@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node snap.mjs 5174 before)"
+      "Bash(node frontend/snap.mjs 5174 before)"
     ]
   }
 }

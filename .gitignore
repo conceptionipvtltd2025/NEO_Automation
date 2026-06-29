@@ -1,11 +1,18 @@
-node_modules
-dist
-dist-ssr
-*.local
-.env
-.env.*
-!.env.example
+# Dependencies (each workspace also has its own .gitignore)
+**/node_modules/
+
+# Build output
+**/dist/
+**/dist-ssr/
+**/*.tsbuildinfo
+
+# Environment files & local secrets (never commit real secrets / DB creds)
+**/.env
+**/.env.*
+!**/.env.example
+**/*.local
+
+# Logs & misc
+**/*.log
 .DS_Store
-*.log
-.vscode/*
-!.vscode/extensions.json
+Thumbs.db

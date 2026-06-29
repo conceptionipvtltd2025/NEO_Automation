@@ -1,112 +1,63 @@
-# Neo Automation — Premium Corporate Website
+# Neo Automation
 
-A modern, highly-animated, fully-responsive website + admin panel for **Neo Automation Pvt. Ltd.**, built to the `NEO-SRS-WEB-001` specification. Premium black theme with NEO-red accents, cinematic motion, 3D, and a complete content-management backend.
+Premium corporate website + admin panel for **Neo Automation Pvt. Ltd.**, built
+to the `NEO-SRS-WEB-001` spec. This repository is a monorepo with two
+independent workspaces:
 
-> Design language inspired by [desouttertools.com](https://www.desouttertools.com/en-in) — dark, industrial, premium — with the NEO brand red as the signature accent.
-
----
-
-## 🚀 Quick start
-
-```bash
-npm install      # install dependencies
-npm run dev      # start dev server  → http://localhost:5173
-npm run build    # type-check + production build → /dist
-npm run preview  # preview the production build
+```
+neo automation/
+├── frontend/    React 18 + Vite + TypeScript website & admin panel
+└── backend/     Node + Express + TypeScript REST API on MySQL
 ```
 
-### 🔐 Admin panel
-Visit **`/admin/login`**
+| Workspace                | Stack                                             | Dev URL                     | Docs                              |
+| ------------------------ | ------------------------------------------------- | --------------------------- | --------------------------------- |
+| [`frontend/`](frontend/) | React, Vite, Tailwind, Framer Motion, Zustand     | http://localhost:5173       | [frontend/README.md](frontend/README.md) |
+| [`backend/`](backend/)   | Express, mysql2, JWT (bcrypt)                      | http://localhost:4000/api   | [backend/README.md](backend/README.md)   |
 
-| Field    | Value      |
-|----------|------------|
-| Username | `admin`    |
-| Password | `neo@2026` |
+The frontend calls `/api`, which Vite proxies to the backend in dev (see
+[frontend/vite.config.ts](frontend/vite.config.ts)). The Zustand stores fall
+back to seeded/`localStorage` data when the API is unreachable, so the site
+keeps working even if the backend is down.
 
-The admin panel is protected, supports failed-attempt lockout, and persists all data to `localStorage`.
+## Prerequisites
 
----
+- **Node.js 18+**
+- **MySQL 5.7+ / 8.0** running locally (XAMPP / WAMP / MySQL Installer / Docker).
 
-## 🧰 Tech stack
+## Run it (two terminals)
 
-| Concern              | Library |
-|----------------------|---------|
-| Framework / build    | **React 18 + Vite + TypeScript** |
-| Styling              | **Tailwind CSS** (custom black/red design system) + shadcn-style primitives |
-| Animation            | **Framer Motion** (page transitions, reveals, magnetic, layout) |
-| 3D                   | **React Three Fiber + drei** (lazy-loaded metallic showpiece) |
-| Smooth scroll        | **Lenis** |
-| State                | **Zustand** (auth, inquiries, catalog — all persisted) |
-| Data fetching        | **TanStack Query** (product loading + skeletons) |
-| Icons                | **lucide-react** |
-| Routing              | **react-router-dom** |
+```bash
+# Terminal 1 — API (creates the DB, migrates & seeds on first boot)
+cd backend
+cp .env.example .env          # edit DB_USER / DB_PASSWORD to match your MySQL
+npm install
+npm run dev                   # → http://localhost:4000
 
-UI patterns are inspired by Aceternity UI / Magic UI / 21st.dev (spotlight cards, aurora, grid backgrounds, marquee, word-reveal headings, tilt, scroll progress) — implemented natively so there are no paid/closed dependencies.
+# Terminal 2 — website + admin
+cd frontend
+npm install
+npm run dev                   # → http://localhost:5173
+```
 
----
+Or, from the repo root, use the convenience scripts in the root
+[package.json](package.json):
 
-## 📐 Design system
+```bash
+npm run install:all           # installs both workspaces
+npm run dev:backend           # in one terminal
+npm run dev:frontend          # in another
+```
 
-- **Palette** — `ink` (near-black surfaces) · `neo` (brand red `#ed1c24`) · `volt` (electric blue accent) · `steel` (text greys)
-- **Fonts** — Clash Display (headings) · Sora (body) · JetBrains Mono
-- **Effects** — animated gradient borders, glassmorphism, aurora glows, dot-grid, film grain, custom scrollbar, glow shadows
+### Admin panel
 
----
+Visit **`/admin/login`** — default credentials `admin` / `neo@2026`
+(configurable in `backend/.env` before first boot).
 
-## 🗺️ Pages & routes
+## Notes
 
-### Public
-| Route | Page |
-|-------|------|
-| `/` | Home — video hero, brands, industries, special products (3D), SWF, catalogue, about, contact |
-| `/products` | Catalogue with search, sort & filters (brand / category / industry) |
-| `/products/:slug` | Product detail — gallery, specs, features, **Inquiry Now** modal, related |
-| `/industries` | All industry verticals |
-| `/industries/:id` | Industry detail + recommended products |
-| `/swf` | Atlas Copco **Smart Workflow Feature** — service-centre video, pillars, inquiry |
-| `/about` | Company, mission, vision, journey timeline, values |
-| `/contact` | Contact details, Google Map, enquiry form |
-| `/inquiry` | Standalone quote-request form (accepts `?product=slug`) |
-| `/terms`, `/privacy` | Legal |
-
-### Admin (`/admin`)
-Dashboard · Products (full CRUD) · Categories (CRUD) · Industries (CRUD) · Inquiries (status, detail, reply, CSV export).
-
----
-
-## ✅ SRS coverage (`NEO-SRS-WEB-001`)
-
-**Functional**
-- **FR-01 Homepage** — video hero, intro, responsive layout, About section, embedded enquiry form, industry & product sections, footer w/ links & T&C ✓
-- **FR-02 Product List** — all products w/ specs/pricing, filter by industry & brand ✓
-- **FR-03 Product Details** — title, description, brand, images, specs, **Inquiry Now** ✓
-- **FR-04 Inquiry** — product-specific form (Name, Email, Address, Phone, Message), validation + confirmation ✓
-- **FR-05 Industry** — dedicated sub-page per vertical with related products/services ✓
-- **FR-06 About Us** — overview, journey timeline, mission, vision ✓
-- **FR-07 Contact** — Google Map, enquiry form ✓
-- **FR-08 SWF (Atlas Copco)** — services + service-centre video, Inquiry pop-up, live chat & WhatsApp widgets ✓
-
-**Admin (Section C)**
-- **AR-01 Login** — secure login, session, failed-attempt lockout, dashboard ✓
-- **AR-02 Categories** — add/edit/delete (with confirm), list/search ✓
-- **AR-03 Industries** — add/edit/delete, assign products, content fields ✓
-- **AR-04 Products** — full CRUD, multi-image, specs, visibility toggle, search/filter/sort ✓
-- **AR-05 Inquiries** — list w/ date & status, full detail, mark Read/Responded/Closed, filter, **CSV export** ✓
-- **AR-06 Email** — reply-by-email actions; confirmation messaging (wire to a mail service for live sending)
-
-**Non-Functional** — responsive (mobile/tablet/desktop), lazy-loaded media & 3D, code-split bundles, CAPTCHA/honeypot-ready forms, custom design system, no IE.
-
----
-
-## 🔌 Going live (next steps)
-
-The frontend is production-ready. To make it fully live, connect a backend for:
-1. **Real auth** — replace the demo Zustand auth with a server + hashed passwords (bcrypt) and JWT/session cookies.
-2. **Persistent data** — swap the Zustand `localStorage` stores for a database (the data shapes in `src/data` are your schema). TanStack Query is already wired for async fetching.
-3. **Email** — connect `AR-06` to an SMTP / transactional email provider (e.g. Resend, SendGrid) in `InquiryForm`'s submit handler.
-4. **Assets** — replace Unsplash/stock URLs and the hero video with the client's real brand imagery, logos and product photos.
-5. **Map** — drop in the exact office coordinates / Google Maps API key.
-
----
-
-*Prepared by Conception I Private Limited — for Neo Automation Pvt. Ltd.*
+- The backend auto-creates the `neo_automation` database and seeds 9 brands,
+  6 categories, 6 industries, 12 products, 3 demo inquiries, and the admin
+  account on first boot. Re-seeding is safe — tables are only seeded when empty.
+- For a production frontend build pointed at a deployed API, set `VITE_API_URL`
+  in `frontend/.env`.

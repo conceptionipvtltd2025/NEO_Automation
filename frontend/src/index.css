@@ -1,0 +1,556 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ── Dark theme (default) ──────────────────────────────────────────
+     Every surface/text token below is a CSS variable so the whole site
+     flips by toggling `.light` on <html>. Brand red (neo) + volt stay
+     constant across themes. */
+  :root {
+    --neo: 237 28 36;
+    --volt: 34 184 255;
+    /* premium accent trio used by the animated ambient mesh */
+    --iris: 129 100 246; /* refined indigo / violet */
+    --aurora: 16 185 129; /* cool teal-green spark   */
+
+    /* Dark = "graphite obsidian": lifted off pure-black to a deep, cool
+       blue-graphite so surfaces feel rich and layered, never flat black. */
+    --ink-950: 10 12 17; /* page background        */
+    --ink-900: 15 17 24; /* cards / footer / bars  */
+    --ink-850: 20 23 31; /* raised cards           */
+    --ink-800: 27 31 41; /* media placeholders     */
+    --ink-700: 39 44 56; /* hairlines (more visible)*/
+    --ink-600: 53 59 73;
+    --ink-500: 70 77 93;
+
+    --steel-100: 236 238 243;
+    --steel-200: 209 214 222;
+    --steel-300: 171 178 190;
+    --steel-400: 130 138 152;
+    --steel-500: 92 99 112;
+    --steel-600: 66 71 82;
+    --steel-700: 46 50 58;
+
+    /* `white` token → light foreground / translucent light overlays */
+    --fg: 255 255 255;
+    --grid-line: 196 210 255;
+    --shadow-card: 0 18px 50px -16px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.04);
+
+    --scrollbar-track: #0d0f15;
+    --body-glow-neo: 0.16;
+    --body-glow-volt: 0.1;
+    --ambient-opacity: 0.65; /* strength of the animated colour mesh */
+  }
+
+  /* ── Light theme ───────────────────────────────────────────────────
+     A premium "pearl" light theme: soft off-white surfaces, crisp
+     near-ink text, gentle red/volt ambience and soft shadows. */
+  html.light {
+    /* Light = "platinum pearl": a soft, faintly-cool grey canvas with
+       crisp white cards that lift off it — layered & premium, not stark. */
+    --ink-950: 231 234 240; /* page background        */
+    --ink-900: 252 253 255; /* cards / footer / bars  */
+    --ink-850: 255 255 255; /* raised cards (pop)     */
+    --ink-800: 221 225 233; /* media placeholders     */
+    --ink-700: 209 214 223; /* default hairlines (visible) */
+    --ink-600: 190 196 207;
+    --ink-500: 168 175 187;
+
+    --steel-100: 18 21 28; /* strongest text         */
+    --steel-200: 36 41 51;
+    --steel-300: 61 69 82; /* muted body / nav       */
+    --steel-400: 88 97 111; /* secondary text         */
+    --steel-500: 120 128 142;
+    --steel-600: 152 160 174;
+    --steel-700: 190 196 206;
+
+    /* `text-white` → near-ink text; `bg-white/[x]` → soft dark glass */
+    --fg: 16 18 24;
+    --grid-line: 40 56 96;
+    --shadow-card: 0 22px 48px -22px rgba(26, 35, 70, 0.26),
+      0 2px 8px -3px rgba(26, 35, 70, 0.1);
+
+    --scrollbar-track: #e3e7ee;
+    --body-glow-neo: 0.08;
+    --body-glow-volt: 0.07;
+    --ambient-opacity: 0.4; /* lighter mesh on the pearl canvas */
+  }
+
+  /* ── Force-dark island ─────────────────────────────────────────────
+     Pins a subtree to the dark token set regardless of the active theme.
+     Used for cinematic media (hero video, image cards) so photos/video
+     stay vivid with light captions in BOTH themes, and for the navbar
+     while it floats over a dark hero. */
+  .force-dark {
+    --ink-950: 8 10 14;
+    --ink-900: 13 15 21;
+    --ink-850: 18 21 28;
+    --ink-800: 25 29 38;
+    --ink-700: 37 42 53;
+    --ink-600: 51 57 70;
+    --ink-500: 68 75 90;
+    --steel-100: 236 238 243;
+    --steel-200: 209 214 222;
+    --steel-300: 171 178 190;
+    --steel-400: 130 138 152;
+    --steel-500: 92 99 112;
+    --steel-600: 66 71 82;
+    --steel-700: 46 50 58;
+    --fg: 255 255 255;
+    --grid-line: 196 210 255;
+    --shadow-card: 0 18px 50px -16px rgba(0, 0, 0, 0.7);
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-ink-700;
+  }
+
+  html {
+    scroll-behavior: auto; /* Lenis handles smooth scroll */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-ink-950 text-steel-100 font-sans antialiased overflow-x-hidden;
+    background-attachment: fixed;
+    background-image: radial-gradient(
+        ellipse 80% 50% at 50% -10%,
+        rgb(var(--neo) / var(--body-glow-neo)),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 100% 0%,
+        rgb(var(--volt) / var(--body-glow-volt)),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 70% 60% at 0% 60%,
+        rgb(var(--iris) / calc(var(--body-glow-volt) * 0.9)),
+        transparent 55%
+      );
+  }
+
+  /* Smooth cross-fade only during a theme switch (class added briefly by
+     the toggle), so it never interferes with normal hover transitions. */
+  html.theme-anim,
+  html.theme-anim *:not(.no-theme-anim) {
+    transition: background-color 0.4s ease, border-color 0.4s ease,
+      color 0.3s ease, box-shadow 0.4s ease, fill 0.3s ease !important;
+  }
+
+  ::selection {
+    @apply bg-neo-600/40;
+    color: #fff;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ed1c24, #871217);
+    border-radius: 99px;
+    border: 2px solid var(--scrollbar-track);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ff2a2a;
+  }
+}
+
+@layer components {
+  .container-px {
+    @apply mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12;
+  }
+
+
+  
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-b from-white via-steel-100 to-steel-300 bg-clip-text text-transparent;
+  }
+  .text-gradient-neo {
+    @apply bg-gradient-to-r from-neo-400 via-neo-600 to-neo-500 bg-clip-text text-transparent;
+  }
+  .text-gradient-volt {
+    @apply bg-gradient-to-r from-volt-400 via-volt-500 to-neo-500 bg-clip-text text-transparent;
+  }
+  /* Continuously animated multi-colour wash for accent words */
+  .text-shimmer-anim {
+    background: linear-gradient(
+      100deg,
+      rgb(var(--neo)),
+      rgb(var(--iris)),
+      rgb(var(--volt)),
+      rgb(var(--neo))
+    );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: text-pan 6s linear infinite;
+  }
+
+  /* Glass surfaces */
+  .glass {
+    @apply border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+  }
+  .glass-strong {
+    @apply border border-white/10 bg-ink-900/70 backdrop-blur-2xl;
+  }
+
+  /* Eyebrow chip — premium pill with a soft inner sheen + accent dot glow */
+  .eyebrow {
+    @apply relative inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-steel-300;
+    background: linear-gradient(
+      120deg,
+      rgb(var(--neo) / 0.08),
+      rgb(var(--fg) / 0.04) 45%,
+      rgb(var(--volt) / 0.07)
+    );
+    box-shadow: inset 0 1px 0 rgb(var(--fg) / 0.06);
+  }
+
+  /* Animated gradient border card — the rim now slowly flows through the
+     brand trio and brightens on hover. */
+  .gradient-border {
+    position: relative;
+    border-radius: 1rem;
+    background: rgb(var(--ink-850));
+  }
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      130deg,
+      rgb(var(--neo) / 0.7),
+      rgb(var(--iris) / 0.45) 35%,
+      rgb(var(--fg) / 0.06) 55%,
+      rgb(var(--volt) / 0.55)
+    );
+    background-size: 200% 200%;
+    animation: border-flow 7s ease infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ── Buttons ────────────────────────────────────────────────────────
+     Primary = glossy red with a sheen sweep + lift on hover.
+     Ghost   = glass pill that lights an accent rim + lifts on hover. */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3.5 text-sm font-semibold transition-all duration-300 active:scale-[0.98];
+    background: linear-gradient(125deg, #ff3b3b 0%, #ed1c24 52%, #c70f17 100%);
+    color: #fff; /* stays white on the red fill in both themes */
+    box-shadow: 0 10px 30px -10px rgba(237, 28, 36, 0.65),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -10px rgba(237, 28, 36, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  /* diagonal sheen that sweeps across on hover */
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 80%
+    );
+    transform: translateX(-130%) skewX(-12deg);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .btn-primary:hover::after {
+    transform: translateX(130%) skewX(-12deg);
+  }
+
+  .btn-ghost {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border border-white/15 bg-white/[0.03] px-7 py-3.5 text-sm font-semibold text-steel-100 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/[0.07] hover:text-white;
+  }
+  .btn-ghost::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      120deg,
+      rgb(var(--neo) / 0.6),
+      transparent 40%,
+      rgb(var(--volt) / 0.5)
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .btn-ghost:hover::after {
+    opacity: 1;
+  }
+
+  .admin-input {
+    @apply w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-steel-600 focus:border-neo-600/50 focus:bg-white/[0.05];
+  }
+
+  /* ── Reusable hover kit ─────────────────────────────────────────────
+     Drop these on any card/element for consistent "premium" motion. */
+
+  /* Rich surface card: layered fill, lifts + warms its rim & shadow on
+     hover. Pair with `group` for child reveals. */
+  .card-rich {
+    @apply relative overflow-hidden rounded-2xl border border-white/10 transition-all duration-500;
+    background: linear-gradient(
+      160deg,
+      rgb(var(--fg) / 0.05),
+      rgb(var(--fg) / 0.015) 55%
+    );
+    background-color: rgb(var(--ink-850) / 0.5);
+  }
+  .card-rich:hover {
+    transform: translateY(-6px);
+    border-color: rgb(var(--neo) / 0.35);
+    box-shadow: 0 24px 60px -22px rgb(var(--neo) / 0.4),
+      var(--shadow-card);
+  }
+
+  /* Simple lift on hover */
+  .hover-lift {
+    @apply transition-transform duration-300 will-change-transform;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Diagonal light sweep on hover — add to a `position:relative;overflow:hidden`
+     parent that also carries the `group` class. */
+  .shine-sweep::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgb(var(--fg) / 0.14) 50%,
+      transparent 70%
+    );
+    transform: translateX(-130%) skewX(-12deg);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .group:hover .shine-sweep::before {
+    transform: translateX(130%) skewX(-12deg);
+  }
+
+  /* ── Animated ambient colour mesh ───────────────────────────────────
+     A fixed, behind-everything field of slow-drifting brand-coloured
+     blobs. Shows through transparent sections so the whole site breathes
+     colour in both themes; strength is theme-tuned via --ambient-opacity. */
+  .ambient-mesh {
+    position: fixed;
+    inset: -10%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--ambient-opacity);
+    overflow: hidden;
+    /* No container blur: the blobs are already blur(70px); a second full-screen
+       blur pass here re-rasterizes every frame (the blobs animate) and is a
+       major scroll-jank source. Dropping it is visually imperceptible. */
+    contain: strict;
+  }
+  .ambient-mesh span {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(52px);
+    /* promote each blob to its own cached GPU layer so the drift animation only
+       *moves* a pre-blurred texture instead of re-blurring every frame */
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  /* Static positions (no per-frame drift animation) — keeps the colour glow
+     while removing continuous full-screen GPU compositing that can steal frames
+     from the hero video on weaker machines. */
+  .ambient-blob-1 {
+    top: 4%;
+    left: -6%;
+    width: 46vw;
+    height: 46vw;
+    background: radial-gradient(circle, rgb(var(--neo) / 0.5), transparent 68%);
+  }
+  .ambient-blob-2 {
+    top: 30%;
+    right: -8%;
+    width: 42vw;
+    height: 42vw;
+    background: radial-gradient(circle, rgb(var(--volt) / 0.42), transparent 68%);
+  }
+  .ambient-blob-3 {
+    bottom: -6%;
+    left: 28%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgb(var(--iris) / 0.4), transparent 70%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-mesh span {
+      animation: none !important;
+    }
+  }
+
+  /* ── Logo medallion ────────────────────────────────────────────────
+     The NEO mark has a black filigree wreath that vanishes on a dark
+     background (and ships with mixed white/transparent corners). We sit
+     it on an opaque "pearl" disc + glowing ring so it reads fully and
+     looks premium in BOTH themes — without altering the logo file. */
+  .logo-medallion {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+    background: radial-gradient(
+      circle at 50% 36%,
+      #ffffff 0%,
+      #f5f6f8 58%,
+      #e7e9ee 100%
+    );
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06),
+      0 0 0 3px rgb(var(--fg) / 0.05), 0 6px 18px -7px rgba(237, 28, 36, 0.5),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+  }
+  /* slow conic glow ring behind the disc */
+  .logo-medallion::before {
+    content: "";
+    position: absolute;
+    inset: -2.5px;
+    z-index: -1;
+    border-radius: inherit;
+    background: conic-gradient(
+      from 0deg,
+      rgba(237, 28, 36, 0),
+      rgba(237, 28, 36, 0.55),
+      rgba(34, 184, 255, 0.45),
+      rgba(237, 28, 36, 0)
+    );
+    filter: blur(5px);
+    opacity: 0.75;
+    animation: logo-ring-spin 14s linear infinite;
+  }
+  .logo-medallion img {
+    border-radius: inherit;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .logo-medallion::before {
+      animation: none;
+    }
+  }
+}
+
+@keyframes logo-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animated accent-text wash */
+@keyframes text-pan {
+  to {
+    background-position: 220% center;
+  }
+}
+
+/* Ambient mesh blob drifts — each on its own slow, organic path */
+@keyframes blob-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate3d(8vw, 6vh, 0) scale(1.18);
+    opacity: 1;
+  }
+}
+@keyframes blob-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(-7vw, 8vh, 0) scale(0.85);
+    opacity: 1;
+  }
+}
+@keyframes blob-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(5vw, -7vh, 0) scale(1.2);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent);
+    mask-image: linear-gradient(to bottom, black 70%, transparent);
+  }
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+  }
+  .perspective {
+    perspective: 1200px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}

@@ -5,6 +5,7 @@ import { Lock, User, Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
 import { useAuth } from "@/store/useAuth";
 import { LogoMark } from "@/components/Logo";
 import { Aurora, GridBackground } from "@/components/ui/Backgrounds";
+import { ADMIN_BASE } from "@/lib/adminPath";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isAuthed) navigate("/admin", { replace: true });
+    if (isAuthed) navigate(ADMIN_BASE, { replace: true });
   }, [isAuthed, navigate]);
 
   const submit = async (e: React.FormEvent) => {
@@ -27,7 +28,7 @@ export default function AdminLogin() {
     setLoading(true);
     try {
       const res = await login(username, password);
-      if (res.ok) navigate("/admin", { replace: true });
+      if (res.ok) navigate(ADMIN_BASE, { replace: true });
       else setError(res.error ?? "Login failed");
     } catch {
       setError("Login failed. Please try again.");

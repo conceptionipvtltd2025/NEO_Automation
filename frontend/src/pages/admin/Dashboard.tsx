@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
 import { useInquiries, type InquiryStatus } from "@/store/useInquiries";
+import { ADMIN_BASE } from "@/lib/adminPath";
 import { cn } from "@/lib/utils";
 
 const statusStyle: Record<InquiryStatus, string> = {
@@ -27,10 +28,10 @@ export default function Dashboard() {
   const newCount = inquiries.filter((i) => i.status === "new").length;
 
   const stats = [
-    { label: "Products", value: products.length, icon: Package, to: "/admin/products", color: "text-neo-400 bg-neo-600/15" },
-    { label: "Categories", value: categories.length, icon: Tags, to: "/admin/categories", color: "text-volt-400 bg-volt-500/15" },
-    { label: "Industries", value: industries.length, icon: Factory, to: "/admin/industries", color: "text-amber-400 bg-amber-500/15" },
-    { label: "Inquiries", value: inquiries.length, icon: Inbox, to: "/admin/inquiries", color: "text-emerald-400 bg-emerald-500/15", badge: newCount },
+    { label: "Products", value: products.length, icon: Package, to: `${ADMIN_BASE}/products`, color: "text-neo-400 bg-neo-600/15" },
+    { label: "Categories", value: categories.length, icon: Tags, to: `${ADMIN_BASE}/categories`, color: "text-volt-400 bg-volt-500/15" },
+    { label: "Industries", value: industries.length, icon: Factory, to: `${ADMIN_BASE}/industries`, color: "text-amber-400 bg-amber-500/15" },
+    { label: "Inquiries", value: inquiries.length, icon: Inbox, to: `${ADMIN_BASE}/inquiries`, color: "text-emerald-400 bg-emerald-500/15", badge: newCount },
   ];
 
   return (
@@ -83,7 +84,7 @@ export default function Dashboard() {
             <h2 className="font-display text-lg font-semibold text-white">
               Recent inquiries
             </h2>
-            <Link to="/admin/inquiries" className="text-sm text-neo-400 hover:text-neo-300">
+            <Link to={`${ADMIN_BASE}/inquiries`} className="text-sm text-neo-400 hover:text-neo-300">
               View all →
             </Link>
           </div>
@@ -131,7 +132,7 @@ export default function Dashboard() {
             <Clock className="h-7 w-7 text-volt-400" />
             <p className="mt-4 font-display text-3xl font-bold text-white">{newCount}</p>
             <p className="mt-1 text-sm text-steel-300">Awaiting response</p>
-            <Link to="/admin/inquiries" className="btn-ghost mt-4 w-full justify-center text-[13px]">
+            <Link to={`${ADMIN_BASE}/inquiries`} className="btn-ghost mt-4 w-full justify-center text-[13px]">
               Review now
             </Link>
           </div>

@@ -18,14 +18,15 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/store/useAuth";
 import { useInquiries } from "@/store/useInquiries";
 import { useCatalog } from "@/store/useCatalog";
+import { ADMIN_BASE, ADMIN_LOGIN } from "@/lib/adminPath";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/products", label: "Products", icon: Package },
-  { to: "/admin/categories", label: "Categories", icon: Tags },
-  { to: "/admin/industries", label: "Industries", icon: Factory },
-  { to: "/admin/inquiries", label: "Inquiries", icon: Inbox },
+  { to: ADMIN_BASE, label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: `${ADMIN_BASE}/products`, label: "Products", icon: Package },
+  { to: `${ADMIN_BASE}/categories`, label: "Categories", icon: Tags },
+  { to: `${ADMIN_BASE}/industries`, label: "Industries", icon: Factory },
+  { to: `${ADMIN_BASE}/inquiries`, label: "Inquiries", icon: Inbox },
 ];
 
 export function AdminLayout() {
@@ -45,7 +46,7 @@ export function AdminLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate("/admin/login", { replace: true });
+    navigate(ADMIN_LOGIN, { replace: true });
   };
 
   const SidebarContent = (

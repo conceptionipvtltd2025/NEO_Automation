@@ -24,6 +24,7 @@ import AdminCategories from "./pages/admin/Categories";
 import AdminIndustries from "./pages/admin/Industries";
 import AdminInquiries from "./pages/admin/Inquiries";
 import { RequireAuth } from "./pages/admin/RequireAuth";
+import { ADMIN_BASE, ADMIN_LOGIN } from "./lib/adminPath";
 
 export default function App() {
   // Hydrate the catalogue from the backend on first load (falls back to the
@@ -51,9 +52,9 @@ export default function App() {
       </Route>
 
       {/* Admin */}
-      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path={ADMIN_LOGIN} element={<AdminLogin />} />
       <Route
-        path="/admin"
+        path={ADMIN_BASE}
         element={
           <RequireAuth>
             <AdminLayout />

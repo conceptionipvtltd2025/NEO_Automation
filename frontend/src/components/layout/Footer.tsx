@@ -7,7 +7,7 @@ import {
   MessageCircle,
   Linkedin,
   Instagram,
-  Youtube,
+  Facebook,
   ArrowUpRight,
   ArrowUp,
 } from "lucide-react";
@@ -16,10 +16,19 @@ import { site, navItems } from "@/data/site";
 import { categories } from "@/data/categories";
 import { getLenis } from "@/components/providers/SmoothScroll";
 
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  );
+}
+
 const social = [
   { icon: Linkedin, href: site.social.linkedin, label: "LinkedIn" },
+  { icon: Facebook, href: site.social.facebook, label: "Facebook" },
   { icon: Instagram, href: site.social.instagram, label: "Instagram" },
-  { icon: Youtube, href: site.social.youtube, label: "YouTube" },
+  { icon: XIcon, href: site.social.twitter, label: "X" },
 ];
 
 export function Footer() {
@@ -51,6 +60,8 @@ export function Footer() {
                 <a
                   key={s.label}
                   href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label={s.label}
                   className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-steel-300 transition hover:border-neo-600/50 hover:text-white"
                 >

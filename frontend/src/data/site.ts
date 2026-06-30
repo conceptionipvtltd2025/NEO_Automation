@@ -28,10 +28,10 @@ export const site = {
       "13 Jahnavi Industrial Estate, Opp Madhav Avenue, S.P. Ring Road, Odhav, Ahmedabad 382415",
   },
   social: {
-    linkedin: "#",
-    instagram: "#",
-    youtube: "#",
-    twitter: "#",
+    linkedin: "https://www.linkedin.com/in/neo-automation-64a619147",
+    instagram: "https://www.instagram.com/neoautomation13/",
+    twitter: "https://x.com/AutomationNeo",
+    facebook: "https://www.facebook.com/profile.php?id=100017663492207",
   },
   stats: [
     { value: 19, suffix: "+", label: "Years of Engineering" },

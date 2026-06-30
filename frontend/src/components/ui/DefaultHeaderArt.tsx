@@ -8,7 +8,7 @@ import { ShieldCheck, Sparkles } from "lucide-react";
  */
 export function DefaultHeaderArt() {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-sm">
+    <div className="relative mx-auto aspect-square w-full max-w-md">
       {/* Soft brand glow */}
       <div className="pointer-events-none absolute inset-8 rounded-full bg-neo-600/20 blur-3xl" />
 
@@ -33,7 +33,7 @@ export function DefaultHeaderArt() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         className="absolute left-1/2 top-1/2 grid h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-ink-900/80 shadow-2xl shadow-black/50 backdrop-blur-md"
       >
-        <span className="font-display text-[clamp(1.5rem,3.5vw,2.4rem)] font-bold tracking-tight text-white">
+        <span className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-bold tracking-tight text-white">
           NE<span className="text-neo-500">O</span>
         </span>
       </motion.div>
@@ -42,28 +42,28 @@ export function DefaultHeaderArt() {
       <motion.div
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -left-1 top-6 flex items-center gap-2 rounded-2xl border border-white/10 bg-ink-900/90 px-3.5 py-2.5 shadow-xl shadow-black/40 backdrop-blur-md"
+        className="absolute left-1 top-6 flex items-center gap-2.5 rounded-2xl border border-white/10 bg-ink-900/90 px-4 py-3 shadow-xl shadow-black/40 backdrop-blur-md"
       >
-        <span className="grid h-8 w-8 place-items-center rounded-xl bg-neo-600/15 text-neo-400">
-          <ShieldCheck className="h-4 w-4" />
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-neo-600/15 text-neo-400">
+          <ShieldCheck className="h-5 w-5" />
         </span>
         <div className="leading-tight">
-          <p className="text-xs font-semibold text-white">Authorised</p>
-          <p className="text-[10px] text-steel-400">Distributor</p>
+          <p className="text-sm font-semibold text-white">Authorised</p>
+          <p className="text-xs text-steel-400">Distributor</p>
         </div>
       </motion.div>
 
       <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-        className="absolute -right-1 bottom-8 flex items-center gap-2 rounded-2xl border border-white/10 bg-ink-900/90 px-3.5 py-2.5 shadow-xl shadow-black/40 backdrop-blur-md"
+        className="absolute right-1 bottom-8 flex items-center gap-2.5 rounded-2xl border border-white/10 bg-ink-900/90 px-4 py-3 shadow-xl shadow-black/40 backdrop-blur-md"
       >
-        <span className="grid h-8 w-8 place-items-center rounded-xl bg-volt-500/15 text-volt-400">
-          <Sparkles className="h-4 w-4" />
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-volt-500/15 text-volt-400">
+          <Sparkles className="h-5 w-5" />
         </span>
         <div className="leading-tight">
-          <p className="text-xs font-semibold text-white">19+ Years</p>
-          <p className="text-[10px] text-steel-400">Engineering</p>
+          <p className="text-sm font-semibold text-white">19+ Years</p>
+          <p className="text-xs text-steel-400">Engineering</p>
         </div>
       </motion.div>
     </div>

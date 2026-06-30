@@ -15,7 +15,7 @@ const Showpiece3D = lazy(() =>
 
 export function SpecialProducts() {
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-16">
       <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-60" />
       <div className="container-px relative">
         <SectionHeading
@@ -59,7 +59,7 @@ export function SpecialProducts() {
                 className="absolute right-5 top-1/3 glass rounded-xl px-3 py-2"
               >
                 <div className="flex items-center gap-2 text-xs text-steel-200">
-                  <Cpu className="h-3.5 w-3.5 text-neo-500" /> SWF Connected
+                  <Cpu className="h-3.5 w-3.5 text-neo-500" /> Smart Connected
                 </div>
               </motion.div>
             </div>

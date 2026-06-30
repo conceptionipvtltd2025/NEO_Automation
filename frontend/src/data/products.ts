@@ -53,7 +53,7 @@ export const products: Product[] = [
     images: [p("1581092160562-40aa08e78837"), p("1504328345606-18bbc8c9d7d1")],
     featured: true,
     special: true,
-    badge: "SWF Ready",
+    badge: "Smart Tool",
     visible: true,
   },
   {

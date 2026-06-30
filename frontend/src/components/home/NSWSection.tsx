@@ -12,7 +12,7 @@ const pillars = [
 
 export function NSWSection() {
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-16">
       <div className="container-px">
         <div className="force-dark relative overflow-hidden rounded-[2rem] border border-white/10">
           {/* bg */}

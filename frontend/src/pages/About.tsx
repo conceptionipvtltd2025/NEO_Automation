@@ -12,11 +12,11 @@ import {
   Clock,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { AboutHeaderArt } from "@/components/ui/HeaderArt";
 import { Reveal } from "@/components/ui/Reveal";
 import { Counter } from "@/components/ui/Counter";
 import { SectionHeading } from "@/components/SectionHeading";
 import { StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
-import { CTABand } from "@/components/home/CTABand";
 import { site } from "@/data/site";
 
 const credentials = [
@@ -51,6 +51,7 @@ export default function About() {
         title="Precision is our heritage"
         subtitle="For nearly two decades, Neo Automation has equipped Indian industry with the world's finest tools — backed by engineering expertise that goes far beyond the sale."
         crumbs={[{ label: "About" }]}
+        media={<AboutHeaderArt />}
       />
 
       {/* Intro + image */}
@@ -227,8 +228,6 @@ export default function About() {
           ))}
         </StaggerGroup>
       </section>
-
-      <CTABand />
     </>
   );
 }

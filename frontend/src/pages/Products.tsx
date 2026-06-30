@@ -9,9 +9,9 @@ import {
   PackageOpen,
   ChevronLeft,
   ChevronRight,
-  Boxes,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { ProductsHeaderArt } from "@/components/ui/HeaderArt";
 import { ProductCard } from "@/components/ProductCard";
 import { useCatalog } from "@/store/useCatalog";
 import { brands } from "@/data/brands";
@@ -116,7 +116,7 @@ export default function Products() {
         title="Industrial tools & automation products"
         subtitle="Explore our complete range — filter by brand, category or the industry you operate in."
         crumbs={[{ label: "Products" }]}
-        media={<CatalogueHero />}
+        media={<ProductsHeaderArt />}
       />
 
       <section className="container-px pb-24">
@@ -269,50 +269,6 @@ export default function Products() {
         )}
       </section>
     </>
-  );
-}
-
-function CatalogueHero() {
-  const img = (id: string) =>
-    `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=900&q=80`;
-
-  return (
-    <div className="relative mx-auto aspect-[4/3] w-full max-w-md">
-      {/* Glow */}
-      <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-neo-600/20 blur-3xl" />
-
-      {/* Back image */}
-      <div className="absolute right-0 top-0 h-[62%] w-[58%] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40 ring-1 ring-white/5">
-        <img
-          src={img("1581092160562-40aa08e78837")}
-          alt="Precision industrial tooling"
-          loading="lazy"
-          className="h-full w-full object-cover"
-        />
-      </div>
-
-      {/* Front image */}
-      <div className="absolute bottom-0 left-0 h-[72%] w-[66%] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/50 ring-1 ring-white/5">
-        <img
-          src={img("1565514020179-026b92b84bb6")}
-          alt="Automation assembly line"
-          loading="lazy"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/50 to-transparent" />
-      </div>
-
-      {/* Floating stat badge */}
-      <div className="absolute -bottom-3 right-2 flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/90 px-4 py-3 shadow-xl shadow-black/40 backdrop-blur-md">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-neo-600/15 text-neo-400">
-          <Boxes className="h-5 w-5" />
-        </span>
-        <div className="leading-tight">
-          <p className="font-display text-lg font-bold text-white">9 Brands</p>
-          <p className="text-[11px] text-steel-400">Authorised partner</p>
-        </div>
-      </div>
-    </div>
   );
 }
 

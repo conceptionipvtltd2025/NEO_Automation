@@ -1,18 +1,20 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, Play } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { Counter } from "@/components/ui/Counter";
 import { GridBackground } from "@/components/ui/Backgrounds";
 import { site } from "@/data/site";
+import { asset } from "@/lib/asset";
 
 // Self-hosted brand showreel — a short, lean, muted/looped industrial b-roll clip.
 // Streamed directly (faststart MP4) so the first frame paints instantly and it never
 // buffers mid-play or at the loop. Source: youtu.be/dDjZkJ9iWHI (trimmed to 12s b-roll).
 // ?v=4 cache-busts the browser's media cache so a stale older encode is never replayed.
-const HERO_VIDEO_SRC = "/video/hero-banner.mp4?v=4";
-const HERO_POSTER = "/video/hero-poster.jpg?v=4"; // the clip's exact first frame (seamless hand-off)
+// asset() prefixes the deploy base so these resolve under /neo-website/ on the server.
+const HERO_VIDEO_SRC = asset("video/hero-banner.mp4?v=4");
+const HERO_POSTER = asset("video/hero-poster.jpg?v=4"); // the clip's exact first frame (seamless hand-off)
 
 
 export function Hero() {
@@ -22,7 +24,7 @@ export function Hero() {
     target: ref,
     offset: ["start start", "end start"],
   });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 80]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   // Only play the banner while it's actually on screen — pausing it when scrolled
@@ -45,7 +47,7 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      className="force-dark relative flex min-h-[100svh] items-center overflow-hidden pt-28"
+      className="force-dark relative flex min-h-[100svh] items-center overflow-hidden pb-24 pt-36"
     >
       {/* Background media — static (no scroll-driven scale) so the GPU never
           re-rasterizes the decoded video frame while scrolling = no lag. */}
@@ -74,26 +76,14 @@ export function Hero() {
 
       <GridBackground className="opacity-40" />
 
-      {/* Content */}
+      {/* Content — gentle parallax drift only; no scroll-driven opacity fade
+          so the heading, buttons and stats stay fully crisp while scrolling. */}
       <motion.div
-        style={{ y, opacity }}
+        style={{ y }}
         className="container-px relative z-10 grid w-full items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]"
       >
         <div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="eyebrow"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neo-500/70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-neo-500" />
-            </span>
-            Authorised Distribution Partner
-          </motion.div>
-
-          <h1 className="mt-6 font-display text-[clamp(2.6rem,7vw,5.4rem)] font-bold leading-[0.98] tracking-tight">
+          <h1 className="font-display text-[clamp(2.6rem,7vw,5.4rem)] font-bold leading-[0.98] tracking-tight">
             {["Engineering", "Tomorrow's"].map((word, i) => (
               <span key={i} className="block overflow-hidden">
                 <motion.span
@@ -142,8 +132,8 @@ export function Hero() {
               </Link>
             </Magnetic>
             <Magnetic strength={0.25}>
-              <Link to="/swf" className="btn-ghost">
-                <Play className="h-4 w-4" /> Discover SWF
+              <Link to="/contact" className="btn-ghost">
+                Get a Quote <ArrowUpRight className="h-4 w-4" />
               </Link>
             </Magnetic>
           </motion.div>

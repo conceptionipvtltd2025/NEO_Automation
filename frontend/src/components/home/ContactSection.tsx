@@ -13,7 +13,7 @@ const contactInfo = [
 
 export function ContactSection() {
   return (
-    <section className="relative py-24">
+    <section className="relative py-16">
       <div className="container-px">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div>

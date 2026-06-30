@@ -10,7 +10,6 @@ import IndustryDetail from "./pages/IndustryDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Inquiry from "./pages/Inquiry";
-import SWF from "./pages/SWF";
 import NSW from "./pages/NSW";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
@@ -41,7 +40,6 @@ export default function App() {
         <Route path="/products/:slug" element={<ProductDetail />} />
         <Route path="/industries" element={<Industries />} />
         <Route path="/industries/:id" element={<IndustryDetail />} />
-        <Route path="/swf" element={<SWF />} />
         <Route path="/nsw" element={<NSW />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

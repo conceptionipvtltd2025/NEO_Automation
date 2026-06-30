@@ -30,7 +30,7 @@ export function IndustriesShowcase() {
   const current = industries[active];
 
   return (
-    <section className="relative py-24">
+    <section className="relative py-16">
       <div className="container-px">
         <SectionHeading
           eyebrow="Industries We Power"

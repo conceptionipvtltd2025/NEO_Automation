@@ -5,7 +5,6 @@ import {
   Gauge,
   GraduationCap,
   Boxes,
-  Headset,
   type LucideIcon,
 } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -49,17 +48,11 @@ const capabilities: Capability[] = [
     text: "Fast-moving spares, sockets, bits and abrasives held in stock for next-day dispatch across India.",
     accent: "139,92,246",
   },
-  {
-    icon: Headset,
-    title: "SWF Deployment",
-    text: "Atlas Copco Smart Workflow Feature roll-outs that error-proof assembly and capture full traceability.",
-    accent: "236,72,153",
-  },
 ];
 
 export function Capabilities() {
   return (
-    <section className="container-px py-24">
+    <section className="container-px py-16">
       <SectionHeading
         eyebrow="What We Do"
         title="End-to-end engineering, not just a supplier"

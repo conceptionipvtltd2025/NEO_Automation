@@ -1,3 +1,5 @@
+import { asset } from "@/lib/asset";
+
 export type Brand = {
   id: string;
   name: string;
@@ -13,7 +15,8 @@ export type Brand = {
 
 // All brand logos resolve to /public/images/brands/<id>.(png|svg).
 // Drop the official PNG/SVG in with the matching filename and it shows automatically.
-const logo = (id: string) => `/images/brands/${id}.png`;
+// asset() prefixes the deploy base so logos load under /neo-website/ on the server.
+const logo = (id: string) => asset(`images/brands/${id}.png`);
 
 export const brands: Brand[] = [
   {

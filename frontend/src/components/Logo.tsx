@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
+import { asset } from "@/lib/asset";
 
 export function LogoMark({ className }: { className?: string }) {
   return (
     <span className={cn("logo-medallion h-[4.5rem] w-[4.5rem] shrink-0", className)}>
       <img
-        src="/images/logo.png"
+        src={asset("images/logo.png")}
         alt="NEO Logo"
         className="h-full w-full object-cover"
       />

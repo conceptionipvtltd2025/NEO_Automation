@@ -54,7 +54,6 @@ export const navItems: NavItem[] = [
     href: "/products",
   },
   { label: "Industries", href: "/industries" },
-  { label: "SWF", href: "/swf" },
   { label: "NSW", href: "/nsw" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },

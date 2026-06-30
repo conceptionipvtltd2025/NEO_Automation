@@ -42,7 +42,7 @@ function BrandLogo({ brand }: { brand: Brand }) {
 
 export function Brands() {
   return (
-    <section className="relative py-24">
+    <section className="relative py-16">
       <div className="container-px">
         <SectionHeading
           eyebrow="Authorised Distribution"

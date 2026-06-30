@@ -4,6 +4,7 @@ import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { ScrollToTop } from "./ScrollToTop";
 import { FloatingWidgets } from "@/components/FloatingWidgets";
+import { TawkChat } from "@/components/TawkChat";
 import { AmbientBackground } from "@/components/ui/Backgrounds";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 
@@ -28,6 +29,7 @@ export function RootLayout() {
       </motion.main>
       <Footer />
       <FloatingWidgets />
+      <TawkChat />
     </div>
   );
 }

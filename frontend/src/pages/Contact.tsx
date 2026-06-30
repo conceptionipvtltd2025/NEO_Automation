@@ -1,5 +1,6 @@
 import { MapPin, Phone, Mail, Clock, Navigation } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { ContactHeaderArt } from "@/components/ui/HeaderArt";
 import { InquiryForm } from "@/components/InquiryForm";
 import { Reveal } from "@/components/ui/Reveal";
 import { site } from "@/data/site";
@@ -22,6 +23,7 @@ export default function Contact() {
         title="We'd love to hear from you"
         subtitle="Reach out for quotes, demos, service or just to talk shop. Our engineers are ready to help."
         crumbs={[{ label: "Contact" }]}
+        media={<ContactHeaderArt />}
       />
 
       <section className="container-px pb-16">
@@ -41,7 +43,11 @@ export default function Contact() {
                       <p className="text-xs uppercase tracking-wider text-steel-500">
                         {c.label}
                       </p>
-                      <p className="mt-1 break-words text-sm font-medium text-white">
+                      <p
+                        className={`mt-1 break-words font-medium text-white ${
+                          c.label === "Email" ? "text-[13px]" : "text-sm"
+                        }`}
+                      >
                         {c.value}
                       </p>
                     </div>

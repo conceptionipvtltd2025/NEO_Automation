@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
+import { LegalHeaderArt } from "@/components/ui/HeaderArt";
 
 const content = {
   terms: {
@@ -32,7 +33,12 @@ export default function Legal({ kind }: { kind: "terms" | "privacy" }) {
   const c = content[kind];
   return (
     <>
-      <PageHeader eyebrow={c.eyebrow} title={c.title} crumbs={[{ label: c.title }]} />
+      <PageHeader
+        eyebrow={c.eyebrow}
+        title={c.title}
+        crumbs={[{ label: c.title }]}
+        media={<LegalHeaderArt />}
+      />
       <section className="container-px pb-24">
         <div className="mx-auto max-w-3xl space-y-8">
           {c.sections.map((s, i) => (

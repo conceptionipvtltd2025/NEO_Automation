@@ -13,6 +13,7 @@ import {
   MessageSquareQuote,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { NSWHeaderArt } from "@/components/ui/HeaderArt";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Modal } from "@/components/ui/Modal";
@@ -71,6 +72,7 @@ export default function NSW() {
         title="Nuclear Service Workshop (NSW)"
         subtitle="An all tools & tackles equipped service workshop for servicing all types of Pneumatic, Battery and Electric nut runners — keeping your tightening tools precise, certified and production-ready."
         crumbs={[{ label: "NSW" }]}
+        media={<NSWHeaderArt />}
       />
 
       {/* Hero band */}

@@ -6,7 +6,7 @@ import { Counter } from "@/components/ui/Counter";
 
 export function AboutTeaser() {
   return (
-    <section className="relative py-24">
+    <section className="relative py-16">
       <div className="container-px grid items-center gap-12 lg:grid-cols-2">
         {/* Visual */}
         <Reveal>

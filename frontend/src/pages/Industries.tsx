@@ -14,8 +14,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { IndustriesHeaderArt } from "@/components/ui/HeaderArt";
 import { useCatalog } from "@/store/useCatalog";
-import { CTABand } from "@/components/home/CTABand";
 import { cn } from "@/lib/utils";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -61,6 +61,7 @@ export default function Industries() {
         title="Solutions tuned to your sector"
         subtitle="Every industry has its own tolerances, takt times and standards. We bring the right tools and expertise to each."
         crumbs={[{ label: "Industries" }]}
+        media={<IndustriesHeaderArt />}
       />
 
       <section className="container-px pb-12">
@@ -170,8 +171,6 @@ export default function Industries() {
           </nav>
         )}
       </section>
-
-      <CTABand />
     </>
   );
 }

@@ -39,7 +39,7 @@ const testimonials: Testimonial[] = [
 
 export function Testimonials() {
   return (
-    <section className="container-px py-24">
+    <section className="container-px py-16">
       <SectionHeading
         align="center"
         eyebrow="Trusted on the Floor"

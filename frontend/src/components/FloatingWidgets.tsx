@@ -19,7 +19,7 @@ export function FloatingWidgets() {
   const [chatOpen, setChatOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-[6.25rem] right-5 z-50 flex flex-col items-end gap-3">
       <AnimatePresence>
         {CHAT_ENABLED && chatOpen && (
           <motion.div
@@ -49,7 +49,7 @@ export function FloatingWidgets() {
                 👋 Welcome to Neo Automation! How can our engineers help you today?
               </div>
               <div className="flex flex-wrap gap-2">
-                {["Request a quote", "Atlas Copco SWF", "Talk to sales"].map((q) => (
+                {["Request a quote", "Product catalogue", "Talk to sales"].map((q) => (
                   <button
                     key={q}
                     className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-steel-200 transition hover:border-neo-600/50 hover:text-white"

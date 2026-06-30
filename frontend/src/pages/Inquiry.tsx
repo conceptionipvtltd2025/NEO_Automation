@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { CheckCircle2, Clock, ShieldCheck, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { InquiryHeaderArt } from "@/components/ui/HeaderArt";
 import { InquiryForm } from "@/components/InquiryForm";
 import { useCatalog } from "@/store/useCatalog";
 import { Reveal } from "@/components/ui/Reveal";
@@ -23,6 +24,7 @@ export default function Inquiry() {
         title="Tell us what you need"
         subtitle="Share your requirement and our team will get back with pricing, availability and recommendations."
         crumbs={[{ label: "Inquiry" }]}
+        media={<InquiryHeaderArt />}
       />
 
       <section className="container-px pb-24">

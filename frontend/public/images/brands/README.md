@@ -7,14 +7,14 @@ styled text wordmark, so you can add logos one at a time.
 | Brand          | Required filename        | Status        |
 | -------------- | ------------------------ | ------------- |
 | Atlas Copco    | `atlas-copco.png`        | ✅ provided   |
-| GESIPA         | `gesipa.png`             | ⬜ needed     |
-| eepos          | `eepos.png`              | ⬜ needed     |
-| GEDORE         | `gedore.png`             | ⬜ needed     |
-| CEJN           | `cejn.png`               | ⬜ needed     |
+| GESIPA         | `gesipa.png`             | ✅ provided   |
+| eepos          | `eepos.png`              | ✅ provided   |
+| GEDORE         | `gedore.png`             | ✅ provided   |
+| CEJN           | `cejn.png`               | ✅ provided   |
 | Hoffmann Group | `hoffmann-group.png`     | ✅ provided   |
-| Legris         | `legris.png`             | ⬜ needed     |
+| Legris         | `legris.png`             | ✅ provided   |
+| Transair       | `transair.png`           | ✅ provided   |
 | PFERD          | `pferd.png`              | ⬜ needed     |
-| John Guest     | `john-guest.png`         | ⬜ needed     |
 
 **Recommendations**
 - Use **transparent PNG** (or SVG — then update the `logo()` extension in

@@ -92,12 +92,12 @@ export const brands: Brand[] = [
     logo: logo("pferd"),
   },
   {
-    id: "john-guest",
-    name: "John Guest",
+    id: "transair",
+    name: "Transair",
     color: "#0e7ec4",
-    category: "Fluid Fittings",
+    category: "Compressed-Air Piping",
     blurb:
-      "Push-fit connectors and pneumatic fittings delivering leak-free fluid and air transfer at scale.",
-    logo: logo("john-guest"),
+      "Advanced aluminium compressed-air, vacuum and fluid piping systems for fast, leak-free installation and energy-efficient distribution.",
+    logo: logo("transair"),
   },
 ];

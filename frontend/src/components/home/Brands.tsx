@@ -40,6 +40,27 @@ function BrandLogo({ brand }: { brand: Brand }) {
   );
 }
 
+/**
+ * Logo variant for the scrolling marquee strip — a wider white tile sized for
+ * the band. Falls back to the wordmark if the logo file is missing (e.g. PFERD
+ * until its logo is supplied), so the strip never shows a broken image.
+ */
+function MarqueeLogo({ brand }: { brand: Brand }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <Wordmark name={brand.name} color={brand.color} />;
+  return (
+    <span className="inline-flex h-12 max-w-[200px] items-center justify-center rounded-xl bg-white px-4 py-2 shadow-sm ring-1 ring-black/5 sm:h-14">
+      <img
+        src={brand.logo}
+        alt={`${brand.name} logo`}
+        loading="lazy"
+        onError={() => setFailed(true)}
+        className="h-full w-auto max-w-full object-contain"
+      />
+    </span>
+  );
+}
+
 export function Brands() {
   return (
     <section className="relative py-16">
@@ -58,12 +79,10 @@ export function Brands() {
             {brands.map((b) => (
               <div
                 key={b.id}
-                className="group flex items-center gap-3 px-2"
+                className="group flex items-center gap-5 px-4"
                 style={{ ["--brand" as string]: b.color }}
               >
-                <span className="font-display text-2xl font-bold tracking-tight text-steel-500 transition-colors duration-300 group-hover:[color:var(--brand)] sm:text-3xl">
-                  {b.name}
-                </span>
+                <MarqueeLogo brand={b} />
                 <span className="h-1.5 w-1.5 rounded-full bg-neo-600" />
               </div>
             ))}

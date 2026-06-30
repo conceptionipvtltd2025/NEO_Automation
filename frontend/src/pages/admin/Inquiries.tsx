@@ -16,7 +16,7 @@ import {
 } from "@/store/useInquiries";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { AdminToolbar, IconBtn } from "./Categories";
+import { AdminToolbar, IconBtn, usePagination, AdminPagination } from "./Categories";
 import { cn } from "@/lib/utils";
 
 const statuses: InquiryStatus[] = ["new", "read", "responded", "closed"];
@@ -36,6 +36,15 @@ const timeAgo = (ts: number) => {
   return `${Math.floor(h / 24)}d ago`;
 };
 
+// Gmail compose link — opens reliably in a new tab without needing a desktop
+// mail client (unlike mailto:). Pre-fills recipient and subject.
+const gmailCompose = (to: string, subject: string) =>
+  `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+    to
+  )}&su=${encodeURIComponent(subject)}`;
+
+const REPLY_SUBJECT = "Re: Your inquiry to Neo Automation";
+
 export default function AdminInquiries() {
   const { inquiries, setStatus, remove } = useInquiries();
   const [search, setSearch] = useState("");
@@ -53,6 +62,8 @@ export default function AdminInquiries() {
       return matchSearch && matchFilter;
     });
   }, [inquiries, search, filter]);
+
+  const { paged, ...pager } = usePagination(filtered, [search, filter]);
 
   const exportCSV = () => {
     const headers = ["Name", "Email", "Phone", "Address", "Product", "Status", "Date", "Message"];
@@ -122,7 +133,7 @@ export default function AdminInquiries() {
       </div>
 
       <div className="space-y-3">
-        {filtered.map((inq) => (
+        {paged.map((inq) => (
           <div
             key={inq.id}
             className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-ink-900 p-4 sm:flex-row sm:items-center"
@@ -165,8 +176,10 @@ export default function AdminInquiries() {
                 <Eye className="h-4 w-4" />
               </IconBtn>
               <a
-                href={`mailto:${inq.email}?subject=Re: Your inquiry to Neo Automation`}
-                title="Reply"
+                href={gmailCompose(inq.email, REPLY_SUBJECT)}
+                target="_blank"
+                rel="noreferrer"
+                title="Reply by email"
                 className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-300 transition hover:border-white/20 hover:text-white"
               >
                 <Mail className="h-4 w-4" />
@@ -183,6 +196,8 @@ export default function AdminInquiries() {
           </div>
         )}
       </div>
+
+      <AdminPagination {...pager} />
 
       {/* Detail modal */}
       <Modal
@@ -211,7 +226,12 @@ export default function AdminInquiries() {
             </div>
 
             <div className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 text-sm">
-              <a href={`mailto:${viewing.email}`} className="flex items-center gap-3 text-steel-300 hover:text-white">
+              <a
+                href={gmailCompose(viewing.email, REPLY_SUBJECT)}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 text-steel-300 hover:text-white"
+              >
                 <Mail className="h-4 w-4 text-neo-500" /> {viewing.email}
               </a>
               <a href={`tel:${viewing.phone}`} className="flex items-center gap-3 text-steel-300 hover:text-white">
@@ -255,7 +275,16 @@ export default function AdminInquiries() {
                 </button>
               ))}
               <a
-                href={`mailto:${viewing.email}?subject=Re: Your inquiry to Neo Automation`}
+                href={gmailCompose(viewing.email, REPLY_SUBJECT)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => {
+                  // Replying implies a response went out — bump status if still new/read.
+                  if (viewing.status === "new" || viewing.status === "read") {
+                    setStatus(viewing.id, "responded");
+                    setViewing({ ...viewing, status: "responded" });
+                  }
+                }}
                 className="btn-primary ml-auto text-[13px]"
               >
                 <Mail className="h-4 w-4" /> Reply by email

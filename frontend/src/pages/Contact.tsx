@@ -37,11 +37,13 @@ export default function Contact() {
                     <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-neo-600/15 text-neo-400">
                       <c.icon className="h-5 w-5" />
                     </span>
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-xs uppercase tracking-wider text-steel-500">
                         {c.label}
                       </p>
-                      <p className="mt-1 text-sm font-medium text-white">{c.value}</p>
+                      <p className="mt-1 break-words text-sm font-medium text-white">
+                        {c.value}
+                      </p>
                     </div>
                   </a>
                 </Reveal>

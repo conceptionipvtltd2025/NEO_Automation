@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { requireAuth } from "../auth";
-import { listIndustries, upsertIndustry, deleteIndustry } from "../repo";
+import {
+  listIndustries,
+  upsertIndustry,
+  deleteIndustry,
+  toggleIndustry,
+} from "../repo";
 
 const router = Router();
 
@@ -20,6 +25,17 @@ router.put("/:id", requireAuth, async (req, res, next) => {
     const industry = { ...body, id: req.params.id };
     if (!industry.name) return res.status(400).json({ error: "name is required" });
     res.json(await upsertIndustry(industry));
+  } catch (e) {
+    next(e);
+  }
+});
+
+// PATCH /api/industries/:id/toggle  (admin) — flip public visibility
+router.patch("/:id/toggle", requireAuth, async (req, res, next) => {
+  try {
+    const updated = await toggleIndustry(req.params.id);
+    if (!updated) return res.status(404).json({ error: "Industry not found" });
+    res.json(updated);
   } catch (e) {
     next(e);
   }

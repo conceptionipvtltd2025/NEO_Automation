@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Pencil, Trash2, Factory } from "lucide-react";
+import { Pencil, Trash2, Factory, Eye, EyeOff } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
 import type { Industry } from "@/data/industries";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
-import { AdminToolbar, IconBtn, Field } from "./Categories";
-import { slugify } from "@/lib/utils";
+import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
+import { slugify, cn } from "@/lib/utils";
 
 const empty: Industry = {
   id: "",
@@ -22,7 +22,7 @@ const empty: Industry = {
 };
 
 export default function AdminIndustries() {
-  const { industries, upsertIndustry, deleteIndustry } = useCatalog();
+  const { industries, upsertIndustry, deleteIndustry, toggleIndustry } = useCatalog();
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Industry | null>(null);
   const [capsText, setCapsText] = useState("");
@@ -31,6 +31,7 @@ export default function AdminIndustries() {
   const filtered = industries.filter((i) =>
     i.name.toLowerCase().includes(search.toLowerCase())
   );
+  const { paged, ...pager } = usePagination(filtered, [search]);
 
   const openEdit = (ind: Industry) => {
     setEditing(ind);
@@ -64,13 +65,20 @@ export default function AdminIndustries() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((ind) => (
+        {paged.map((ind) => (
           <div
             key={ind.id}
             className="group overflow-hidden rounded-2xl border border-white/10 bg-ink-900"
           >
             <div className="relative h-36 overflow-hidden">
-              <img src={ind.image} alt={ind.name} className="h-full w-full object-cover" />
+              <img
+                src={ind.image}
+                alt={ind.name}
+                className={cn(
+                  "h-full w-full object-cover",
+                  ind.visible === false && "opacity-40 grayscale"
+                )}
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-900 to-transparent" />
               <span
                 className="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-lg backdrop-blur"
@@ -78,11 +86,27 @@ export default function AdminIndustries() {
               >
                 <Factory className="h-4 w-4" />
               </span>
+              <span
+                className={cn(
+                  "absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium backdrop-blur",
+                  ind.visible === false
+                    ? "border-white/10 bg-black/40 text-steel-300"
+                    : "border-emerald-500/30 bg-emerald-500/15 text-emerald-300"
+                )}
+              >
+                {ind.visible === false ? "Disabled" : "Enabled"}
+              </span>
             </div>
             <div className="p-4">
               <h3 className="font-display text-base font-semibold text-white">{ind.name}</h3>
               <p className="mt-1 line-clamp-2 text-xs text-steel-400">{ind.tagline}</p>
               <div className="mt-3 flex justify-end gap-2">
+                <IconBtn
+                  onClick={() => toggleIndustry(ind.id)}
+                  title={ind.visible === false ? "Enable (show on site)" : "Disable (hide from site)"}
+                >
+                  {ind.visible === false ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </IconBtn>
                 <IconBtn onClick={() => openEdit(ind)} title="Edit">
                   <Pencil className="h-4 w-4" />
                 </IconBtn>
@@ -99,6 +123,8 @@ export default function AdminIndustries() {
           </p>
         )}
       </div>
+
+      <AdminPagination {...pager} />
 
       <Modal
         open={!!editing}

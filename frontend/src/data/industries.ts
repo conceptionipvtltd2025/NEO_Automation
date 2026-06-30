@@ -9,6 +9,10 @@ export type Industry = {
   accent: string;
   capabilities: string[];
   stat: { value: string; label: string };
+  /** Public visibility. Undefined is treated as visible (enabled). */
+  visible?: boolean;
+  /** Creation timestamp (ms). Used to order "latest" first; older seed rows may omit it. */
+  createdAt?: number;
 };
 
 const img = (id: string) =>

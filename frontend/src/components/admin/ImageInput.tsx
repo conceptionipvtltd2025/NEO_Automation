@@ -199,6 +199,9 @@ export function ImageInput({
                 addUrl();
               }
             }}
+            // Commit a typed-but-not-"Add"ed URL when the field loses focus
+            // (e.g. the user clicks Save directly) so the URL isn't lost.
+            onBlur={addUrl}
             placeholder="…or paste an image URL"
             className="admin-input pl-9"
           />

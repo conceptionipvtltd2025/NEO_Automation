@@ -2,7 +2,15 @@ import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, SlidersHorizontal, X, PackageOpen } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  X,
+  PackageOpen,
+  ChevronLeft,
+  ChevronRight,
+  Boxes,
+} from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { ProductCard } from "@/components/ProductCard";
 import { useCatalog } from "@/store/useCatalog";
@@ -10,6 +18,8 @@ import { brands } from "@/data/brands";
 import { cn } from "@/lib/utils";
 
 type Sort = "featured" | "price-asc" | "price-desc" | "rating";
+
+const PAGE_SIZE = 8;
 
 export default function Products() {
   const [params, setParams] = useSearchParams();
@@ -23,6 +33,7 @@ export default function Products() {
   const [industry, setIndustry] = useState(params.get("industry") ?? "all");
   const [sort, setSort] = useState<Sort>("featured");
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const next: Record<string, string> = {};
@@ -73,6 +84,23 @@ export default function Products() {
     return list;
   }, [data, brand, category, industry, search, sort]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = useMemo(
+    () => filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [filtered, currentPage]
+  );
+
+  // Reset to first page whenever the result set changes
+  useEffect(() => {
+    setPage(1);
+  }, [brand, category, industry, search, sort]);
+
+  const goToPage = (p: number) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const activeFilters = [brand, category, industry].filter((f) => f !== "all").length;
   const reset = () => {
     setBrand("all");
@@ -88,6 +116,7 @@ export default function Products() {
         title="Industrial tools & automation products"
         subtitle="Explore our complete range — filter by brand, category or the industry you operate in."
         crumbs={[{ label: "Products" }]}
+        media={<CatalogueHero />}
       />
 
       <section className="container-px pb-24">
@@ -184,7 +213,14 @@ export default function Products() {
 
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-steel-400">
-            {isLoading ? "Loading…" : `${filtered.length} products`}
+            {isLoading
+              ? "Loading…"
+              : filtered.length === 0
+              ? "0 products"
+              : `Showing ${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(
+                  currentPage * PAGE_SIZE,
+                  filtered.length
+                )} of ${filtered.length} products`}
           </p>
         </div>
 
@@ -212,17 +248,143 @@ export default function Products() {
             </button>
           </div>
         ) : (
-          <motion.div
-            layout
-            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          >
-            {filtered.map((p, i) => (
-              <ProductCard key={p.id} product={p} index={i} />
-            ))}
-          </motion.div>
+          <>
+            <motion.div
+              layout
+              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
+              {paginated.map((p, i) => (
+                <ProductCard key={p.id} product={p} index={i} />
+              ))}
+            </motion.div>
+
+            {totalPages > 1 && (
+              <Pagination
+                page={currentPage}
+                totalPages={totalPages}
+                onChange={goToPage}
+              />
+            )}
+          </>
         )}
       </section>
     </>
+  );
+}
+
+function CatalogueHero() {
+  const img = (id: string) =>
+    `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=900&q=80`;
+
+  return (
+    <div className="relative mx-auto aspect-[4/3] w-full max-w-md">
+      {/* Glow */}
+      <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-neo-600/20 blur-3xl" />
+
+      {/* Back image */}
+      <div className="absolute right-0 top-0 h-[62%] w-[58%] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40 ring-1 ring-white/5">
+        <img
+          src={img("1581092160562-40aa08e78837")}
+          alt="Precision industrial tooling"
+          loading="lazy"
+          className="h-full w-full object-cover"
+        />
+      </div>
+
+      {/* Front image */}
+      <div className="absolute bottom-0 left-0 h-[72%] w-[66%] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/50 ring-1 ring-white/5">
+        <img
+          src={img("1565514020179-026b92b84bb6")}
+          alt="Automation assembly line"
+          loading="lazy"
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/50 to-transparent" />
+      </div>
+
+      {/* Floating stat badge */}
+      <div className="absolute -bottom-3 right-2 flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/90 px-4 py-3 shadow-xl shadow-black/40 backdrop-blur-md">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-neo-600/15 text-neo-400">
+          <Boxes className="h-5 w-5" />
+        </span>
+        <div className="leading-tight">
+          <p className="font-display text-lg font-bold text-white">9 Brands</p>
+          <p className="text-[11px] text-steel-400">Authorised partner</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Pagination({
+  page,
+  totalPages,
+  onChange,
+}: {
+  page: number;
+  totalPages: number;
+  onChange: (p: number) => void;
+}) {
+  // Build a compact page list with ellipses, e.g. 1 … 4 5 6 … 12
+  const pages: (number | "…")[] = [];
+  const push = (p: number | "…") => pages.push(p);
+  const window = 1; // neighbors on each side of current
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || (p >= page - window && p <= page + window)) {
+      push(p);
+    } else if (pages[pages.length - 1] !== "…") {
+      push("…");
+    }
+  }
+
+  return (
+    <nav
+      aria-label="Pagination"
+      className="mt-12 flex items-center justify-center gap-2"
+    >
+      <button
+        onClick={() => onChange(page - 1)}
+        disabled={page === 1}
+        aria-label="Previous page"
+        className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 text-steel-300 transition hover:border-neo-600/50 hover:text-white disabled:pointer-events-none disabled:opacity-40"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+
+      {pages.map((p, i) =>
+        p === "…" ? (
+          <span
+            key={`gap-${i}`}
+            className="grid h-10 w-10 place-items-center text-sm text-steel-600"
+          >
+            …
+          </span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onChange(p)}
+            aria-current={p === page ? "page" : undefined}
+            className={cn(
+              "grid h-10 min-w-10 place-items-center rounded-xl border px-3 text-sm font-medium transition",
+              p === page
+                ? "border-neo-600/50 bg-neo-600/15 text-white"
+                : "border-white/10 text-steel-300 hover:border-white/20 hover:text-white"
+            )}
+          >
+            {p}
+          </button>
+        )
+      )}
+
+      <button
+        onClick={() => onChange(page + 1)}
+        disabled={page === totalPages}
+        aria-label="Next page"
+        className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 text-steel-300 transition hover:border-neo-600/50 hover:text-white disabled:pointer-events-none disabled:opacity-40"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </nav>
   );
 }
 

@@ -3,6 +3,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, X, Send, Phone } from "lucide-react";
 import { site } from "@/data/site";
 
+// Live chat is a static mockup with no real backend yet — hidden until the
+// client wants it. Flip to `true` to re-enable the chat button and panel.
+const CHAT_ENABLED = false;
+
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -17,7 +21,7 @@ export function FloatingWidgets() {
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
       <AnimatePresence>
-        {chatOpen && (
+        {CHAT_ENABLED && chatOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -84,23 +88,25 @@ export function FloatingWidgets() {
         <WhatsAppIcon className="h-7 w-7" />
       </a>
 
-      <button
-        onClick={() => setChatOpen((o) => !o)}
-        aria-label="Live chat"
-        className="grid h-14 w-14 place-items-center rounded-full bg-neo-600 text-pure shadow-glow transition-transform hover:scale-110"
-      >
-        <AnimatePresence mode="wait">
-          {chatOpen ? (
-            <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-              <X className="h-6 w-6" />
-            </motion.span>
-          ) : (
-            <motion.span key="c" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
-              <MessageCircle className="h-6 w-6" />
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </button>
+      {CHAT_ENABLED && (
+        <button
+          onClick={() => setChatOpen((o) => !o)}
+          aria-label="Live chat"
+          className="grid h-14 w-14 place-items-center rounded-full bg-neo-600 text-pure shadow-glow transition-transform hover:scale-110"
+        >
+          <AnimatePresence mode="wait">
+            {chatOpen ? (
+              <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+                <X className="h-6 w-6" />
+              </motion.span>
+            ) : (
+              <motion.span key="c" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
+                <MessageCircle className="h-6 w-6" />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </button>
+      )}
     </div>
   );
 }

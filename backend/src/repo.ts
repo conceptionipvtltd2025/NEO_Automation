@@ -51,6 +51,8 @@ export function mapIndustry(r: any) {
     accent: r.accent ?? "#ed1c24",
     capabilities: parseJson<string[]>(r.capabilities, []),
     stat: parseJson<{ value: string; label: string }>(r.stat, { value: "", label: "" }),
+    visible: r.visible == null ? true : bool(r.visible),
+    createdAt: Number(r.created_at ?? 0),
   };
 }
 
@@ -148,12 +150,13 @@ export async function listIndustries() {
 export async function upsertIndustry(i: any) {
   await query(
     `INSERT INTO industries
-       (id, name, short, tagline, description, image, icon, accent, capabilities, stat)
-     VALUES (?,?,?,?,?,?,?,?,?,?)
+       (id, name, short, tagline, description, image, icon, accent, capabilities, stat, visible, created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        name=VALUES(name), short=VALUES(short), tagline=VALUES(tagline),
        description=VALUES(description), image=VALUES(image), icon=VALUES(icon),
-       accent=VALUES(accent), capabilities=VALUES(capabilities), stat=VALUES(stat)`,
+       accent=VALUES(accent), capabilities=VALUES(capabilities), stat=VALUES(stat),
+       visible=VALUES(visible)`,
     [
       i.id,
       i.name,
@@ -165,10 +168,18 @@ export async function upsertIndustry(i: any) {
       i.accent ?? "#ed1c24",
       JSON.stringify(i.capabilities ?? []),
       JSON.stringify(i.stat ?? { value: "", label: "" }),
+      i.visible === false ? 0 : 1,
+      Number(i.createdAt) || Date.now(),
     ]
   );
   const rows = await query(`SELECT * FROM industries WHERE id=?`, [i.id]);
   return mapIndustry(rows[0]);
+}
+
+export async function toggleIndustry(id: string) {
+  await query(`UPDATE industries SET visible = IF(visible=1,0,1) WHERE id=?`, [id]);
+  const rows = await query(`SELECT * FROM industries WHERE id=?`, [id]);
+  return rows[0] ? mapIndustry(rows[0]) : null;
 }
 
 export async function deleteIndustry(id: string) {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
+import { Lock, User, Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
 import { useAuth } from "@/store/useAuth";
-import { Logo } from "@/components/Logo";
+import { LogoMark } from "@/components/Logo";
 import { Aurora, GridBackground } from "@/components/ui/Backgrounds";
 
 export default function AdminLogin() {
@@ -47,18 +47,12 @@ export default function AdminLogin() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 w-full max-w-md"
       >
-        <div className="mb-8 flex justify-center">
-          <Link to="/">
-            <Logo />
-          </Link>
-        </div>
-
         <div className="gradient-border p-8">
           <div className="text-center">
-            <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-neo-600/15 text-neo-400">
-              <ShieldCheck className="h-7 w-7" />
-            </span>
-            <h1 className="mt-5 font-display text-2xl font-bold text-white">
+            <Link to="/" className="mx-auto grid w-fit place-items-center">
+              <LogoMark />
+            </Link>
+            <h1 className="mt-4 font-display text-2xl font-bold text-white">
               Admin Panel
             </h1>
             <p className="mt-1.5 text-sm text-steel-400">
@@ -124,11 +118,6 @@ export default function AdminLogin() {
               {!loading && <ArrowRight className="h-4 w-4" />}
             </button>
           </form>
-
-          <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-center text-xs text-steel-500">
-            Demo credentials — <span className="text-steel-300">admin</span> /{" "}
-            <span className="text-steel-300">neo@2026</span>
-          </div>
         </div>
 
         <Link

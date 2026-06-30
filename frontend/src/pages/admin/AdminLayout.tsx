@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Menu,
   X,
+  AlertTriangle,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -32,6 +33,8 @@ export function AdminLayout() {
   const logout = useAuth((s) => s.logout);
   const user = useAuth((s) => s.user);
   const newCount = useInquiries((s) => s.inquiries.filter((i) => i.status === "new").length);
+  const lastError = useCatalog((s) => s.lastError);
+  const clearError = useCatalog((s) => s.clearError);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Pull live inquiries + catalogue from the backend when entering the admin.
@@ -161,6 +164,20 @@ export function AdminLayout() {
             </span>
           </div>
         </header>
+
+        {lastError && (
+          <div className="flex items-start gap-3 border-b border-red-500/30 bg-red-500/10 px-5 py-3 text-sm text-red-200 sm:px-8">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+            <p className="flex-1">{lastError}</p>
+            <button
+              onClick={clearError}
+              aria-label="Dismiss"
+              className="shrink-0 rounded-lg p-1 text-red-300 transition hover:bg-red-500/20 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
 
         <main className="p-5 sm:p-8">
           <Outlet />

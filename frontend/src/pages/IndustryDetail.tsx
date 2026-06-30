@@ -12,7 +12,8 @@ export default function IndustryDetail() {
   const products = useCatalog((s) => s.products);
   const industry = industries.find((i) => i.id === id);
 
-  if (!industry) return <NotFound />;
+  // Disabled industries are hidden from the public site — treat as not found.
+  if (!industry || industry.visible === false) return <NotFound />;
 
   const relatedProducts = products
     .filter((p) => p.industries.includes(industry.id) && p.visible !== false)

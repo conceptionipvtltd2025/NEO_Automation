@@ -22,7 +22,14 @@ type InquiryState = {
   loaded: boolean;
   /** Load inquiries from the API (admin only — requires a valid token). */
   load: () => Promise<void>;
-  addInquiry: (data: Omit<Inquiry, "id" | "status" | "createdAt">) => Inquiry;
+  /**
+   * Submit an inquiry. `extra` carries anti-bot fields (math captcha + honeypot)
+   * that are sent to the API for verification but never stored in local state.
+   */
+  addInquiry: (
+    data: Omit<Inquiry, "id" | "status" | "createdAt">,
+    extra?: Record<string, unknown>
+  ) => Inquiry;
   setStatus: (id: string, status: InquiryStatus) => void;
   remove: (id: string) => void;
 };
@@ -88,7 +95,7 @@ export const useInquiries = create<InquiryState>()(
         }
       },
 
-      addInquiry: (data) => {
+      addInquiry: (data, extra) => {
         const inquiry: Inquiry = {
           ...data,
           id: `inq-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -97,8 +104,9 @@ export const useInquiries = create<InquiryState>()(
         };
         set((s) => ({ inquiries: [inquiry, ...s.inquiries] }));
         // Persist to the backend; reconcile the optimistic row with the saved one.
+        // `extra` adds the captcha/honeypot fields the server verifies (not stored).
         api
-          .post<Inquiry>("/inquiries", data)
+          .post<Inquiry>("/inquiries", { ...data, ...extra })
           .then((saved) => {
             if (saved?.id) {
               set((s) => ({

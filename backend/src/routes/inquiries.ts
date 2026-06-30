@@ -14,8 +14,42 @@ const STATUSES = ["new", "read", "responded", "closed"];
 // POST /api/inquiries  (public) — submit a customer inquiry from the website form.
 router.post("/", async (req, res, next) => {
   try {
-    const { name, email, phone, address, message, productId, productName } =
-      req.body || {};
+    const {
+      name,
+      email,
+      phone,
+      address,
+      message,
+      productId,
+      productName,
+      // Anti-bot fields (not persisted)
+      captchaA,
+      captchaB,
+      captchaAnswer,
+      company, // honeypot — must stay empty
+    } = req.body || {};
+
+    // Honeypot: bots auto-fill every field; humans never see this one.
+    if (typeof company === "string" && company.trim() !== "") {
+      // Pretend success so bots don't learn the field is a trap.
+      return res.status(201).json({ ok: true });
+    }
+
+    // Math CAPTCHA: re-verify the challenge answer server-side.
+    const a = Number(captchaA);
+    const b = Number(captchaB);
+    const answer = Number(captchaAnswer);
+    if (
+      !Number.isInteger(a) ||
+      !Number.isInteger(b) ||
+      !Number.isInteger(answer) ||
+      a + b !== answer
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Captcha verification failed. Please try again." });
+    }
+
     if (!name || !email) {
       return res.status(400).json({ error: "Name and email are required" });
     }

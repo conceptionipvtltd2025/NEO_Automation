@@ -39,7 +39,9 @@ const TABLES: string[] = [
     icon VARCHAR(64),
     accent VARCHAR(16),
     capabilities JSON,
-    stat JSON
+    stat JSON,
+    visible TINYINT(1) DEFAULT 1,
+    created_at BIGINT DEFAULT 0
   ) ENGINE=InnoDB`,
 
   `CREATE TABLE IF NOT EXISTS products (
@@ -82,8 +84,23 @@ const TABLES: string[] = [
   ) ENGINE=InnoDB`,
 ];
 
+// Additive migrations for databases created before a column existed. Each is
+// idempotent: a "duplicate column" error means it's already applied, so ignore.
+const ALTERS: string[] = [
+  `ALTER TABLE industries ADD COLUMN visible TINYINT(1) DEFAULT 1`,
+  `ALTER TABLE industries ADD COLUMN created_at BIGINT DEFAULT 0`,
+];
+
 export async function migrate() {
   for (const sql of TABLES) {
     await query(sql);
+  }
+  for (const sql of ALTERS) {
+    try {
+      await query(sql);
+    } catch (e: any) {
+      // ER_DUP_FIELDNAME (1060) — column already exists; safe to skip.
+      if (e?.errno !== 1060) throw e;
+    }
   }
 }

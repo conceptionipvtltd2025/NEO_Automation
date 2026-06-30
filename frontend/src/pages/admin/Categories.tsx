@@ -1,10 +1,18 @@
-import { useState } from "react";
-import { Plus, Pencil, Trash2, Search, Tags } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+  Tags,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
 import type { Category } from "@/data/categories";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { slugify } from "@/lib/utils";
+import { slugify, cn } from "@/lib/utils";
 
 const empty: Category = { id: "", name: "", description: "", icon: "Tags" };
 
@@ -17,6 +25,7 @@ export default function AdminCategories() {
   const filtered = categories.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())
   );
+  const { paged, ...pager } = usePagination(filtered, [search]);
 
   const save = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +56,7 @@ export default function AdminCategories() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((c) => (
+            {paged.map((c) => (
               <tr key={c.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.02]">
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
@@ -80,6 +89,8 @@ export default function AdminCategories() {
           </tbody>
         </table>
       </div>
+
+      <AdminPagination {...pager} />
 
       <Modal
         open={!!editing}
@@ -130,6 +141,114 @@ export default function AdminCategories() {
 }
 
 /* ---- shared admin bits (exported for reuse) ---- */
+
+export const ADMIN_PAGE_SIZE = 10;
+
+/**
+ * Client-side pagination for admin lists (10 items/page). Pass the filtered
+ * list and the dependencies (e.g. [search]) that should reset to page 1.
+ * Returns the current page's slice plus props to spread into <AdminPagination>.
+ */
+export function usePagination<T>(items: T[], resetDeps: unknown[] = []) {
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(items.length / ADMIN_PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+
+  // Reset to the first page whenever the underlying list changes (search/filter).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => setPage(1), resetDeps);
+
+  const paged = useMemo(
+    () =>
+      items.slice(
+        (currentPage - 1) * ADMIN_PAGE_SIZE,
+        currentPage * ADMIN_PAGE_SIZE
+      ),
+    [items, currentPage]
+  );
+
+  return {
+    paged,
+    page: currentPage,
+    totalPages,
+    total: items.length,
+    setPage,
+  };
+}
+
+export function AdminPagination({
+  page,
+  totalPages,
+  total,
+  setPage,
+}: {
+  page: number;
+  totalPages: number;
+  total: number;
+  setPage: (p: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const from = (page - 1) * ADMIN_PAGE_SIZE + 1;
+  const to = Math.min(page * ADMIN_PAGE_SIZE, total);
+
+  // Compact page list with ellipses: 1 … 4 5 6 … 12
+  const nums: (number | "…")[] = [];
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1)) {
+      nums.push(p);
+    } else if (nums[nums.length - 1] !== "…") {
+      nums.push("…");
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+      <p className="text-xs text-steel-500">
+        Showing {from}–{to} of {total}
+      </p>
+      <nav aria-label="Pagination" className="flex items-center gap-1.5">
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          aria-label="Previous page"
+          className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-300 transition hover:border-white/20 hover:text-white disabled:pointer-events-none disabled:opacity-40"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        {nums.map((n, i) =>
+          n === "…" ? (
+            <span key={`gap-${i}`} className="grid h-9 w-9 place-items-center text-sm text-steel-600">
+              …
+            </span>
+          ) : (
+            <button
+              key={n}
+              onClick={() => setPage(n)}
+              aria-current={n === page ? "page" : undefined}
+              className={cn(
+                "grid h-9 min-w-9 place-items-center rounded-lg border px-2.5 text-sm font-medium transition",
+                n === page
+                  ? "border-neo-600/50 bg-neo-600/15 text-white"
+                  : "border-white/10 text-steel-300 hover:border-white/20 hover:text-white"
+              )}
+            >
+              {n}
+            </button>
+          )
+        )}
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages}
+          aria-label="Next page"
+          className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-300 transition hover:border-white/20 hover:text-white disabled:pointer-events-none disabled:opacity-40"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </nav>
+    </div>
+  );
+}
 
 export function AdminToolbar({
   title,

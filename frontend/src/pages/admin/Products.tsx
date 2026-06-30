@@ -6,7 +6,7 @@ import { brands } from "@/data/brands";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
-import { AdminToolbar, IconBtn, Field } from "./Categories";
+import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
 import { formatINR, slugify, cn } from "@/lib/utils";
 
 const blank: Product = {
@@ -42,6 +42,7 @@ export default function AdminProducts() {
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.brand.toLowerCase().includes(search.toLowerCase())
   );
+  const { paged, ...pager } = usePagination(filtered, [search]);
 
   const openEdit = (p: Product) => {
     setEditing(p);
@@ -115,7 +116,7 @@ export default function AdminProducts() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((p) => (
+            {paged.map((p) => (
               <tr key={p.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.02]">
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
@@ -166,6 +167,8 @@ export default function AdminProducts() {
           </tbody>
         </table>
       </div>
+
+      <AdminPagination {...pager} />
 
       <Modal
         open={!!editing}

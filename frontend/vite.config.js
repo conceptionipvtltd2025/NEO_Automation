@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 export default defineConfig({
     plugins: [react()],
+    base: "/neo-website/",
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
@@ -12,7 +13,7 @@ export default defineConfig({
         port: 5173,
         host: true,
         proxy: {
-            // Proxy API calls to the backend (server/) in dev so there are no CORS
+            // Proxy API calls to the backend (backend/) in dev so there are no CORS
             // issues and the frontend can just call "/api/...".
             "/api": {
                 target: process.env.VITE_API_PROXY || "http://localhost:4000",

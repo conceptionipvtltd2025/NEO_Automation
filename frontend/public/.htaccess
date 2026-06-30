@@ -1,0 +1,25 @@
+# SPA routing for the Neo Automation site (served from /neo-website/).
+# Without this, deep links like /neo-website/cipanel return Apache's 404 because
+# no such file exists on disk — only index.html does. These rules serve
+# index.html for any request that isn't a real file/directory, letting React
+# Router handle the route on the client.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Base path the app is deployed under (matches Vite `base` + Router basename).
+  RewriteBase /neo-website/
+
+  # Don't rewrite requests for real files or directories (assets, images, etc.).
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Everything else → index.html (the SPA entry point).
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Fallback for servers without mod_rewrite: send 404s to the SPA entry too.
+<IfModule !mod_rewrite.c>
+  ErrorDocument 404 /neo-website/index.html
+</IfModule>

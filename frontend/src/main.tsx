@@ -9,7 +9,7 @@ import "./index.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Query>
-      <BrowserRouter>
+      <BrowserRouter basename="/neo-website">
         <SmoothScroll>
           <App />
         </SmoothScroll>

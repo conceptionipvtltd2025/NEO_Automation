@@ -17,7 +17,13 @@ import inquiryRoutes from "./routes/inquiries";
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
-
+const BASE = process.env.PASSENGER_BASE_URI; // cPanel sets this to "/neo_website_backend"
+if (BASE) {
+  app.use((req, _res, next) => {
+    if (req.url.startsWith(BASE)) req.url = req.url.slice(BASE.length) || "/";
+    next();
+  });
+}
 // CORS — allow the configured origin(s), or any in dev.
 const corsOrigin = process.env.CORS_ORIGIN || "*";
 app.use(

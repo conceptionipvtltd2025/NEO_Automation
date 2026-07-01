@@ -18,6 +18,7 @@ import { Counter } from "@/components/ui/Counter";
 import { SectionHeading } from "@/components/SectionHeading";
 import { StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
 import { site } from "@/data/site";
+import { asset } from "@/lib/asset";
 
 const credentials = [
   { icon: ShieldCheck, title: "ISO 9001:2015", text: "Quality-management certified processes across supply and service." },
@@ -60,8 +61,8 @@ export default function About() {
           <Reveal>
             <div className="force-dark relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
               <img
-                src="https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=1200&q=80"
-                alt="Neo Automation facility"
+                src={asset("images/nsw/team-leadership.jpg")}
+                alt="The Neo Automation team at the Nuclear Service Workshop inauguration"
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 to-transparent" />

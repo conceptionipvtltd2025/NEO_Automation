@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Target, Eye, Award, ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { Counter } from "@/components/ui/Counter";
+import { asset } from "@/lib/asset";
 
 export function AboutTeaser() {
   return (
@@ -13,9 +14,9 @@ export function AboutTeaser() {
           <div className="relative">
             <div className="force-dark relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
               <img
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80"
-                alt="Neo Automation engineering team"
-                className="aspect-[4/3] w-full object-cover"
+                src={asset("images/nsw/team-group.jpg")}
+                alt="The Neo Automation team with Atlas Copco leadership at the Nuclear Service Workshop"
+                className="aspect-[3/2] w-full object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 to-transparent" />
             </div>

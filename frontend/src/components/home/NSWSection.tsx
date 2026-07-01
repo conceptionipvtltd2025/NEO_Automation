@@ -2,12 +2,34 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Wind, BatteryCharging, Plug, Gauge } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
+import { nswHero } from "@/data/nswGallery";
+import { asset } from "@/lib/asset";
 
 const pillars = [
-  { icon: Wind, title: "Pneumatic Nut Runners", desc: "Air-motor overhaul, seal kits and full servicing." },
-  { icon: BatteryCharging, title: "Battery Nut Runners", desc: "Cordless repair, battery health & diagnostics." },
-  { icon: Plug, title: "Electric Nut Runners", desc: "DC/transducerised tool service & fault-finding." },
-  { icon: Gauge, title: "Torque Calibration", desc: "ISO 6789 calibration with certified reports." },
+  {
+    icon: Wind,
+    title: "Pneumatic Nut Runners",
+    desc: "Air-motor overhaul, seal kits and full servicing.",
+    bg: asset("images/nsw/workshop-tool-bench-thumb.jpg"),
+  },
+  {
+    icon: BatteryCharging,
+    title: "Battery Nut Runners",
+    desc: "Cordless repair, battery health & diagnostics.",
+    bg: asset("images/nsw/workshop-alture-thumb.jpg"),
+  },
+  {
+    icon: Plug,
+    title: "Electric Nut Runners",
+    desc: "DC/transducerised tool service & fault-finding.",
+    bg: asset("images/nsw/tool-handover-thumb.jpg"),
+  },
+  {
+    icon: Gauge,
+    title: "Torque Calibration",
+    desc: "ISO 6789 calibration with certified reports.",
+    bg: asset("images/nsw/workshop-storage-thumb.jpg"),
+  },
 ];
 
 export function NSWSection() {
@@ -18,8 +40,8 @@ export function NSWSection() {
           {/* bg */}
           <div className="absolute inset-0">
             <img
-              src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=2000&q=80"
-              alt="Neo Automation service workshop"
+              src={nswHero}
+              alt="Neo Automation Nuclear Service Workshop"
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/90 to-ink-950/50" />
@@ -65,17 +87,29 @@ export function NSWSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="rounded-2xl border border-white/10 bg-ink-900/50 p-5 backdrop-blur-xl transition hover:border-neo-600/30"
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 p-5 transition hover:border-neo-600/40"
                 >
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-neo-600/15 text-neo-400">
-                    <p.icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-4 font-display text-base font-semibold text-pure">
-                    {p.title}
-                  </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-steel-400">
-                    {p.desc}
-                  </p>
+                  {/* photo background */}
+                  <img
+                    src={p.bg}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover opacity-40 transition duration-500 group-hover:scale-105 group-hover:opacity-55"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/85 to-ink-950/55" />
+
+                  <div className="relative">
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-neo-600/20 text-neo-300 ring-1 ring-inset ring-white/10 backdrop-blur-sm">
+                      <p.icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-4 font-display text-base font-semibold text-pure">
+                      {p.title}
+                    </h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-steel-300">
+                      {p.desc}
+                    </p>
+                  </div>
                 </motion.div>
               ))}
             </div>

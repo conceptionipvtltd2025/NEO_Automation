@@ -19,6 +19,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { Modal } from "@/components/ui/Modal";
 import { InquiryForm } from "@/components/InquiryForm";
 import { Counter } from "@/components/ui/Counter";
+import { NSWGallery } from "@/components/NSWGallery";
+import { nswHero } from "@/data/nswGallery";
 
 const serviced = [
   {
@@ -80,8 +82,8 @@ export default function NSW() {
         <Reveal>
           <div className="force-dark relative aspect-[16/9] overflow-hidden rounded-3xl border border-white/10 shadow-card sm:aspect-[21/9]">
             <img
-              src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=2000&q=80"
-              alt="Neo Automation service workshop"
+              src={nswHero}
+              alt="Neo Automation Nuclear Service Workshop — Atlas Copco tool bench"
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-ink-950/50" />
@@ -144,6 +146,19 @@ export default function NSW() {
               <p className="mt-2 text-sm leading-relaxed text-steel-400">{f.text}</p>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* Inauguration gallery */}
+      <section className="container-px py-12">
+        <SectionHeading
+          align="center"
+          eyebrow="Inside the Workshop"
+          title="Our Nuclear Service Workshop"
+          subtitle="A look inside our tools & tackles equipped NSW facility and its inauguration with Atlas Copco Industrial Technique."
+        />
+        <div className="mt-14">
+          <NSWGallery />
         </div>
       </section>
 

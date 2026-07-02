@@ -27,7 +27,7 @@ export function FloatingWidgets() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.92 }}
             transition={{ type: "spring", stiffness: 280, damping: 24 }}
-            className="w-[330px] overflow-hidden rounded-2xl glass-strong shadow-card"
+            className="w-[min(330px,calc(100vw-2.5rem))] overflow-hidden rounded-2xl glass-strong shadow-card"
           >
             <div className="flex items-center justify-between bg-gradient-to-r from-neo-700 to-neo-600 px-4 py-3">
               <div className="flex items-center gap-2.5">

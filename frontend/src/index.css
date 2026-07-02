@@ -116,6 +116,10 @@
     scroll-behavior: auto; /* Lenis handles smooth scroll */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Kill any horizontal panning on mobile at the ROOT level (body's
+       overflow-x can't clip position:fixed descendants). `clip` doesn't create
+       a scroll container, so position:sticky keeps working. */
+    overflow-x: clip;
   }
 
   body {
@@ -420,7 +424,9 @@
      colour in both themes; strength is theme-tuned via --ambient-opacity. */
   .ambient-mesh {
     position: fixed;
-    inset: -10%;
+    /* Only bleed vertically — a horizontal bleed (inset:-10%) made this fixed
+       layer 120vw wide and caused left/right sliding on mobile. */
+    inset: -10% 0;
     z-index: -1;
     pointer-events: none;
     opacity: var(--ambient-opacity);

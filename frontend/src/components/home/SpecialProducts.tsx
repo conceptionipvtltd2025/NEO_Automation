@@ -56,9 +56,9 @@ export function SpecialProducts() {
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
-                className="absolute right-5 top-1/3 glass rounded-xl px-3 py-2"
+                className="absolute right-4 top-4 glass rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2"
               >
-                <div className="flex items-center gap-2 text-xs text-steel-200">
+                <div className="flex items-center gap-2 text-[11px] text-steel-200 sm:text-xs">
                   <Cpu className="h-3.5 w-3.5 text-neo-500" /> Smart Connected
                 </div>
               </motion.div>

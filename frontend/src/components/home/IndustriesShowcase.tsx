@@ -150,13 +150,14 @@ export function IndustriesShowcase() {
             })}
           </motion.div>
 
-          {/* Visual */}
+          {/* Visual — hidden on mobile: the accordion already carries the info,
+              and text-over-photo reads poorly on small screens. */}
           <motion.div
             initial={{ opacity: 0, x: 64, filter: "blur(10px)" }}
             whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
             viewport={{ once: false, margin: "-80px" }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="force-dark relative min-h-[420px] overflow-hidden rounded-3xl border border-white/10 lg:min-h-full"
+            className="force-dark relative hidden min-h-[420px] overflow-hidden rounded-3xl border border-white/10 lg:block lg:min-h-full"
           >
             <AnimatePresence mode="wait">
               <motion.div

@@ -61,7 +61,7 @@ export default function ProductDetail() {
             <div>
               <motion.div
                 layout
-                className="relative aspect-square overflow-hidden rounded-3xl border border-white/10 bg-ink-850 shadow-card ring-1 ring-black/5"
+                className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-ink-850 shadow-card ring-1 ring-black/5 sm:aspect-square"
               >
                 <AnimatePresence mode="wait">
                   <motion.img

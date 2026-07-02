@@ -33,8 +33,9 @@ export function ProductsSection() {
           }
         />
 
-        {/* Category pills */}
-        <div className="mt-10 flex flex-wrap gap-2">
+        {/* Category pills — a clean swipeable bar on mobile (edge-to-edge,
+            scrollbar hidden), wrapping normally from sm up. */}
+        <div className="mt-10 -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
           {tabs.map((t) => {
             const isActive = cat === t.id;
             return (
@@ -42,7 +43,7 @@ export function ProductsSection() {
                 key={t.id}
                 onClick={() => setCat(t.id)}
                 className={cn(
-                  "relative rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  "relative shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors",
                   isActive ? "text-white" : "text-steel-400 hover:text-white"
                 )}
               >

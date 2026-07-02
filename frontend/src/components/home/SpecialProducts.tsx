@@ -56,9 +56,9 @@ export function SpecialProducts() {
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
-                className="absolute right-4 top-4 glass rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2"
+                className="absolute right-4 top-4 hidden glass rounded-xl px-3 py-2 sm:block"
               >
-                <div className="flex items-center gap-2 text-[11px] text-steel-200 sm:text-xs">
+                <div className="flex items-center gap-2 text-xs text-steel-200">
                   <Cpu className="h-3.5 w-3.5 text-neo-500" /> Smart Connected
                 </div>
               </motion.div>
@@ -66,10 +66,11 @@ export function SpecialProducts() {
           </Reveal>
 
           {/* Product list */}
-          <div className="flex flex-col gap-4">
+          <div className="flex min-w-0 flex-col gap-4">
             {specialProducts.map((prod, i) => (
               <motion.div
                 key={prod.id}
+                className="min-w-0"
                 initial={{ opacity: 0, x: 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
@@ -77,7 +78,7 @@ export function SpecialProducts() {
               >
                 <Link
                   to={`/products/${prod.slug}`}
-                  className="group flex items-center gap-5 rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
+                  className="group flex min-w-0 items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:gap-5"
                 >
                   <span className="font-display text-2xl font-bold text-white/15">
                     0{i + 1}

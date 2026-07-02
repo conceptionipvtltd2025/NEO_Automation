@@ -41,11 +41,50 @@ export default {
           800: "#a30d14",
           900: "#871217",
         },
-        // Industrial electric accent
+        // "Titanium & Pastel" accent family. Legacy keys (volt/iris/aurora) kept
+        // so existing utilities re-skin for free — they now hold vibrant pastels.
+        // volt = SKY (primary pastel accent)
         volt: {
-          400: "#5ed6ff",
-          500: "#22b8ff",
-          600: "#0a93e6",
+          400: "#7dc9f5",
+          500: "#4fb6f0",
+          600: "#2f9fe0",
+        },
+        // iris = PERIWINKLE (cool violet-blue pastel)
+        iris: {
+          300: "#b3baf7",
+          400: "#949df3",
+          500: "#7c86f0",
+          600: "#5b64e8",
+        },
+        // aurora = MINT (fresh teal-mint pastel)
+        aurora: {
+          300: "#9cecd6",
+          400: "#6fe0c0",
+          500: "#4fd9b4",
+          600: "#22b899",
+        },
+        // Explicit pastel names for new work
+        periwinkle: {
+          400: "#949df3",
+          500: "#7c86f0",
+          600: "#5b64e8",
+        },
+        sky: {
+          400: "#7dc9f5",
+          500: "#4fb6f0",
+          600: "#2f9fe0",
+        },
+        mint: {
+          400: "#6fe0c0",
+          500: "#4fd9b4",
+          600: "#22b899",
+        },
+        // Brushed-titanium neutral (for metallic surfaces/text)
+        titanium: {
+          300: "#e2e6ec",
+          400: "#c3cad6",
+          500: "#9aa3b2",
+          600: "#6b7482",
         },
         steel: {
           100: "rgb(var(--steel-100) / <alpha-value>)",
@@ -66,9 +105,21 @@ export default {
         "grid-dark":
           "linear-gradient(to right, rgb(var(--grid-line) / 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--grid-line) / 0.05) 1px, transparent 1px)",
         "radial-glow":
-          "radial-gradient(circle at 50% 0%, rgba(237,28,36,0.18), transparent 60%)",
+          "radial-gradient(circle at 50% 0%, rgba(124,134,240,0.16), transparent 60%)",
+        "radial-aurora":
+          "radial-gradient(circle at 50% 0%, rgba(124,134,240,0.16), transparent 55%), radial-gradient(circle at 85% 20%, rgba(79,217,180,0.13), transparent 55%)",
         "neo-gradient":
           "linear-gradient(135deg, #ed1c24 0%, #ff5d5d 50%, #ff2a2a 100%)",
+        // Signature pastel ribbon: periwinkle → sky → mint
+        aurora: "linear-gradient(120deg, #7c86f0 0%, #4fb6f0 46%, #4fd9b4 100%)",
+        "aurora-soft":
+          "linear-gradient(120deg, rgba(124,134,240,0.22), rgba(79,182,240,0.16) 50%, rgba(79,217,180,0.20))",
+        // brushed-titanium metal sheen
+        "titanium-sheen":
+          "linear-gradient(120deg, #e2e6ec 0%, #9aa3b2 40%, #e2e6ec 55%, #6b7482 100%)",
+        // pastel ribbon with a brand-red kiss
+        "aurora-hot":
+          "linear-gradient(120deg, #ed1c24 0%, #7c86f0 45%, #4fb6f0 75%, #4fd9b4 100%)",
       },
       boxShadow: {
         glow: "0 0 40px -10px rgba(237,28,36,0.55)",
@@ -138,6 +189,7 @@ export default {
         shine: "shine 1.1s cubic-bezier(0.22,1,0.36,1)",
         "float-x": "float-x 7s ease-in-out infinite",
         bob: "bob 5s ease-in-out infinite",
+        "aurora-pan": "gradient-pan 12s ease infinite",
       },
     },
   },

@@ -17,7 +17,7 @@ const testimonials: Testimonial[] = [
     name: "Rakesh Menon",
     role: "Plant Head",
     company: "Automotive OEM, Sanand",
-    accent: "237,28,36",
+    accent: "167,139,250",
   },
   {
     quote:
@@ -25,7 +25,7 @@ const testimonials: Testimonial[] = [
     name: "Anita Deshpande",
     role: "Manufacturing Manager",
     company: "Aerospace Components",
-    accent: "34,184,255",
+    accent: "124,134,240",
   },
   {
     quote:
@@ -33,7 +33,7 @@ const testimonials: Testimonial[] = [
     name: "Suresh Patel",
     role: "Operations Director",
     company: "EV Powertrain, Pune",
-    accent: "16,185,129",
+    accent: "79,217,180",
   },
 ];
 

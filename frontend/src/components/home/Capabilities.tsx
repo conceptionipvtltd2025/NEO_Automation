@@ -22,31 +22,31 @@ const capabilities: Capability[] = [
     icon: PackageCheck,
     title: "Authorised Distribution",
     text: "Genuine, warranty-backed tools & consumables from Atlas Copco, GESIPA, GEDORE, CEJN, Hoffmann Group, Legris, eepos, PFERD & John Guest.",
-    accent: "237,28,36",
+    accent: "167,139,250",
   },
   {
     icon: Workflow,
     title: "System Integration",
     text: "Turnkey smart-tightening and material-handling lines, integrated with your MES and quality systems.",
-    accent: "34,184,255",
+    accent: "124,134,240",
   },
   {
     icon: Gauge,
     title: "Calibration & Service",
     text: "On-site calibration, preventive maintenance and rapid breakdown support that keeps your line running.",
-    accent: "245,158,11",
+    accent: "124,134,240",
   },
   {
     icon: GraduationCap,
     title: "Training & Enablement",
     text: "Operator and engineer training programmes so your team gets the most from every tool and workflow.",
-    accent: "16,185,129",
+    accent: "79,217,180",
   },
   {
     icon: Boxes,
     title: "Spares & Consumables",
     text: "Fast-moving spares, sockets, bits and abrasives held in stock for next-day dispatch across India.",
-    accent: "139,92,246",
+    accent: "79,182,240",
   },
 ];
 

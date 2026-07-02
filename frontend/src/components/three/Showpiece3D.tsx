@@ -22,18 +22,22 @@ function Core() {
     <group>
       <Float speed={1.4} rotationIntensity={0.5} floatIntensity={0.9}>
         <TorusKnot ref={knot} args={[0.85, 0.28, 200, 32]}>
+          {/* Brushed-titanium base that catches the pastel point-lights as
+              cool periwinkle/sky/mint streaks — reads as polished chrome/
+              titanium in BOTH themes (no env-map needed, so no HDR to load). */}
           <meshStandardMaterial
-            color="#1a1a1f"
-            metalness={1}
-            roughness={0.18}
-            envMapIntensity={0.6}
+            color="#cbd2de"
+            metalness={0.94}
+            roughness={0.22}
+            emissive="#7c86f0"
+            emissiveIntensity={0.12}
           />
         </TorusKnot>
       </Float>
 
       <group ref={cage}>
         <Icosahedron args={[1.9, 1]}>
-          <meshBasicMaterial color="#ed1c24" wireframe transparent opacity={0.18} />
+          <meshBasicMaterial color="#7c86f0" wireframe transparent opacity={0.22} />
         </Icosahedron>
       </group>
     </group>
@@ -77,11 +81,14 @@ export function Showpiece3D({ className }: { className?: string }) {
           gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         >
           <Suspense fallback={null}>
-            <ambientLight intensity={0.35} />
-            <directionalLight position={[5, 5, 5]} intensity={1.4} />
-            <pointLight position={[-4, 2, 3]} intensity={40} color="#ed1c24" />
-            <pointLight position={[4, -2, 2]} intensity={30} color="#22b8ff" />
-            <pointLight position={[0, 3, -4]} intensity={20} color="#ffffff" />
+            <ambientLight intensity={0.55} />
+            <directionalLight position={[5, 5, 5]} intensity={1.3} />
+            {/* Pastel rim lights (periwinkle · sky · mint) + a subtle red kiss */}
+            <pointLight position={[-4, 2, 3]} intensity={45} color="#7c86f0" />
+            <pointLight position={[4, -2, 2]} intensity={42} color="#4fb6f0" />
+            <pointLight position={[2, 3, -1]} intensity={34} color="#4fd9b4" />
+            <pointLight position={[-2, -3, 1]} intensity={16} color="#ed1c24" />
+            <pointLight position={[0, 3, -4]} intensity={18} color="#ffffff" />
             <Core />
           </Suspense>
         </Canvas>

@@ -1,12 +1,28 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { brands, type Brand } from "@/data/brands";
 import { Marquee } from "@/components/ui/Marquee";
-import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
+import { Reveal } from "@/components/ui/Reveal";
 import { SpotlightCard } from "@/components/ui/SpotlightCard";
 import { SectionHeading } from "@/components/SectionHeading";
+
+// Brand cards slide in from the left in sequence, so the row of partner logos
+// appears to flow left → right. Re-fires every time the grid scrolls into view.
+const gridWrap: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+};
+const gridCard: Variants = {
+  hidden: { opacity: 0, x: -48, filter: "blur(8px)" },
+  show: {
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+  },
+};
 
 function Wordmark({ name, color }: { name: string; color: string }) {
   return (
@@ -28,7 +44,10 @@ function BrandLogo({ brand }: { brand: Brand }) {
   const [failed, setFailed] = useState(false);
   if (failed) return <Wordmark name={brand.name} color={brand.color} />;
   return (
-    <span className="inline-flex h-12 max-w-[170px] items-center justify-center rounded-xl bg-white px-3.5 py-2 shadow-sm ring-1 ring-black/5">
+    // bg-pure (literal white) — NOT bg-white, which flips to near-ink in the
+    // light theme and would hide the dark brand artwork (GEDORE, GESIPA…). A
+    // constant white chip keeps every logo fully visible in BOTH themes.
+    <span className="inline-flex h-12 max-w-[170px] items-center justify-center rounded-xl bg-pure px-3.5 py-2 shadow-sm ring-1 ring-black/10">
       <img
         src={brand.logo}
         alt={`${brand.name} logo`}
@@ -49,7 +68,8 @@ function MarqueeLogo({ brand }: { brand: Brand }) {
   const [failed, setFailed] = useState(false);
   if (failed) return <Wordmark name={brand.name} color={brand.color} />;
   return (
-    <span className="inline-flex h-12 max-w-[200px] items-center justify-center rounded-xl bg-white px-4 py-2 shadow-sm ring-1 ring-black/5 sm:h-14">
+    // Constant white chip (see BrandLogo) so logos read in both themes.
+    <span className="inline-flex h-12 max-w-[200px] items-center justify-center rounded-xl bg-pure px-4 py-2 shadow-sm ring-1 ring-black/10 sm:h-14">
       <img
         src={brand.logo}
         alt={`${brand.name} logo`}
@@ -92,9 +112,15 @@ export function Brands() {
 
       {/* Brand cards */}
       <div className="container-px">
-        <StaggerGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          variants={gridWrap}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: false, margin: "-60px" }}
+          className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {brands.map((b) => (
-            <StaggerItem key={b.id}>
+            <motion.div key={b.id} variants={gridCard}>
               <SpotlightCard
                 className="h-full p-6"
                 spotColor={`${b.color}26`}
@@ -128,13 +154,13 @@ export function Brands() {
                   }}
                   initial={{ scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: false }}
                   transition={{ duration: 0.8 }}
                 />
               </SpotlightCard>
-            </StaggerItem>
+            </motion.div>
           ))}
-        </StaggerGroup>
+        </motion.div>
       </div>
     </section>
   );

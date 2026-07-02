@@ -87,7 +87,7 @@ export function Hero() {
             {["Engineering", "Tomorrow's"].map((word, i) => (
               <span key={i} className="block overflow-hidden">
                 <motion.span
-                  className="inline-block text-gradient"
+                  className="inline-block text-titanium"
                   initial={{ y: "110%" }}
                   animate={{ y: 0 }}
                   transition={{ duration: 0.9, delay: 0.1 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
@@ -98,7 +98,7 @@ export function Hero() {
             ))}
             <span className="block overflow-hidden">
               <motion.span
-                className="inline-block text-gradient-neo"
+                className="inline-block text-shimmer-anim"
                 initial={{ y: "110%" }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.9, delay: 0.34, ease: [0.22, 1, 0.36, 1] }}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
   Car,
   Plane,
@@ -25,6 +25,22 @@ const iconMap: Record<string, LucideIcon> = {
   Zap,
 };
 
+// Left → right entrance: the selector rows cascade in from the left while the
+// visual panel slides in from the right. Re-fires on every scroll (once:false).
+const listWrap: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+const listItem: Variants = {
+  hidden: { opacity: 0, x: -44, filter: "blur(6px)" },
+  show: {
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
 export function IndustriesShowcase() {
   const [active, setActive] = useState(0);
   const current = industries[active];
@@ -45,13 +61,20 @@ export function IndustriesShowcase() {
 
         <div className="mt-14 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           {/* Selector list */}
-          <div className="flex flex-col gap-2">
+          <motion.div
+            className="flex flex-col gap-2"
+            variants={listWrap}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: false, margin: "-80px" }}
+          >
             {industries.map((ind, i) => {
               const Icon = iconMap[ind.icon] ?? Factory;
               const isActive = i === active;
               return (
-                <button
+                <motion.button
                   key={ind.id}
+                  variants={listItem}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => setActive(i)}
                   className={cn(
@@ -122,13 +145,19 @@ export function IndustriesShowcase() {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </button>
+                </motion.button>
               );
             })}
-          </div>
+          </motion.div>
 
           {/* Visual */}
-          <div className="force-dark relative min-h-[420px] overflow-hidden rounded-3xl border border-white/10 lg:min-h-full">
+          <motion.div
+            initial={{ opacity: 0, x: 64, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            viewport={{ once: false, margin: "-80px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="force-dark relative min-h-[420px] overflow-hidden rounded-3xl border border-white/10 lg:min-h-full"
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.id}
@@ -196,7 +225,7 @@ export function IndustriesShowcase() {
                 </motion.div>
               </AnimatePresence>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

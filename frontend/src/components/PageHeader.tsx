@@ -64,7 +64,7 @@ export function PageHeader({
         )}
 
         <h1 className="mt-5 max-w-4xl font-display text-[clamp(2.2rem,5.5vw,4rem)] font-bold leading-[1.02] tracking-tight text-gradient">
-          <WordsReveal text={title} />
+          <WordsReveal text={title} highlightWords={1} />
         </h1>
 
         {subtitle && (

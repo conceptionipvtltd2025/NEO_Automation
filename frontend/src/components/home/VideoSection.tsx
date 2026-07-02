@@ -3,12 +3,14 @@ import { motion } from "framer-motion";
 import { Play, Clock } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { asset } from "@/lib/asset";
 
 // YouTube video shown on the homepage. Swap the ID to change the clip.
 const YT_ID = "dDjZkJ9iWHI";
-// High-res industrial poster (welding/sparks) — same image used on the old SWF band.
-const POSTER =
-  "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=2000&q=80";
+// Poster is a clean frame lifted straight from our own brand b-roll
+// (precision-drilling close-up) — an actual video screenshot rather than a
+// stock photo, and free of the third-party text baked into the YouTube thumb.
+const POSTER = asset("images/showreel-poster.jpg");
 
 // Caption shown over the poster (edit to taste).
 const VIDEO_TITLE = "Engineering Tomorrow's Industry";

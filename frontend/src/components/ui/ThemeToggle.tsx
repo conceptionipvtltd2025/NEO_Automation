@@ -26,7 +26,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           "pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100",
           isLight
             ? "bg-[radial-gradient(circle_at_50%_50%,rgba(255,180,40,0.18),transparent_70%)]"
-            : "bg-[radial-gradient(circle_at_50%_50%,rgba(34,184,255,0.18),transparent_70%)]"
+            : "bg-[radial-gradient(circle_at_50%_50%,rgba(124,134,240,0.18),transparent_70%)]"
         )}
       />
       <AnimatePresence mode="wait" initial={false}>

@@ -45,7 +45,7 @@ export function SpotlightCard({
         className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{
           background:
-            "linear-gradient(130deg, rgba(237,28,36,0.10), transparent 40%, rgba(34,184,255,0.08))",
+            "linear-gradient(130deg, rgba(237,28,36,0.10), transparent 40%, rgba(124,134,240,0.10))",
         }}
       />
       {children}

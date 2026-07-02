@@ -28,7 +28,7 @@ export const industries: Industry[] = [
       "From body-in-white to final assembly, we deploy smart tightening, riveting and error-proofing systems that keep automotive lines moving at takt time with full traceability.",
     image: img("1565043666747-69f6646db940"),
     icon: "Car",
-    accent: "#ed1c24",
+    accent: "#7c86f0",
     capabilities: [
       "Smart tightening & torque traceability",
       "Structural blind riveting (BIW)",
@@ -46,7 +46,7 @@ export const industries: Industry[] = [
       "Aerospace assembly demands certified torque, documented processes and flawless surface integrity. Our calibrated tooling and abrasives meet the most exacting AS9100 environments.",
     image: img("1436491865332-7a61a109cc05"),
     icon: "Plane",
-    accent: "#22b8ff",
+    accent: "#4fb6f0",
     capabilities: [
       "Calibrated precision torque tools",
       "Composite & alloy finishing",
@@ -64,7 +64,7 @@ export const industries: Industry[] = [
       "Hyperscale build-outs need rapid, repeatable rack assembly and clean cable management. We supply pneumatic fittings, precision hand tools and ergonomic handling for 24/7 deployment.",
     image: img("1558494949-ef010cbdcc31"),
     icon: "Server",
-    accent: "#5ed6ff",
+    accent: "#4fd9b4",
     capabilities: [
       "Push-fit fluid & cooling fittings",
       "Precision rack assembly tooling",
@@ -82,7 +82,7 @@ export const industries: Industry[] = [
       "Fabrication, machinery, white goods and beyond — our complete catalogue of assembly, cutting and material-handling solutions powers general manufacturing across the board.",
     image: img("1565514020179-026b92b84bb6"),
     icon: "Factory",
-    accent: "#ff5d5d",
+    accent: "#a78bfa",
     capabilities: [
       "Full assembly tool range",
       "Cutting, grinding & abrasives",
@@ -100,7 +100,7 @@ export const industries: Industry[] = [
       "Battery packs, power electronics and connected devices require delicate, traceable assembly. Our smart tools deliver micro-torque control and ESD-safe handling at scale.",
     image: img("1518770660439-4636190af475"),
     icon: "CircuitBoard",
-    accent: "#22b8ff",
+    accent: "#4fb6f0",
     capabilities: [
       "Micro-torque smart tools",
       "Battery module assembly",
@@ -118,7 +118,7 @@ export const industries: Industry[] = [
       "Power generation, transmission and renewables operate in the harshest conditions. Our rugged tooling and lifting systems are engineered for reliability where downtime is not an option.",
     image: img("1466611653911-95081537e5b7"),
     icon: "Zap",
-    accent: "#ed1c24",
+    accent: "#7c86f0",
     capabilities: [
       "High-torque bolting systems",
       "Heavy lifting & cranes",

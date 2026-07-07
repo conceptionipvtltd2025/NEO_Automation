@@ -35,7 +35,7 @@ export function Hero() {
     if (!section || !v) return;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) v.play().catch(() => {});
+        if (entry.isIntersecting) v.play().catch(() => { });
         else v.pause();
       },
       { threshold: 0.1 }
@@ -66,7 +66,7 @@ export function Hero() {
           aria-hidden="true"
           onLoadedMetadata={(e) => {
             e.currentTarget.muted = true;
-            e.currentTarget.play().catch(() => {});
+            e.currentTarget.play().catch(() => { });
           }}
         />
         {/* legibility gradients — kept light so the footage stays visible; content sits on the left */}
@@ -114,10 +114,9 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.5 }}
             className="mt-6 max-w-xl text-base leading-relaxed text-steel-300 sm:text-lg"
           >
-            Precision automation tools, smart tightening systems and material
-            handling — backed by the world's finest brands including{" "}
-            <span className="font-medium text-white">Atlas Copco</span>,
-            GESIPA, GEDORE, CEJN, Hoffmann Group, Legris &amp; more.
+            Delivering innovative solutions that improve
+            <span className="font-medium text-red-600">Productivity, Quality, Safety</span>,
+            and <span className="font-medium text-red-600">Traceability</span> in manufacturing operations.
           </motion.p>
 
           <motion.div
@@ -161,7 +160,7 @@ export function Hero() {
           </motion.div>
         </div>
 
-        
+
       </motion.div>
 
       {/* scroll cue */}

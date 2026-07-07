@@ -6,6 +6,7 @@ import { specialProducts } from "@/data/products";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { formatINR } from "@/lib/utils";
+import { safeImg, onImgError } from "@/lib/image";
 
 const Showpiece3D = lazy(() =>
   import("@/components/three/Showpiece3D").then((m) => ({
@@ -85,7 +86,8 @@ export function SpecialProducts() {
                   </span>
                   <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-ink-800">
                     <img
-                      src={prod.images[0]}
+                      src={safeImg(prod.images[0])}
+                      onError={onImgError}
                       alt={prod.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />

@@ -366,6 +366,16 @@
   .admin-input {
     @apply w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-steel-600 focus:border-neo-600/50 focus:bg-white/[0.05];
   }
+  /* Native <select> dropdowns render their option list via the OS, which
+     defaults to a white background — turning the white option text invisible
+     in the dark admin. Force a dark scheme + readable option colours. */
+  select.admin-input {
+    color-scheme: dark;
+  }
+  select.admin-input option {
+    background-color: #12151c;
+    color: #f8fafc;
+  }
 
   /* ── Reusable hover kit ─────────────────────────────────────────────
      Drop these on any card/element for consistent "premium" motion. */

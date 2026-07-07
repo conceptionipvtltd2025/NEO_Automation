@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Check, ArrowUpRight, ArrowLeft } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
 import { ProductCard } from "@/components/ProductCard";
+import { safeImg, onImgError } from "@/lib/image";
 import { Reveal } from "@/components/ui/Reveal";
 import NotFound from "./NotFound";
 
@@ -25,7 +26,8 @@ export default function IndustryDetail() {
       <section className="force-dark relative min-h-[70svh] overflow-hidden pt-24">
         <div className="absolute inset-0">
           <img
-            src={industry.image}
+            src={safeImg(industry.image)}
+            onError={onImgError}
             alt={industry.name}
             className="h-full w-full object-cover"
           />

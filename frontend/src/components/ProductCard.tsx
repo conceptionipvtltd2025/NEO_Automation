@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Star } from "lucide-react";
 import type { Product } from "@/data/products";
 import { formatINR } from "@/lib/utils";
+import { safeImg, onImgError } from "@/lib/image";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   return (
@@ -19,7 +20,8 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       >
         <div className="shine-sweep force-dark relative aspect-[4/3] overflow-hidden bg-ink-800">
           <img
-            src={product.images[0]}
+            src={safeImg(product.images[0])}
+            onError={onImgError}
             alt={product.name}
             loading="lazy"
             className="h-full w-full object-cover opacity-90 transition-all duration-700 group-hover:scale-110 group-hover:opacity-100"

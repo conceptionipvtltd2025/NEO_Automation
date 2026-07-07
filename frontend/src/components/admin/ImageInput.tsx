@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { UploadCloud, X, Star, Link2 } from "lucide-react";
+import { safeImg, onImgError, isValidImageRef } from "@/lib/image";
 
 /**
  * Reads an image File and returns a compressed JPEG data URL, downscaled to
@@ -52,6 +53,7 @@ export function ImageInput({
 }) {
   const commit = (next: string[]) => onChange(max ? next.slice(-max) : next);
   const [url, setUrl] = useState("");
+  const [urlErr, setUrlErr] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   // ref so the global paste handler always appends to the latest list
@@ -103,6 +105,11 @@ export function ImageInput({
   const addUrl = () => {
     const u = url.trim();
     if (!u) return;
+    if (!isValidImageRef(u)) {
+      setUrlErr("Enter a valid image URL (https://…, /path, or data:image).");
+      return;
+    }
+    setUrlErr("");
     commit([...value, u]);
     setUrl("");
   };
@@ -116,7 +123,7 @@ export function ImageInput({
               key={i}
               className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-ink-800"
             >
-              <img src={src} alt={`Image ${i + 1}`} className="h-full w-full object-cover" />
+              <img src={safeImg(src)} onError={onImgError} alt={`Image ${i + 1}`} className="h-full w-full object-cover" />
               {i === 0 && value.length > 1 && (
                 <span className="absolute left-1.5 top-1.5 rounded-full bg-neo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-pure">
                   Cover
@@ -192,7 +199,10 @@ export function ImageInput({
           <Link2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-steel-500" />
           <input
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e) => {
+              setUrl(e.target.value);
+              if (urlErr) setUrlErr("");
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -210,6 +220,7 @@ export function ImageInput({
           Add URL
         </button>
       </div>
+      {urlErr && <p className="text-xs text-red-400">{urlErr}</p>}
     </div>
   );
 }

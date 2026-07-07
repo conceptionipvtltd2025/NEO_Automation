@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { safeImg, onImgError } from "@/lib/image";
 import {
   Car,
   Plane,
@@ -169,7 +170,8 @@ export function IndustriesShowcase() {
                 className="absolute inset-0"
               >
                 <img
-                  src={current.image}
+                  src={safeImg(current.image)}
+                  onError={onImgError}
                   alt={current.name}
                   className="h-full w-full object-cover"
                 />

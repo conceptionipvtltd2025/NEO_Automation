@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
 import { formatINR, slugify, cn } from "@/lib/utils";
+import { safeImg, onImgError } from "@/lib/image";
 
 const blank: Product = {
   id: "",
@@ -120,7 +121,7 @@ export default function AdminProducts() {
               <tr key={p.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.02]">
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
-                    <img src={p.images[0]} alt="" className="h-11 w-11 rounded-lg object-cover" />
+                    <img src={safeImg(p.images[0])} onError={onImgError} alt="" className="h-11 w-11 rounded-lg object-cover" />
                     <div>
                       <p className="font-medium text-white">{p.name}</p>
                       <p className="flex items-center gap-1 text-xs text-steel-500">

@@ -35,8 +35,8 @@ export const site = {
   },
   stats: [
     { value: 19, suffix: "+", label: "Years of Engineering" },
-    { value: 9, suffix: "", label: "Global Brand Partners" },
-    { value: 1200, suffix: "+", label: "Installations Delivered" },
+    { value: 8, suffix: "+", label: "Global Brand Partners" },
+    { value: 600, suffix: "+", label: "Delivered Solutions To Customers" },
     { value: 99.2, suffix: "%", label: "Uptime Reliability" },
   ],
 };

@@ -52,9 +52,15 @@ async function request<T = any>(path: string, opts: Options = {}): Promise<T> {
   const token = getToken();
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
+  // Many shared hosts (cPanel/LiteSpeed) block PUT/PATCH/DELETE, so tunnel them
+  // over POST with a method-override header the backend understands.
+  const method = opts.method || "GET";
+  const tunnel = method === "PUT" || method === "PATCH" || method === "DELETE";
+  if (tunnel) headers["X-HTTP-Method-Override"] = method;
+
   try {
     const res = await fetch(`${BASE}${path}`, {
-      method: opts.method || "GET",
+      method: tunnel ? "POST" : method,
       headers,
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
       signal: controller.signal,

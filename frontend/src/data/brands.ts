@@ -22,7 +22,7 @@ export const brands: Brand[] = [
   {
     id: "atlas-copco",
     name: "Atlas Copco",
-    color: "#0033A0",
+    color: "#a5c532",
     category: "Assembly & Tightening",
     blurb:
       "Industrial power tools, smart tightening systems and the Smart Workflow Feature (SWF) for error-proof assembly lines.",
@@ -31,7 +31,7 @@ export const brands: Brand[] = [
   {
     id: "gesipa",
     name: "GESIPA",
-    color: "#0a4ea2",
+    color: "#2ed658",
     category: "Riveting Technology",
     blurb:
       "Blind rivets, blind rivet nuts and battery-powered setting tools engineered in Germany for high-volume joining.",

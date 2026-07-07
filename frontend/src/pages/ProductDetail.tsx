@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { safeImg, onImgError } from "@/lib/image";
 import {
   Star,
   ShieldCheck,
@@ -66,7 +67,8 @@ export default function ProductDetail() {
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={activeImg}
-                    src={product.images[activeImg]}
+                    src={safeImg(product.images[activeImg])}
+                    onError={onImgError}
                     alt={product.name}
                     initial={{ opacity: 0, scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -94,7 +96,7 @@ export default function ProductDetail() {
                           : "border-white/10 opacity-60 hover:opacity-100"
                       )}
                     >
-                      <img src={img} alt="" className="h-full w-full object-cover" />
+                      <img src={safeImg(img)} onError={onImgError} alt="" className="h-full w-full object-cover" />
                     </button>
                   ))}
                 </div>

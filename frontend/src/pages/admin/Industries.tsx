@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
 import { slugify, cn } from "@/lib/utils";
+import { safeImg, onImgError } from "@/lib/image";
 
 const empty: Industry = {
   id: "",
@@ -72,7 +73,8 @@ export default function AdminIndustries() {
           >
             <div className="relative h-36 overflow-hidden">
               <img
-                src={ind.image}
+                src={safeImg(ind.image)}
+                onError={onImgError}
                 alt={ind.name}
                 className={cn(
                   "h-full w-full object-cover",

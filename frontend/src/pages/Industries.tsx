@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { safeImg, onImgError } from "@/lib/image";
 import {
   Car,
   Plane,
@@ -82,7 +83,8 @@ export default function Industries() {
                 >
                   <div className="relative h-72 overflow-hidden sm:h-80">
                     <img
-                      src={ind.image}
+                      src={safeImg(ind.image)}
+                      onError={onImgError}
                       alt={ind.name}
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />

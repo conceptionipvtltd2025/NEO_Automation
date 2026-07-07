@@ -40,6 +40,12 @@ export default defineConfig({
           });
         },
       },
+      // Uploaded product images are served by the backend from /uploads; proxy
+      // them too so the relative URL stays same-origin (and https-safe) in dev.
+      "/uploads": {
+        target: process.env.VITE_API_PROXY || "http://localhost:4000",
+        changeOrigin: true,
+      },
     },
   },
   build: {

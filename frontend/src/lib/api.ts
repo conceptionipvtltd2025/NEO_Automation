@@ -93,7 +93,50 @@ export const api = {
   patch: <T = any>(path: string, body?: unknown) =>
     request<T>(path, { method: "PATCH", body }),
   del: <T = any>(path: string) => request<T>(path, { method: "DELETE" }),
+  /**
+   * Upload an image file and get back its stored file URL. Sent as binary
+   * multipart/form-data (NOT base64) — the production WAF blocks base64 bodies,
+   * and multipart is what firewalls expect for file uploads. The backend writes
+   * a real image file and returns { url }, so product records hold a short URL.
+   */
+  upload: (file: Blob, filename = "image.jpg") => uploadFile(file, filename),
 };
+
+/** Multipart file upload — separate from `request()` because the browser must
+ *  set the multipart Content-Type (with boundary) itself, so we don't add one. */
+async function uploadFile(file: Blob, filename: string): Promise<{ url: string }> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30000); // uploads can be slower
+
+  const headers: Record<string, string> = {};
+  const token = getToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const form = new FormData();
+  form.append("file", file, filename);
+
+  try {
+    const res = await fetch(`${BASE}/uploads`, {
+      method: "POST",
+      headers, // no Content-Type — the browser adds multipart boundary
+      body: form,
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      let message = res.statusText;
+      try {
+        const data = await res.json();
+        if (data?.error) message = data.error;
+      } catch {
+        /* non-JSON error body */
+      }
+      throw new ApiError(message, res.status);
+    }
+    return (await res.json()) as { url: string };
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 /** True when the API responds to a health check — used to decide online vs fallback. */
 export async function apiReachable(): Promise<boolean> {

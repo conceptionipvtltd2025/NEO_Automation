@@ -1,20 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { UploadCloud, X, Star, Link2 } from "lucide-react";
 import { safeImg, onImgError, isValidImageRef } from "@/lib/image";
+import { api } from "@/lib/api";
 
 /**
- * Reads an image File and returns a compressed JPEG data URL, downscaled to
- * `maxDim` on its longest edge. Keeps uploaded/pasted images small enough to
- * persist in localStorage (the catalog has no backend yet).
+ * Reads an image File, downscales it to `maxDim` on its longest edge, and returns
+ * a compressed JPEG Blob. The Blob is uploaded to the backend as multipart binary
+ * (see api.upload) which saves it as a real image file — the product then stores a
+ * short file URL, not the image bytes.
  */
-async function fileToDataURL(file: File, maxDim = 1200, quality = 0.8): Promise<string> {
-  const original = await new Promise<string>((resolve, reject) => {
+async function compressToBlob(file: File, maxDim = 1200, quality = 0.8): Promise<Blob> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
     const fr = new FileReader();
     fr.onload = () => resolve(fr.result as string);
     fr.onerror = reject;
     fr.readAsDataURL(file);
   });
-  return await new Promise<string>((resolve) => {
+  return await new Promise<Blob>((resolve) => {
     const img = new Image();
     img.onload = () => {
       let { width, height } = img;
@@ -28,16 +30,16 @@ async function fileToDataURL(file: File, maxDim = 1200, quality = 0.8): Promise<
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext("2d");
-      if (!ctx) return resolve(original);
+      if (!ctx) return resolve(file);
       ctx.drawImage(img, 0, 0, width, height);
-      try {
-        resolve(canvas.toDataURL("image/jpeg", quality));
-      } catch {
-        resolve(original);
-      }
+      canvas.toBlob(
+        (blob) => resolve(blob || file),
+        "image/jpeg",
+        quality
+      );
     };
-    img.onerror = () => resolve(original);
-    img.src = original;
+    img.onerror = () => resolve(file);
+    img.src = dataUrl;
   });
 }
 
@@ -54,6 +56,7 @@ export function ImageInput({
   const commit = (next: string[]) => onChange(max ? next.slice(-max) : next);
   const [url, setUrl] = useState("");
   const [urlErr, setUrlErr] = useState("");
+  const [uploadErr, setUploadErr] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   // ref so the global paste handler always appends to the latest list
@@ -64,9 +67,24 @@ export function ImageInput({
     const imgs = Array.from(files).filter((f) => f.type.startsWith("image/"));
     if (!imgs.length) return;
     setBusy(true);
+    setUploadErr("");
     try {
-      const urls = await Promise.all(imgs.map((f) => fileToDataURL(f)));
+      // Compress in the browser, then upload each as a real binary file. The
+      // backend saves it and returns a short URL, which is what we store. We
+      // upload sequentially so one failure can stop the batch with a clear msg.
+      const urls: string[] = [];
+      for (const f of imgs) {
+        const blob = await compressToBlob(f);
+        const { url: fileUrl } = await api.upload(blob, f.name || "image.jpg");
+        urls.push(fileUrl);
+      }
       commit([...valueRef.current, ...urls]);
+    } catch (err) {
+      setUploadErr(
+        err instanceof Error && err.message
+          ? `Image upload failed: ${err.message}`
+          : "Image upload failed — check your connection and try again."
+      );
     } finally {
       setBusy(false);
     }
@@ -192,6 +210,8 @@ export function ImageInput({
           }}
         />
       </div>
+
+      {uploadErr && <p className="text-xs text-red-400">{uploadErr}</p>}
 
       {/* Or add by URL */}
       <div className="flex gap-2">

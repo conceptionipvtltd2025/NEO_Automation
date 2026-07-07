@@ -14,6 +14,7 @@ import categoryRoutes from "./routes/categories";
 import industryRoutes from "./routes/industries";
 import brandRoutes from "./routes/brands";
 import inquiryRoutes from "./routes/inquiries";
+import uploadRoutes, { UPLOADS_DIR } from "./routes/uploads";
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -48,12 +49,23 @@ app.use((req, _res, next) => {
 
 app.get("/api/health", (_req, res) => res.json({ ok: true, service: "neo-automation-api" }));
 
+// Serve uploaded product images as static files. Long cache — filenames are unique.
+app.use(
+  "/uploads",
+  express.static(UPLOADS_DIR, {
+    maxAge: "30d",
+    fallthrough: true,
+    index: false,
+  })
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/industries", industryRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/uploads", uploadRoutes);
 
 // 404 for unknown API routes
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));

@@ -30,9 +30,8 @@ const credentials = [
 ];
 
 const timeline = [
-  { year: "2007", title: "Founded by Mr. Baldev Solanki", text: "Neo Automation begins in Ahmedabad with a vision to deliver world-class industrial tools and service." },
-  { year: "2013", title: "Atlas Copco partnership", text: "Becomes an authorised distributor, bringing smart tightening to the region." },
-  { year: "2017", title: "Multi-brand expansion", text: "Adds GESIPA, GEDORE, PFERD & John Guest to the portfolio." },
+  { year: "2019", title: "Eepos Aluminium Crane System", text: "Becomes promoter for the Eepos aluminium crane system, expanding into material handling solutions." },
+  { year: "2020", title: "Atlas Copco Master Channel Partner", text: "Appointed Master Channel Partner for Atlas Copco PRO series tools across Gujarat, Madhya Pradesh & Mumbai." },
   { year: "2021", title: "SWF & Industry 4.0", text: "Rolls out Smart Workflow Feature deployments across automotive lines." },
   { year: "2026", title: "1200+ installations", text: "Trusted across automotive, aerospace, data-center & general industry." },
 ];
@@ -40,7 +39,7 @@ const timeline = [
 const values = [
   { icon: Heart, title: "Integrity", text: "Genuine equipment, honest advice, always." },
   { icon: Rocket, title: "Precision", text: "Obsessed with accuracy and reliability." },
-  { icon: Users, title: "Partnership", text: "Your line's uptime is our success." },
+  { icon: Users, title: "Partnership", text: "We invest in our people and processes so our team consistently exceeds — not just meets — customer expectations." },
   { icon: Award, title: "Excellence", text: "World-class brands, world-class service." },
 ];
 
@@ -122,7 +121,7 @@ export default function About() {
         <div className="grid gap-6 md:grid-cols-2">
           {[
             { icon: Target, title: "Our Mission", text: "To empower every factory floor in India with precision, traceable and reliable tooling — improving quality, safety and productivity on every line we touch." },
-            { icon: Eye, title: "Our Vision", text: "To be the most trusted automation solutions partner in the country, recognised for genuine products, deep expertise and uncompromising service." },
+            { icon: Eye, title: "Our Vision", text: "To become a reliable and trusted tightening partner to our esteemed customers, in line with the requirements of Industry 4.0 — recognised for genuine products, deep expertise and uncompromising service." },
           ].map((m, i) => (
             <Reveal key={m.title} delay={i * 0.1}>
               <div className="relative h-full overflow-hidden rounded-3xl border border-white/10 bg-ink-900 p-8">

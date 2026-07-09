@@ -25,7 +25,7 @@ export const brands: Brand[] = [
     color: "#a5c532",
     category: "Assembly & Tightening",
     blurb:
-      "Industrial power tools, smart tightening systems and the Smart Workflow Feature (SWF) for error-proof assembly lines.",
+      "The global benchmark in industrial assembly. Transducer-controlled nutrunners, smart tightening systems and the Smart Workflow Feature (SWF) deliver traceable, error-proof torque on every critical joint — engineered for Industry 4.0 production lines.",
     logo: logo("atlas-copco"),
   },
   {
@@ -34,7 +34,7 @@ export const brands: Brand[] = [
     color: "#2ed658",
     category: "Riveting Technology",
     blurb:
-      "Blind rivets, blind rivet nuts and battery-powered setting tools engineered in Germany for high-volume joining.",
+      "German pioneers of blind riveting since 1931. A complete range of blind rivets, rivet nuts and battery, pneumatic and hydro-pneumatic setting tools built for fast, reliable, high-volume joining across automotive and sheet-metal fabrication.",
     logo: logo("gesipa"),
   },
   {
@@ -43,7 +43,7 @@ export const brands: Brand[] = [
     color: "#1b9bd7",
     category: "Crane Systems",
     blurb:
-      "Modular aluminium crane systems and ergonomic lifting solutions for flexible, lightweight material handling.",
+      "Modular aluminium crane systems that make material handling effortless. Lightweight yet rigid profiles, low dead weight and smooth-running trolleys reduce operator strain and let you configure ergonomic lifting to fit any workstation.",
     logo: logo("eepos"),
   },
   {
@@ -52,7 +52,7 @@ export const brands: Brand[] = [
     color: "#0b63b2",
     category: "Hand Tools",
     blurb:
-      "Premium hand tools, torque wrenches and workshop trolleys trusted across global manufacturing floors.",
+      "Precision hand tools 'Made in Germany' since 1919. Forged spanners, calibrated torque wrenches, VDE insulated tools and fully stocked workshop trolleys — the professional-grade toolkit trusted on manufacturing and maintenance floors worldwide.",
     logo: logo("gedore"),
   },
   {
@@ -61,7 +61,7 @@ export const brands: Brand[] = [
     color: "#ee7203",
     category: "Pneumatics & Connectors",
     blurb:
-      "Swedish-engineered quick-connect couplings, high-pressure connectors and safety air guns for fast, leak-free pneumatic and hydraulic connections.",
+      "Swedish-engineered quick-connect technology. Compact, high-flow couplings, ultra-high-pressure connectors and safety air guns deliver leak-free pneumatic, hydraulic and fluid connections that cut energy loss and keep operators safe.",
     logo: logo("cejn"),
   },
   {
@@ -70,7 +70,7 @@ export const brands: Brand[] = [
     color: "#ff7300",
     category: "Tooling & MRO",
     blurb:
-      "Europe's system partner for quality tools — GARANT and HOLEX precision tools, measuring equipment and workstation solutions for industrial MRO.",
+      "Europe's leading system partner for quality tools. Through its GARANT and HOLEX ranges, Hoffmann Group supplies precision cutting tools, measuring and clamping equipment and complete workstation solutions — a single trusted source for industrial tooling and MRO.",
     logo: logo("hoffmann-group"),
   },
   {
@@ -79,7 +79,7 @@ export const brands: Brand[] = [
     color: "#0a3d91",
     category: "Fluid & Pneumatic Fittings",
     blurb:
-      "Precision push-in fittings, connectors and tubing engineered in France for reliable compressed-air and fluid control.",
+      "French precision in fluid and pneumatic control. Legris push-in fittings, connectors and calibrated tubing install in seconds without tools and hold leak-tight under pressure — the dependable choice for compressed-air and process fluid lines.",
     logo: logo("legris"),
   },
   {
@@ -88,7 +88,7 @@ export const brands: Brand[] = [
     color: "#1f6fb2",
     category: "Abrasives & Cutting",
     blurb:
-      "High-performance cutting discs, grinding wheels and surface finishing tools for metalworking precision.",
+      "German abrasives specialists and the 'TRUST BLUE' standard in surface work. High-performance cutting discs, grinding wheels, burrs and finishing tools engineered for maximum stock removal, longer life and a superior finish on every metalworking job.",
     logo: logo("pferd"),
   },
   {
@@ -97,7 +97,7 @@ export const brands: Brand[] = [
     color: "#0e7ec4",
     category: "Compressed-Air Piping",
     blurb:
-      "Advanced aluminium compressed-air, vacuum and fluid piping systems for fast, leak-free installation and energy-efficient distribution.",
+      "Aluminium piping that transforms your compressed-air network. Transair's clean-bore, corrosion-free system installs fast, reconfigures without tools and stays leak-free for life — cutting pressure drop and energy cost across air, vacuum and inert-gas lines.",
     logo: logo("transair"),
   },
 ];

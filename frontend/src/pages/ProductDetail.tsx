@@ -19,7 +19,7 @@ import { InquiryForm } from "@/components/InquiryForm";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { GridBackground, Aurora } from "@/components/ui/Backgrounds";
-import { formatINR, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import NotFound from "./NotFound";
 
 const trust = [
@@ -119,16 +119,6 @@ export default function ProductDetail() {
               <p className="mt-4 text-base leading-relaxed text-steel-300">
                 {product.shortDesc}
               </p>
-
-              <div className="mt-6 flex items-end gap-3">
-                <div>
-                  <span className="text-xs text-steel-500">Starting from</span>
-                  <p className="font-display text-3xl font-bold text-white">
-                    {formatINR(product.price)}
-                  </p>
-                </div>
-                <span className="mb-1 text-xs text-steel-500">excl. taxes</span>
-              </div>
 
               <div className="mt-7 flex flex-wrap gap-3">
                 <button

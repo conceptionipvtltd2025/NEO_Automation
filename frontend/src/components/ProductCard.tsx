@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Star } from "lucide-react";
 import type { Product } from "@/data/products";
-import { formatINR } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
@@ -48,10 +47,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             {product.shortDesc}
           </p>
           <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-            <div>
-              <span className="text-[11px] text-steel-500">From</span>
-              
-            </div>
+            <span className="text-[11px] font-medium uppercase tracking-wider text-steel-500">
+              View details
+            </span>
             <span className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-steel-300 transition-all duration-300 group-hover:border-neo-600 group-hover:bg-neo-600 group-hover:text-pure">
               <ArrowUpRight className="h-4 w-4" />
             </span>

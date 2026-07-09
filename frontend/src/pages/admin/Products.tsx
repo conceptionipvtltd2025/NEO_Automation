@@ -7,7 +7,7 @@ import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
-import { formatINR, slugify, cn } from "@/lib/utils";
+import { slugify, cn } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
 
 const blank: Product = {
@@ -111,7 +111,6 @@ export default function AdminProducts() {
             <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-steel-500">
               <th className="px-5 py-4 font-medium">Product</th>
               <th className="px-5 py-4 font-medium">Brand</th>
-              <th className="px-5 py-4 font-medium">Price</th>
               <th className="px-5 py-4 font-medium">Status</th>
               <th className="px-5 py-4 text-right font-medium">Actions</th>
             </tr>
@@ -131,7 +130,6 @@ export default function AdminProducts() {
                   </div>
                 </td>
                 <td className="px-5 py-4 text-steel-300">{p.brand}</td>
-                <td className="px-5 py-4 font-medium text-white">{formatINR(p.price)}</td>
                 <td className="px-5 py-4">
                   <button
                     onClick={() => toggleProduct(p.id)}
@@ -160,7 +158,7 @@ export default function AdminProducts() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-steel-500">
+                <td colSpan={4} className="px-5 py-12 text-center text-steel-500">
                   No products found.
                 </td>
               </tr>
@@ -188,7 +186,7 @@ export default function AdminProducts() {
               </Field>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Brand">
                 <select value={editing.brandId} onChange={(e) => setEditing({ ...editing, brandId: e.target.value })} className="admin-input">
                   {brands.map((b) => (
@@ -202,9 +200,6 @@ export default function AdminProducts() {
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
-              </Field>
-              <Field label="Price (INR)">
-                <input type="number" value={editing.price} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className="admin-input" />
               </Field>
             </div>
 

@@ -138,8 +138,6 @@ export default function Products() {
               className="rounded-xl border border-white/10 bg-ink-850 px-4 py-2.5 text-sm text-white outline-none"
             >
               <option value="featured">Featured</option>
-              <option value="price-asc">Price: Low → High</option>
-              <option value="price-desc">Price: High → Low</option>
               <option value="rating">Top rated</option>
             </select>
             <button
@@ -209,6 +207,26 @@ export default function Products() {
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+
+        {/* Brand tabs — one-click filtering by brand */}
+        <div
+          className="mb-6 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <BrandTab
+            label="All Brands"
+            active={brand === "all"}
+            onClick={() => setBrand("all")}
+          />
+          {brands.map((b) => (
+            <BrandTab
+              key={b.id}
+              label={b.name}
+              active={brand === b.id}
+              color={b.color}
+              onClick={() => setBrand(b.id)}
+            />
+          ))}
         </div>
 
         <div className="mb-6 flex items-center justify-between">
@@ -341,6 +359,33 @@ function Pagination({
         <ChevronRight className="h-4 w-4" />
       </button>
     </nav>
+  );
+}
+
+function BrandTab({
+  label,
+  active,
+  color,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  color?: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={active && color ? { borderColor: color, color } : undefined}
+      className={cn(
+        "shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition",
+        active
+          ? "border-neo-600/60 bg-neo-600/10 text-white"
+          : "border-white/10 text-steel-300 hover:border-white/25 hover:text-white"
+      )}
+    >
+      {label}
+    </button>
   );
 }
 

@@ -490,51 +490,100 @@
     }
   }
 
-  /* ── Logo medallion ────────────────────────────────────────────────
-     The NEO mark has a black filigree wreath that vanishes on a dark
-     background (and ships with mixed white/transparent corners). We sit
-     it on an opaque "pearl" disc + glowing ring so it reads fully and
-     looks premium in BOTH themes — without altering the logo file. */
-  .logo-medallion {
+  /* ── Logo mark ──────────────────────────────────────────────────────
+     The NEO brand mark is a round white ornament on brand red (#ed1c24).
+     We frame it as a circular medallion (its own red fills edge-to-edge)
+     inside a soft ring, ride a slow-spinning glow behind it, and lift
+     gently on hover so the whole lockup reads premium. */
+  .logo-mark {
     position: relative;
     display: grid;
     place-items: center;
+    overflow: hidden;
     border-radius: 9999px;
-    background: radial-gradient(
-      circle at 50% 36%,
-      #ffffff 0%,
-      #f5f6f8 58%,
-      #e7e9ee 100%
-    );
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06),
-      0 0 0 3px rgb(var(--fg) / 0.05), 0 6px 18px -7px rgba(237, 28, 36, 0.5),
-      inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+    /* matches the logo's background so the circle's corner gaps blend
+       seamlessly into the brand red (#ed1c24) */
+    background: #ed1c24;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+      0 0 0 1px rgba(0, 0, 0, 0.4), 0 8px 22px -10px rgba(237, 28, 36, 0.65),
+      0 2px 6px -2px rgba(0, 0, 0, 0.5);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  /* slow conic glow ring behind the disc */
-  .logo-medallion::before {
+  .logo-mark img {
+    /* show the FULL ornament (nothing clipped); the matching red background
+       fills the corners so it still reads as one solid red medallion */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1px;
+  }
+  /* slow conic glow ring behind the medallion */
+  .logo-mark::before {
     content: "";
     position: absolute;
-    inset: -2.5px;
+    inset: -3px;
     z-index: -1;
     border-radius: inherit;
     background: conic-gradient(
       from 0deg,
-      rgba(124, 134, 240, 0),
+      rgba(237, 28, 36, 0),
+      rgba(255, 93, 93, 0.7),
       rgba(124, 134, 240, 0.55),
-      rgba(79, 217, 180, 0.5),
-      rgba(124, 134, 240, 0)
+      rgba(79, 217, 180, 0.45),
+      rgba(237, 28, 36, 0)
     );
-    filter: blur(5px);
-    opacity: 0.75;
-    animation: logo-ring-spin 14s linear infinite;
+    filter: blur(6px);
+    opacity: 0.7;
+    animation: logo-ring-spin 16s linear infinite;
+    transition: opacity 0.45s ease;
   }
-  .logo-medallion img {
+  /* soft ambient halo that breathes */
+  .logo-mark::after {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    z-index: -2;
     border-radius: inherit;
+    background: radial-gradient(
+      circle,
+      rgba(237, 28, 36, 0.35) 0%,
+      rgba(237, 28, 36, 0) 68%
+    );
+    opacity: 0.55;
+    animation: logo-halo-pulse 4.5s ease-in-out infinite;
+  }
+  /* hover: lift + brighten the ring, driven from the lockup wrapper */
+  .logo-lockup:hover .logo-mark {
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+      0 0 0 1px rgba(0, 0, 0, 0.4), 0 12px 30px -10px rgba(237, 28, 36, 0.85),
+      0 3px 8px -2px rgba(0, 0, 0, 0.55);
+  }
+  .logo-lockup:hover .logo-mark::before {
+    opacity: 1;
   }
   @media (prefers-reduced-motion: reduce) {
-    .logo-medallion::before {
+    .logo-mark,
+    .logo-lockup:hover .logo-mark {
+      transition: none;
+    }
+    .logo-mark::before,
+    .logo-mark::after {
       animation: none;
     }
+  }
+}
+
+@keyframes logo-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.06);
   }
 }
 

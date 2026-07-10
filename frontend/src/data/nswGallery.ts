@@ -23,8 +23,8 @@ const img = (slug: string) => ({
 
 export const nswGallery: NSWPhoto[] = [
   { ...img("workshop-tool-bench"), caption: "Atlas Copco tool bench with Power Focus controllers" },
-  { ...img("team-group"), caption: "The Neo Automation & Atlas Copco team at the NSW inauguration" },
-  { ...img("welcome-banner"), caption: "Welcome to our Nuclear Service Workshop" },
+  { ...img("team-group"), caption: "The Neo Automation & Atlas Copco team at the Service Workshop inauguration" },
+  { ...img("welcome-banner"), caption: "Welcome to our Service Workshop" },
   { ...img("workshop-storage"), caption: "Organised parts & spares storage inside the workshop" },
   { ...img("ribbon-cutting"), caption: "Ribbon-cutting ceremony at the workshop entrance" },
   { ...img("workshop-alture"), caption: "ALTURE data-driven service station" },
@@ -33,8 +33,12 @@ export const nswGallery: NSWPhoto[] = [
   { ...img("store-walkthrough"), caption: "Walkthrough of the genuine-spares store" },
   { ...img("team-celebrate"), caption: "The full team celebrating the new workshop" },
   { ...img("entrance-storefront"), caption: "Neo Automation storefront", portrait: true },
-  { ...img("entrance-arch"), caption: "Nuclear Service Workshop entrance", portrait: true },
+  { ...img("entrance-arch"), caption: "Service Workshop entrance", portrait: true },
 ];
 
 /** Wide 21:9 hero crop of the workshop tool bench. */
 export const nswHero = asset("images/nsw/hero-wide.jpg");
+
+/** Whole-team cover photo — the full Neo Automation & Atlas Copco team at
+ *  the Service Workshop inauguration. Used as the Service page hero. */
+export const nswTeamCover = asset("images/nsw/team-group.jpg");

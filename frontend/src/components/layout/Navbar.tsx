@@ -6,6 +6,7 @@ import { Logo } from "@/components/Logo";
 import { navItems } from "@/data/site";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { NavSearch } from "@/components/layout/NavSearch";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -88,6 +89,7 @@ export function Navbar() {
             </nav>
 
             <div className="flex items-center gap-2">
+              <NavSearch />
               <ThemeToggle />
               <Magnetic className="hidden lg:block">
                 <Link to="/inquiry" className="btn-primary text-[13px]">

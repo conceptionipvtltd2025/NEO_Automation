@@ -20,7 +20,7 @@ import { Modal } from "@/components/ui/Modal";
 import { InquiryForm } from "@/components/InquiryForm";
 import { Counter } from "@/components/ui/Counter";
 import { NSWGallery } from "@/components/NSWGallery";
-import { nswHero } from "@/data/nswGallery";
+import { nswHero, nswTeamCover } from "@/data/nswGallery";
 
 const serviced = [
   {
@@ -71,27 +71,27 @@ export default function NSW() {
     <>
       <PageHeader
         eyebrow="Neo Service Workshop"
-        title="Nuclear Service Workshop (NSW)"
+        title="Service"
         subtitle="An all tools & tackles equipped service workshop for servicing all types of Pneumatic, Battery and Electric nut runners — keeping your tightening tools precise, certified and production-ready."
-        crumbs={[{ label: "NSW" }]}
+        crumbs={[{ label: "Service" }]}
         media={<NSWHeaderArt />}
       />
 
       {/* Hero band */}
       <section className="container-px pb-16">
         <Reveal>
-          <div className="force-dark relative aspect-[16/9] overflow-hidden rounded-3xl border border-white/10 shadow-card sm:aspect-[21/9]">
+          <div className="force-dark relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 shadow-card sm:aspect-[3/2]">
             <img
-              src={nswHero}
-              alt="Neo Automation Nuclear Service Workshop — Atlas Copco tool bench"
-              className="h-full w-full object-cover"
+              src={nswTeamCover}
+              alt="The Neo Automation & Atlas Copco team at the Service Workshop inauguration"
+              className="h-full w-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-ink-950/50" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent,rgba(5,5,7,0.7))]" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent" />
             <div className="absolute bottom-6 left-6">
               <p className="font-display text-lg font-semibold text-pure">
-                Tools & tackles equipped service workshop
+                Our team at the Neo Service Workshop
               </p>
               <p className="text-sm text-pure/70">
                 Pneumatic · Battery · Electric nut runners
@@ -154,8 +154,8 @@ export default function NSW() {
         <SectionHeading
           align="center"
           eyebrow="Inside the Workshop"
-          title="Our Nuclear Service Workshop"
-          subtitle="A look inside our tools & tackles equipped NSW facility and its inauguration with Atlas Copco Industrial Technique."
+          title="Our Service Workshop"
+          subtitle="A look inside our tools & tackles equipped service facility and its inauguration with Atlas Copco Industrial Technique."
         />
         <div className="mt-14">
           <NSWGallery />
@@ -168,7 +168,7 @@ export default function NSW() {
           <Reveal>
             <div>
               <SectionHeading
-                eyebrow="The NSW Promise"
+                eyebrow="The Service Promise"
                 title="A workshop built around your uptime"
                 subtitle="Bring us any nut runner and our engineers restore it to factory accuracy — documented and certified."
               />
@@ -193,7 +193,7 @@ export default function NSW() {
           <Reveal delay={0.15}>
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-ink-900 p-8">
               <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-neo-600/10 blur-3xl" />
-              <span className="eyebrow">Inquiry Now</span>
+              <span className="eyebrow">Enquire Now</span>
               <h3 className="mt-5 font-display text-2xl font-bold text-white">
                 Book a tool service
               </h3>
@@ -203,7 +203,7 @@ export default function NSW() {
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <button onClick={() => setInquiryOpen(true)} className="btn-primary">
-                  <MessageSquareQuote className="h-4 w-4" /> Inquiry Now
+                  <MessageSquareQuote className="h-4 w-4" /> Enquire Now
                 </button>
                 <Link to="/contact" className="btn-ghost">
                   Contact the workshop <ArrowUpRight className="h-4 w-4" />
@@ -217,10 +217,10 @@ export default function NSW() {
       <Modal
         open={inquiryOpen}
         onClose={() => setInquiryOpen(false)}
-        title="NSW Service Request"
+        title="Service Request"
         maxWidth="max-w-xl"
       >
-        <InquiryForm productName="NSW · Nut Runner Service & Calibration" compact />
+        <InquiryForm productName="Service · Nut Runner Service & Calibration" compact />
       </Modal>
     </>
   );

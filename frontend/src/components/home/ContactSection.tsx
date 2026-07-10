@@ -50,7 +50,7 @@ export function ContactSection() {
           <Reveal delay={0.1}>
             <div className="gradient-border p-6 sm:p-8">
               <h3 className="font-display text-lg font-semibold text-white">
-                Send us an inquiry
+                Send us an enquiry
               </h3>
               <p className="mt-1 text-sm text-steel-400">
                 Fill in the form and our team will respond within one business day.

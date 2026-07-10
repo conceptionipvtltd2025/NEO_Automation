@@ -1,5 +1,6 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 type RevealProps = {
   children: ReactNode;
@@ -122,6 +123,7 @@ export function WordsReveal({
     <span className={className}>
       {words.map((w, i) => {
         const accent = highlightWords > 0 && i >= firstAccent;
+        const last = i === words.length - 1;
         return (
           // No `overflow-hidden` clip on the wrapper and the word stays fully
           // opaque — only `y` animates. So even if the scroll-into-view trigger
@@ -129,7 +131,15 @@ export function WordsReveal({
           // past the trigger margin, etc.) the word still renders visibly (at
           // most slightly low) instead of being clipped out of sight — the title
           // can never collapse to a blank gap.
-          <span key={i} className="inline-block align-bottom">
+          //
+          // Space between words uses a real right-margin (`me-[0.28em]`) rather
+          // than a whitespace text node or trailing `&nbsp;` — those collapse to
+          // zero width between inline-block boxes, which made the words run
+          // together ("Aproven path…"). A margin can never collapse.
+          <span
+            key={i}
+            className={cn("inline-block align-bottom", !last && "me-[0.28em]")}
+          >
             <motion.span
               className={accent ? "inline-block text-shimmer-anim" : "inline-block"}
               initial={{ y: "30%" }}
@@ -141,7 +151,7 @@ export function WordsReveal({
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              {w}&nbsp;
+              {w}
             </motion.span>
           </span>
         );

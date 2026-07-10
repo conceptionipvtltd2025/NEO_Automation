@@ -157,9 +157,21 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 py-7 sm:flex-row">
-          <p className="text-xs text-steel-500">
-            © {new Date().getFullYear()} {site.legalName}. All rights reserved.
-          </p>
+          <div className="text-center text-xs text-steel-500 sm:text-left">
+            <p>
+              © {new Date().getFullYear()} {site.legalName}. All rights reserved.
+              <span className="mx-2 text-steel-600">·</span>
+              Designed &amp; developed by{" "}
+              <a
+                href="https://www.conceptioni.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-steel-400 transition hover:text-white"
+              >
+                Conception I Pvt Ltd
+              </a>
+            </p>
+          </div>
           <div className="flex items-center gap-6 text-xs text-steel-500">
             <Link to="/terms" className="transition hover:text-white">
               Terms &amp; Conditions

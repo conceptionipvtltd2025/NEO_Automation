@@ -31,7 +31,7 @@ export default function Dashboard() {
     { label: "Products", value: products.length, icon: Package, to: `${ADMIN_BASE}/products`, color: "text-neo-400 bg-neo-600/15" },
     { label: "Categories", value: categories.length, icon: Tags, to: `${ADMIN_BASE}/categories`, color: "text-volt-400 bg-volt-500/15" },
     { label: "Industries", value: industries.length, icon: Factory, to: `${ADMIN_BASE}/industries`, color: "text-amber-400 bg-amber-500/15" },
-    { label: "Inquiries", value: inquiries.length, icon: Inbox, to: `${ADMIN_BASE}/inquiries`, color: "text-emerald-400 bg-emerald-500/15", badge: newCount },
+    { label: "Enquiries", value: inquiries.length, icon: Inbox, to: `${ADMIN_BASE}/inquiries`, color: "text-emerald-400 bg-emerald-500/15", badge: newCount },
   ];
 
   return (
@@ -82,7 +82,7 @@ export default function Dashboard() {
         <div className="rounded-2xl border border-white/10 bg-ink-900 p-6">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-semibold text-white">
-              Recent inquiries
+              Recent enquiries
             </h2>
             <Link to={`${ADMIN_BASE}/inquiries`} className="text-sm text-neo-400 hover:text-neo-300">
               View all →
@@ -100,7 +100,7 @@ export default function Dashboard() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-white">{inq.name}</p>
                   <p className="truncate text-xs text-steel-400">
-                    {inq.productName ?? "General inquiry"}
+                    {inq.productName ?? "General enquiry"}
                   </p>
                 </div>
                 <span
@@ -114,7 +114,7 @@ export default function Dashboard() {
               </div>
             ))}
             {inquiries.length === 0 && (
-              <p className="py-8 text-center text-sm text-steel-500">No inquiries yet.</p>
+              <p className="py-8 text-center text-sm text-steel-500">No enquiries yet.</p>
             )}
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function Dashboard() {
             <p className="mt-4 font-display text-3xl font-bold text-white">
               {Math.round((inquiries.filter((i) => i.status === "responded" || i.status === "closed").length / Math.max(inquiries.length, 1)) * 100)}%
             </p>
-            <p className="mt-1 text-sm text-steel-300">Inquiries handled</p>
+            <p className="mt-1 text-sm text-steel-300">Enquiries handled</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-ink-900 p-6">
             <Clock className="h-7 w-7 text-volt-400" />

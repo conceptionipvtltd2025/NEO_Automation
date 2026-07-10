@@ -57,7 +57,7 @@ export default function AdminLogin() {
               Admin Panel
             </h1>
             <p className="mt-1.5 text-sm text-steel-400">
-              Sign in to manage your catalogue & inquiries
+              Sign in to manage your catalogue & enquiries
             </p>
           </div>
 

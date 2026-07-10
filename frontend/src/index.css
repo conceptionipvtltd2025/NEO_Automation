@@ -491,84 +491,73 @@
   }
 
   /* ── Logo mark ──────────────────────────────────────────────────────
-     The NEO brand mark is a round white ornament on brand red (#ed1c24).
-     We frame it as a circular medallion (its own red fills edge-to-edge)
-     inside a soft ring, ride a slow-spinning glow behind it, and lift
-     gently on hover so the whole lockup reads premium. */
+     The NEO brand mark is the client's logo as-is: black ornament + red
+     "NEO" circle on white. To sit it in the premium dark UI without looking
+     like a harsh white sticker, we frame it on a soft IVORY disc with a thin
+     brand-red ring and a diffuse red glow — so it reads as an intentional,
+     high-end medallion that belongs to the dark theme. */
   .logo-mark {
     position: relative;
     display: grid;
     place-items: center;
     overflow: hidden;
     border-radius: 9999px;
-    /* matches the logo's background so the circle's corner gaps blend
-       seamlessly into the brand red (#ed1c24) */
-    background: #ed1c24;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14),
-      0 0 0 1px rgba(0, 0, 0, 0.4), 0 8px 22px -10px rgba(237, 28, 36, 0.65),
-      0 2px 6px -2px rgba(0, 0, 0, 0.5);
+    /* soft ivory disc — a hair off pure white so it's warm, not glaring */
+    background: radial-gradient(
+      circle at 50% 34%,
+      #ffffff 0%,
+      #fbfbfa 62%,
+      #f1f0ee 100%
+    );
+    box-shadow:
+      /* thin brand-red ring ties it to the site palette */
+      0 0 0 1.5px rgba(237, 28, 36, 0.55),
+      /* subtle dark separation from the disc edge */ 0 0 0 3px rgba(10, 10, 12, 0.55),
+      /* soft red glow so it feels lit, not pasted-on */ 0 6px 20px -8px rgba(237, 28, 36, 0.55),
+      0 2px 8px -3px rgba(0, 0, 0, 0.55),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .logo-mark img {
-    /* show the FULL ornament (nothing clipped); the matching red background
-       fills the corners so it still reads as one solid red medallion */
-    width: 100%;
-    height: 100%;
+    position: relative;
+    z-index: 1;
+    /* logo.png is a tight-cropped square of the ornament. Scale it up a touch
+       so the ornament fills the disc edge-to-edge (the diamond points reach
+       the rim) — big, balanced, and perfectly fitted. */
+    width: 116%;
+    height: 116%;
     object-fit: contain;
-    padding: 1px;
   }
-  /* slow conic glow ring behind the medallion */
-  .logo-mark::before {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    z-index: -1;
-    border-radius: inherit;
-    background: conic-gradient(
-      from 0deg,
-      rgba(237, 28, 36, 0),
-      rgba(255, 93, 93, 0.7),
-      rgba(124, 134, 240, 0.55),
-      rgba(79, 217, 180, 0.45),
-      rgba(237, 28, 36, 0)
-    );
-    filter: blur(6px);
-    opacity: 0.7;
-    animation: logo-ring-spin 16s linear infinite;
-    transition: opacity 0.45s ease;
-  }
-  /* soft ambient halo that breathes */
+  /* diffuse red glow that breathes behind the disc — anchors it to the
+     brand's red accents (buttons, links) so it feels part of the design */
   .logo-mark::after {
     content: "";
     position: absolute;
     inset: -30%;
-    z-index: -2;
-    border-radius: inherit;
+    z-index: -1;
+    border-radius: 9999px;
     background: radial-gradient(
       circle,
-      rgba(237, 28, 36, 0.35) 0%,
-      rgba(237, 28, 36, 0) 68%
+      rgba(237, 28, 36, 0.42) 0%,
+      rgba(237, 28, 36, 0) 64%
     );
     opacity: 0.55;
     animation: logo-halo-pulse 4.5s ease-in-out infinite;
   }
-  /* hover: lift + brighten the ring, driven from the lockup wrapper */
+  /* hover: gentle lift + brighter red ring/glow */
   .logo-lockup:hover .logo-mark {
-    transform: translateY(-1px) scale(1.04);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2),
-      0 0 0 1px rgba(0, 0, 0, 0.4), 0 12px 30px -10px rgba(237, 28, 36, 0.85),
-      0 3px 8px -2px rgba(0, 0, 0, 0.55);
-  }
-  .logo-lockup:hover .logo-mark::before {
-    opacity: 1;
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 0 0 1.5px rgba(237, 28, 36, 0.9),
+      0 0 0 3px rgba(10, 10, 12, 0.55),
+      0 10px 28px -8px rgba(237, 28, 36, 0.7),
+      0 2px 8px -3px rgba(0, 0, 0, 0.55),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
   }
   @media (prefers-reduced-motion: reduce) {
-    .logo-mark,
-    .logo-lockup:hover .logo-mark {
+    .logo-mark {
       transition: none;
     }
-    .logo-mark::before,
     .logo-mark::after {
       animation: none;
     }

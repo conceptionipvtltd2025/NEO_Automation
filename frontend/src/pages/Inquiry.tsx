@@ -23,7 +23,7 @@ export default function Inquiry() {
         eyebrow="Get a Quote"
         title="Tell us what you need"
         subtitle="Share your requirement and our team will get back with pricing, availability and recommendations."
-        crumbs={[{ label: "Inquiry" }]}
+        crumbs={[{ label: "Enquiry" }]}
         media={<InquiryHeaderArt />}
       />
 

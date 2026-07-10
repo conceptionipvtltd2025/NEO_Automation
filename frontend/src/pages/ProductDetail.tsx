@@ -125,7 +125,7 @@ export default function ProductDetail() {
                   onClick={() => setInquiryOpen(true)}
                   className="btn-primary"
                 >
-                  <MessageSquareQuote className="h-4 w-4" /> Inquiry Now
+                  <MessageSquareQuote className="h-4 w-4" /> Enquire Now
                 </button>
                 <Link to="/contact" className="btn-ghost">
                   Talk to expert
@@ -251,7 +251,7 @@ export default function ProductDetail() {
       <Modal
         open={inquiryOpen}
         onClose={() => setInquiryOpen(false)}
-        title="Product Inquiry"
+        title="Product Enquiry"
         maxWidth="max-w-xl"
       >
         <InquiryForm

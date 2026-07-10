@@ -26,7 +26,7 @@ const links = [
   { to: `${ADMIN_BASE}/products`, label: "Products", icon: Package },
   { to: `${ADMIN_BASE}/categories`, label: "Categories", icon: Tags },
   { to: `${ADMIN_BASE}/industries`, label: "Industries", icon: Factory },
-  { to: `${ADMIN_BASE}/inquiries`, label: "Inquiries", icon: Inbox },
+  { to: `${ADMIN_BASE}/inquiries`, label: "Enquiries", icon: Inbox },
 ];
 
 export function AdminLayout() {
@@ -87,7 +87,7 @@ export function AdminLayout() {
                 )}
                 <l.icon className="h-5 w-5" />
                 {l.label}
-                {l.label === "Inquiries" && newCount > 0 && (
+                {l.label === "Enquiries" && newCount > 0 && (
                   <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-neo-600 px-1.5 text-[11px] font-bold text-pure">
                     {newCount}
                   </span>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Linkedin, Instagram, Facebook } from "lucide-react";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { Counter } from "@/components/ui/Counter";
 import { GridBackground } from "@/components/ui/Backgrounds";
@@ -15,6 +15,26 @@ import { asset } from "@/lib/asset";
 // asset() prefixes the deploy base so these resolve under /neo-website/ on the server.
 const HERO_VIDEO_SRC = asset("video/hero-banner.mp4?v=4");
 const HERO_POSTER = asset("video/hero-poster.jpg?v=4"); // the clip's exact first frame (seamless hand-off)
+
+// X (Twitter) has no non-deprecated lucide glyph, so we inline the mark — same
+// approach as the footer so the hero social row matches the rest of the site.
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  );
+}
+
+// Same links/order as the footer (site.social) so the two stay in sync.
+// `color` is the brand hover-fill; `fg` is the icon colour on that fill so it
+// always stays legible (X fills black, everything else fills its bright brand hue).
+const socials = [
+  { icon: Linkedin, href: site.social.linkedin, label: "LinkedIn", color: "#0a66c2", fg: "#ffffff" },
+  { icon: Facebook, href: site.social.facebook, label: "Facebook", color: "#1877f2", fg: "#ffffff" },
+  { icon: Instagram, href: site.social.instagram, label: "Instagram", color: "#e1306c", fg: "#ffffff" },
+  { icon: XIcon, href: site.social.twitter, label: "X", color: "#000000", fg: "#ffffff" },
+];
 
 
 export function Hero() {
@@ -157,6 +177,74 @@ export function Hero() {
                 </div>
               </div>
             ))}
+          </motion.div>
+
+          {/* Social links — mirrors the footer's set (site.social). Each tile
+              carries a soft brand tint at rest and fills with its brand colour on
+              hover, with a glow + shine sweep for an eye-catching finish. */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 1 }}
+            className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-4"
+          >
+            <span className="flex items-center gap-3">
+              <span className="bg-gradient-to-r from-white to-steel-400 bg-clip-text text-[11px] font-semibold uppercase tracking-[0.3em] text-transparent">
+                Follow us
+              </span>
+              <span className="h-px w-10 bg-gradient-to-r from-neo-500 to-transparent" />
+            </span>
+            <div className="flex items-center gap-3">
+              {socials.map((s, i) => (
+                <motion.a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={s.label}
+                  initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 380,
+                    damping: 18,
+                    delay: 1.05 + i * 0.09,
+                  }}
+                  whileHover={{ y: -5, scale: 1.06 }}
+                  whileTap={{ scale: 0.92 }}
+                  style={{ "--brand": s.color, "--fg": s.fg } as React.CSSProperties}
+                  className="group relative grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-md transition-[border-color,box-shadow] duration-300 hover:border-[color:var(--brand)] hover:shadow-[0_14px_34px_-10px_var(--brand),inset_0_1px_0_rgba(255,255,255,0.25)]"
+                >
+                  {/* resting brand tint — subtle so the row reads coloured, not gray */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 opacity-60 transition-opacity duration-300 group-hover:opacity-0"
+                    style={{
+                      background:
+                        "radial-gradient(circle at 50% 120%, color-mix(in srgb, var(--brand) 30%, transparent), transparent 75%)",
+                    }}
+                  />
+                  {/* full brand fill that rises in on hover */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 translate-y-full transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0"
+                    style={{
+                      background:
+                        "linear-gradient(160deg, color-mix(in srgb, var(--brand) 92%, white) 0%, var(--brand) 100%)",
+                    }}
+                  />
+                  {/* diagonal shine sweep */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 -translate-x-full -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-full"
+                  />
+                  <s.icon
+                    className="relative h-[18px] w-[18px] drop-shadow-sm transition-transform duration-300 group-hover:scale-110"
+                    style={{ color: "var(--fg)" }}
+                  />
+                </motion.a>
+              ))}
+            </div>
           </motion.div>
         </div>
 

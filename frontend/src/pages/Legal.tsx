@@ -9,7 +9,7 @@ const content = {
     sections: [
       { h: "1. Acceptance of Terms", p: "By accessing and using the Neo Automation website, you accept and agree to be bound by these Terms & Conditions. If you do not agree, please discontinue use of the site." },
       { h: "2. Products & Quotations", p: "All products are supplied as authorised distribution. Pricing is not published on this website and is provided only on request. Final pricing, applicable taxes and availability are confirmed at the time of quotation." },
-      { h: "3. Inquiries & Quotations", p: "Submitting an inquiry does not constitute a binding order. Quotations are valid for the period stated and subject to stock availability and confirmation." },
+      { h: "3. Enquiries & Quotations", p: "Submitting an enquiry does not constitute a binding order. Quotations are valid for the period stated and subject to stock availability and confirmation." },
       { h: "4. Intellectual Property", p: "All brand names, logos and trademarks remain the property of their respective owners. Content on this site may not be reproduced without written consent." },
       { h: "5. Limitation of Liability", p: "Neo Automation shall not be liable for any indirect or consequential loss arising from the use of this website or the products listed herein." },
       { h: "6. Governing Law", p: "These terms are governed by the laws of India, with jurisdiction in the courts of Ahmedabad, Gujarat." },
@@ -19,8 +19,8 @@ const content = {
     title: "Privacy Policy",
     eyebrow: "Legal",
     sections: [
-      { h: "1. Information We Collect", p: "We collect information you provide through inquiry forms, including name, email, phone, address and message content, solely to respond to your request." },
-      { h: "2. How We Use Information", p: "Your information is used to process inquiries, provide quotations, and communicate about products and services. We do not sell your data to third parties." },
+      { h: "1. Information We Collect", p: "We collect information you provide through enquiry forms, including name, email, phone, address and message content, solely to respond to your request." },
+      { h: "2. How We Use Information", p: "Your information is used to process enquiries, provide quotations, and communicate about products and services. We do not sell your data to third parties." },
       { h: "3. Data Security", p: "We implement industry-standard measures including encryption and access controls to protect your personal information." },
       { h: "4. Cookies", p: "This site may use cookies to improve your browsing experience and analyse traffic. You can control cookies through your browser settings." },
       { h: "5. Your Rights", p: "You may request access to, correction of, or deletion of your personal data at any time by contacting us." },

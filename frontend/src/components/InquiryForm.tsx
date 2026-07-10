@@ -128,7 +128,7 @@ export function InquiryForm({
               <Check className="h-8 w-8" />
             </motion.span>
             <h3 className="mt-5 font-display text-xl font-bold text-white">
-              Inquiry received!
+              Enquiry received!
             </h3>
             <p className="mt-2 max-w-sm text-sm text-steel-300">
               Thank you, {values.name.split(" ")[0] || "there"}. Our team will
@@ -157,7 +157,7 @@ export function InquiryForm({
           >
             {productName && (
               <div className="rounded-xl border border-neo-600/30 bg-neo-600/[0.08] px-4 py-3 text-sm">
-                <span className="text-steel-400">Inquiry for: </span>
+                <span className="text-steel-400">Enquiry for: </span>
                 <span className="font-semibold text-white">{productName}</span>
               </div>
             )}
@@ -265,7 +265,7 @@ export function InquiryForm({
                 </>
               ) : (
                 <>
-                  Submit Inquiry <Send className="h-4 w-4" />
+                  Submit Enquiry <Send className="h-4 w-4" />
                 </>
               )}
             </button>

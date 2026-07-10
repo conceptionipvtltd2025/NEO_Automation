@@ -27,7 +27,7 @@ export default function Products() {
   const categories = useCatalog((s) => s.categories);
   const industries = useCatalog((s) => s.industries);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(params.get("q") ?? "");
   const [brand, setBrand] = useState(params.get("brand") ?? "all");
   const [category, setCategory] = useState(params.get("category") ?? "all");
   const [industry, setIndustry] = useState(params.get("industry") ?? "all");

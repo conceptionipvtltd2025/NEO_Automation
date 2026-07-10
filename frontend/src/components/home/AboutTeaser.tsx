@@ -15,7 +15,7 @@ export function AboutTeaser() {
             <div className="force-dark relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
               <img
                 src={asset("images/nsw/team-group.jpg")}
-                alt="The Neo Automation team with Atlas Copco leadership at the Nuclear Service Workshop"
+                alt="The Neo Automation team with Atlas Copco leadership at the Service Workshop"
                 className="aspect-[3/2] w-full object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 to-transparent" />

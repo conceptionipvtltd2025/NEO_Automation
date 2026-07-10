@@ -34,7 +34,7 @@ export function NSWSection() {
           <div className="absolute inset-0">
             <img
               src={nswHero}
-              alt="Neo Automation Nuclear Service Workshop"
+              alt="Neo Automation Service Workshop"
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/90 to-ink-950/50" />
@@ -44,7 +44,7 @@ export function NSWSection() {
           <div className="relative grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.1fr_0.9fr] lg:p-16">
             <div>
               <Reveal>
-                <span className="eyebrow">Neo Service Workshop · NSW</span>
+                <span className="eyebrow">Neo Service Workshop</span>
               </Reveal>
               <Reveal delay={0.1}>
                 <h2 className="mt-6 font-display text-[clamp(2rem,4.5vw,3.4rem)] font-bold leading-[1.04] text-pure">
@@ -63,7 +63,7 @@ export function NSWSection() {
               <Reveal delay={0.26}>
                 <div className="mt-8 flex flex-wrap items-center gap-3">
                   <Link to="/nsw" className="btn-primary">
-                    Explore NSW <ArrowUpRight className="h-4 w-4" />
+                    Explore Service <ArrowUpRight className="h-4 w-4" />
                   </Link>
                   <Link to="/contact" className="btn-ghost">
                     Book a service

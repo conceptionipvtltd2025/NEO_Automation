@@ -61,7 +61,7 @@ export default function About() {
             <div className="force-dark relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
               <img
                 src={asset("images/nsw/team-leadership.jpg")}
-                alt="The Neo Automation team at the Nuclear Service Workshop inauguration"
+                alt="The Neo Automation team at the Service Workshop inauguration"
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 to-transparent" />

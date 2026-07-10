@@ -43,7 +43,7 @@ const gmailCompose = (to: string, subject: string) =>
     to
   )}&su=${encodeURIComponent(subject)}`;
 
-const REPLY_SUBJECT = "Re: Your inquiry to Neo Automation";
+const REPLY_SUBJECT = "Re: Your enquiry to Neo Automation";
 
 export default function AdminInquiries() {
   const { inquiries, setStatus, remove } = useInquiries();
@@ -84,7 +84,7 @@ export default function AdminInquiries() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `neo-inquiries-${Date.now()}.csv`;
+    a.download = `neo-enquiries-${Date.now()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -97,8 +97,8 @@ export default function AdminInquiries() {
   return (
     <div className="space-y-6">
       <AdminToolbar
-        title="Inquiries"
-        subtitle="View, respond to and manage customer inquiries."
+        title="Enquiries"
+        subtitle="View, respond to and manage customer enquiries."
         search={search}
         setSearch={setSearch}
       >
@@ -192,7 +192,7 @@ export default function AdminInquiries() {
         ))}
         {filtered.length === 0 && (
           <div className="rounded-2xl border border-white/10 bg-ink-900 py-16 text-center text-steel-500">
-            No inquiries found.
+            No enquiries found.
           </div>
         )}
       </div>
@@ -203,7 +203,7 @@ export default function AdminInquiries() {
       <Modal
         open={!!viewing}
         onClose={() => setViewing(null)}
-        title="Inquiry details"
+        title="Enquiry details"
         maxWidth="max-w-lg"
       >
         {viewing && (
@@ -298,8 +298,8 @@ export default function AdminInquiries() {
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={() => deleteId && remove(deleteId)}
-        title="Delete inquiry?"
-        message="This inquiry will be permanently removed."
+        title="Delete enquiry?"
+        message="This enquiry will be permanently removed."
       />
     </div>
   );

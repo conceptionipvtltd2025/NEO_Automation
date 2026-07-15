@@ -1,30 +1,16 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { safeImg, onImgError } from "@/lib/image";
-import {
-  Car,
-  Plane,
-  Server,
-  Factory,
-  CircuitBoard,
-  Zap,
-  ArrowUpRight,
-  Plus,
-  type LucideIcon,
-} from "lucide-react";
-import { industries } from "@/data/industries";
+import { safeImg, imgSrcSet, onImgError } from "@/lib/image";
+import { ArrowUpRight, Plus } from "lucide-react";
+import { industryIcon } from "@/lib/industryIcons";
+import { useCatalog } from "@/store/useCatalog";
 import { SectionHeading } from "@/components/SectionHeading";
 import { cn } from "@/lib/utils";
 
-const iconMap: Record<string, LucideIcon> = {
-  Car,
-  Plane,
-  Server,
-  Factory,
-  CircuitBoard,
-  Zap,
-};
+// The accordion is a teaser, not the full catalogue — past this the column grows
+// taller than the visual beside it. /industries carries the complete grid.
+const MAX_SHOWN = 6;
 
 // Left → right entrance: the selector rows cascade in from the left while the
 // visual panel slides in from the right. Re-fires on every scroll (once:false).
@@ -43,11 +29,25 @@ const listItem: Variants = {
 };
 
 export function IndustriesShowcase() {
+  const allIndustries = useCatalog((s) => s.industries);
   const [active, setActive] = useState(0);
-  const current = industries[active];
+
+  // Mirror the /industries page: hide what the admin disabled, newest first.
+  const industries = useMemo(
+    () =>
+      allIndustries
+        .filter((i) => i.visible !== false)
+        .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
+        .slice(0, MAX_SHOWN),
+    [allIndustries]
+  );
+
+  // The list is admin-driven, so it can shrink under a stale `active` index.
+  const current = industries[active] ?? industries[0];
+  if (!current) return null;
 
   return (
-    <section className="relative py-16">
+    <section id="industries" className="relative py-16">
       <div className="container-px">
         <SectionHeading
           eyebrow="Industries We Power"
@@ -70,8 +70,8 @@ export function IndustriesShowcase() {
             viewport={{ once: false, margin: "-80px" }}
           >
             {industries.map((ind, i) => {
-              const Icon = iconMap[ind.icon] ?? Factory;
-              const isActive = i === active;
+              const Icon = industryIcon(ind.icon);
+              const isActive = ind.id === current.id;
               return (
                 <motion.button
                   key={ind.id}
@@ -171,8 +171,11 @@ export function IndustriesShowcase() {
               >
                 <img
                   src={safeImg(current.image)}
+                  srcSet={imgSrcSet(current.image, [720, 1080, 1440])}
+                  sizes="(min-width: 1024px) 55vw, 100vw"
                   onError={onImgError}
-                  alt={current.name}
+                  alt={`${current.name} — ${current.short}`}
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent" />

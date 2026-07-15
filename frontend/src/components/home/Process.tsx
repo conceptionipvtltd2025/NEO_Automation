@@ -46,7 +46,7 @@ const steps: Step[] = [
 
 export function Process() {
   return (
-    <section className="relative overflow-hidden py-16">
+    <section id="process" className="relative overflow-hidden py-16">
       <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-40" />
       <div className="container-px relative">
         <SectionHeading

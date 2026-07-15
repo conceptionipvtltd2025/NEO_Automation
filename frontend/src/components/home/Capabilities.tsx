@@ -52,7 +52,7 @@ const capabilities: Capability[] = [
 
 export function Capabilities() {
   return (
-    <section className="container-px py-16">
+    <section id="capabilities" className="container-px py-16">
       <SectionHeading
         eyebrow="What We Do"
         title="End-to-end engineering, not just a supplier"

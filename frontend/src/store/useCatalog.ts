@@ -164,6 +164,17 @@ export const useCatalog = create<CatalogState>()(
           industries: seedIndustries,
         }),
     }),
-    { name: "neo-catalog", version: 3 }
+    {
+      name: "neo-catalog",
+      version: 4,
+      // v4 expanded the industry seed. A visitor's persisted v3 catalogue would
+      // otherwise mask the new rows forever, so drop the cache and fall back to
+      // the seed — `load()` re-fetches server truth on the next boot anyway.
+      migrate: () => ({
+        products: seedProducts,
+        categories: seedCategories,
+        industries: seedIndustries,
+      }),
+    }
   )
 );

@@ -24,31 +24,37 @@ import { nswHero, nswTeamCover } from "@/data/nswGallery";
 
 const serviced = [
   {
+    id: "pneumatic-nut-runners",
     icon: Wind,
     title: "Pneumatic Nut Runners",
     text: "Complete overhaul, seal kits and air-motor servicing for every make of pneumatic tightening tool.",
   },
   {
+    id: "battery-nut-runners",
     icon: BatteryCharging,
     title: "Battery Nut Runners",
     text: "Cordless tool repair, battery health checks and electronics diagnostics to restore full performance.",
   },
   {
+    id: "electric-nut-runners",
     icon: Plug,
     title: "Electric Nut Runners",
     text: "Transducerised and DC electric tool service, motor rewinding and controller fault-finding.",
   },
   {
+    id: "torque-calibration",
     icon: Gauge,
     title: "Torque Calibration",
     text: "Calibration and certification against ISO 6789 with documented, audit-ready torque reports.",
   },
   {
+    id: "repair-spares",
     icon: Wrench,
     title: "Repair & Genuine Spares",
     text: "Fully equipped with all tools & tackles and a stock of genuine spares for fast turnaround.",
   },
   {
+    id: "preventive-maintenance",
     icon: ShieldCheck,
     title: "Preventive Maintenance",
     text: "Scheduled maintenance contracts that maximise tool life and keep your line running.",
@@ -120,7 +126,7 @@ export default function NSW() {
       </section>
 
       {/* What we service */}
-      <section className="container-px py-12">
+      <section id="what-we-service" className="container-px py-12">
         <SectionHeading
           align="center"
           eyebrow="What We Service"
@@ -131,11 +137,12 @@ export default function NSW() {
           {serviced.map((f, i) => (
             <motion.div
               key={f.title}
+              id={f.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
-              className="group rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition hover:border-neo-600/30 hover:bg-white/[0.04]"
+              className="group scroll-mt-28 rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition hover:border-neo-600/30 hover:bg-white/[0.04]"
             >
               <span className="grid h-12 w-12 place-items-center rounded-2xl bg-neo-600/15 text-neo-400 transition group-hover:scale-110">
                 <f.icon className="h-6 w-6" />
@@ -150,7 +157,7 @@ export default function NSW() {
       </section>
 
       {/* Inauguration gallery */}
-      <section className="container-px py-12">
+      <section id="inside-the-workshop" className="container-px py-12">
         <SectionHeading
           align="center"
           eyebrow="Inside the Workshop"
@@ -163,7 +170,7 @@ export default function NSW() {
       </section>
 
       {/* Promises + inquiry */}
-      <section className="container-px py-16">
+      <section id="service-promise" className="container-px py-16">
         <div className="grid gap-10 lg:grid-cols-2">
           <Reveal>
             <div>

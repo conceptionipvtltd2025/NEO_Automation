@@ -44,7 +44,14 @@ export async function seed() {
   }
 
   if ((await tableCount("industries")) === 0) {
-    for (const i of seedIndustries) await upsertIndustry(i);
+    // The public site lists industries newest-first, and upsertIndustry stamps
+    // created_at with Date.now() when it's absent — which would hand each row a
+    // later timestamp than the one before and show seedIndustries reversed.
+    // Stamp descending timestamps so the curated array order is what ships.
+    const base = Date.now();
+    for (const [idx, i] of seedIndustries.entries()) {
+      await upsertIndustry({ ...i, createdAt: base - idx * 1000 });
+    }
     console.log(`  • seeded ${seedIndustries.length} industries`);
   }
 

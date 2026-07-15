@@ -522,28 +522,30 @@
   .logo-mark img {
     position: relative;
     z-index: 1;
-    /* logo.png is a tight-cropped square of the ornament. Scale it up a touch
-       so the ornament fills the disc edge-to-edge (the diamond points reach
-       the rim) — big, balanced, and perfectly fitted. */
-    width: 116%;
-    height: 116%;
+    /* logo.png is a full-bleed white square (opaque bg + black ornament + red
+       NEO circle) whose outer filigree points touch all four edges. CONTAIN it
+       a touch inside the disc so the whole medallion sits within the circular
+       mask with an even mat all around — fully visible, balanced, and never
+       clipped at top/bottom/left/right (the old 116% overflowed the rim). */
+    width: 92%;
+    height: 92%;
     object-fit: contain;
   }
-  /* diffuse red glow that breathes behind the disc — anchors it to the
-     brand's red accents (buttons, links) so it feels part of the design */
+  /* diffuse red glow behind the disc — anchors it to the brand's red accents
+     (buttons, links) so the mark feels part of the design. Kept static and
+     restrained: a soft halo, not a flashing pulse — reads premium, not busy. */
   .logo-mark::after {
     content: "";
     position: absolute;
-    inset: -30%;
+    inset: -24%;
     z-index: -1;
     border-radius: 9999px;
     background: radial-gradient(
       circle,
-      rgba(237, 28, 36, 0.42) 0%,
-      rgba(237, 28, 36, 0) 64%
+      rgba(237, 28, 36, 0.32) 0%,
+      rgba(237, 28, 36, 0) 62%
     );
-    opacity: 0.55;
-    animation: logo-halo-pulse 4.5s ease-in-out infinite;
+    opacity: 0.5;
   }
   /* hover: gentle lift + brighter red ring/glow */
   .logo-lockup:hover .logo-mark {

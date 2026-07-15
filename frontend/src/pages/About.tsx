@@ -55,7 +55,7 @@ export default function About() {
       />
 
       {/* Intro + image */}
-      <section className="container-px pb-8">
+      <section id="story" className="container-px pb-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <Reveal>
             <div className="force-dark relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
@@ -117,7 +117,7 @@ export default function About() {
       </section>
 
       {/* Mission / Vision */}
-      <section className="container-px py-16">
+      <section id="mission-vision" className="container-px py-16">
         <div className="grid gap-6 md:grid-cols-2">
           {[
             { icon: Target, title: "Our Mission", text: "To empower every factory floor in India with precision, traceable and reliable tooling — improving quality, safety and productivity on every line we touch." },
@@ -140,7 +140,7 @@ export default function About() {
       </section>
 
       {/* Timeline */}
-      <section className="container-px py-16">
+      <section id="timeline" className="container-px py-16">
         <SectionHeading
           align="center"
           eyebrow="Our Journey"
@@ -181,7 +181,7 @@ export default function About() {
       </section>
 
       {/* Values */}
-      <section className="container-px py-16">
+      <section id="values" className="container-px py-16">
         <SectionHeading align="center" eyebrow="What Drives Us" title="Our core values" />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {values.map((v, i) => (
@@ -201,7 +201,7 @@ export default function About() {
       </section>
 
       {/* Certifications & standards */}
-      <section className="container-px py-16">
+      <section id="credentials" className="container-px py-16">
         <SectionHeading
           align="center"
           eyebrow="Credentials You Can Trust"

@@ -15,9 +15,9 @@ const empty: Industry = {
   short: "",
   tagline: "",
   description: "",
-  image: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=1200&q=80",
+  image: "https://images.unsplash.com/photo-1717386255773-1e3037c81788?auto=format&fit=crop&w=1600&q=85",
   icon: "Factory",
-  accent: "#ed1c24",
+  accent: "#7c86f0",
   capabilities: [],
   stat: { value: "", label: "" },
 };

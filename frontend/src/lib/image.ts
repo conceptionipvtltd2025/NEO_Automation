@@ -34,6 +34,33 @@ export function safeImg(src?: string | null): string {
   return s;
 }
 
+/**
+ * Build a width-descriptor `srcSet` for Unsplash-hosted images so the browser
+ * can pick a crop that matches the element's real size and pixel density —
+ * that's what keeps a tile sharp on a HiDPI screen instead of upscaled.
+ *
+ * Returns undefined for anything we can't resize (admin data-URL uploads,
+ * self-hosted files), which leaves `<img>` to fall back to plain `src`.
+ */
+export function imgSrcSet(
+  src?: string | null,
+  widths: number[] = [640, 960, 1280, 1920]
+): string | undefined {
+  const s = safeImg(src);
+  if (!s.startsWith("https://images.unsplash.com/")) return undefined;
+  try {
+    return widths
+      .map((w) => {
+        const u = new URL(s);
+        u.searchParams.set("w", String(w));
+        return `${u.toString()} ${w}w`;
+      })
+      .join(", ");
+  } catch {
+    return undefined;
+  }
+}
+
 /** `<img onError>` handler — swap a broken image for the placeholder, once. */
 export function onImgError(e: SyntheticEvent<HTMLImageElement>) {
   const img = e.currentTarget;

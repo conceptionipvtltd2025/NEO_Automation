@@ -24,11 +24,28 @@ On first boot the server will:
 
 1. create the `neo_automation` database (if missing),
 2. create all tables,
-3. seed 9 brands, 6 categories, 6 industries, 12 products, 3 demo inquiries,
+3. seed 9 brands, 6 categories, 12 industries, 12 products, 3 demo inquiries,
    and the admin account.
 
 Re-seeding is safe — each table is only seeded when empty, so your admin edits
 are never overwritten.
+
+### Updating an already-seeded database
+
+Because seeding is skipped once a table has rows, adding new seed content (e.g.
+a new industry) never reaches a database that was seeded earlier — including
+production. Use the backfill for that:
+
+```bash
+npm run backfill:industries -- --dry-run     # show the plan, change nothing
+npm run backfill:industries -- --fix-images  # insert missing + repoint retired photos
+
+# On a production install (devDependencies absent, so no tsx):
+npm run backfill:industries:prod -- --fix-images
+```
+
+It inserts only missing ids and never rewrites an existing row's content, so
+admin edits survive.
 
 ### Default admin login
 

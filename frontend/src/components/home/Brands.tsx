@@ -83,7 +83,7 @@ function MarqueeLogo({ brand }: { brand: Brand }) {
 
 export function Brands() {
   return (
-    <section className="relative py-16">
+    <section id="brands" className="relative py-16">
       <div className="container-px">
         <SectionHeading
           eyebrow="Authorised Distribution"

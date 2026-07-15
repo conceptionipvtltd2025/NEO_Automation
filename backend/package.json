@@ -9,7 +9,10 @@
     "start": "tsx src/index.ts",
     "build": "tsc -p tsconfig.json",
     "serve": "node dist/index.js",
-    "seed": "tsx src/seed.ts"
+    "seed": "tsx src/seed.ts",
+    "backfill:industries": "tsx src/backfillIndustries.ts",
+    "_comment_prod": "On a production install (no devDependencies) tsx is absent — use the compiled build instead:",
+    "backfill:industries:prod": "node dist/backfillIndustries.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

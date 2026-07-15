@@ -16,7 +16,7 @@ const Showpiece3D = lazy(() =>
 
 export function SpecialProducts() {
   return (
-    <section className="relative overflow-hidden py-16">
+    <section id="special-products" className="relative overflow-hidden py-16">
       <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-60" />
       <div className="container-px relative">
         <SectionHeading

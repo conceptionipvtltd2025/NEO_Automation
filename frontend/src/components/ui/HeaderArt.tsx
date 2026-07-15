@@ -14,6 +14,10 @@ import {
   ShieldCheck,
   Quote,
   Send,
+  Leaf,
+  Recycle,
+  HardHat,
+  Wind,
 } from "lucide-react";
 
 /**
@@ -182,6 +186,50 @@ export function AboutHeaderArt() {
         <span className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-bold tracking-tight text-white">
           NE<span className="text-neo-500">O</span>
         </span>
+      </motion.div>
+    </Stage>
+  );
+}
+
+/* ─────────────────── Sustainability — shield emblem + orbiting eco/safety icons ─────────────────── */
+export function SustainabilityHeaderArt() {
+  const orbit = [Leaf, Recycle, HardHat, Wind];
+  const accents = ["text-aurora-400", "text-volt-400", "text-iris-400", "text-aurora-400"];
+  return (
+    <Stage>
+      {/* center emblem */}
+      <motion.div
+        animate={{ scale: [1, 1.06, 1] }}
+        transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border border-white/10 bg-ink-900/85 text-aurora-400 shadow-2xl shadow-black/50 backdrop-blur-md"
+      >
+        <ShieldCheck className="h-9 w-9" />
+      </motion.div>
+
+      {/* rotating ring carrying the eco/safety icons */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        className="absolute left-1/2 top-1/2 h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/10"
+      >
+        {orbit.map((Icon, i) => {
+          const angle = (i / orbit.length) * 360;
+          return (
+            <div
+              key={i}
+              className="absolute left-1/2 top-1/2"
+              style={{ transform: `rotate(${angle}deg) translateY(-50%) translateX(-50%)` }}
+            >
+              <motion.span
+                animate={{ rotate: -360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                className={`grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-ink-900/90 shadow-lg backdrop-blur-md ${accents[i]}`}
+              >
+                <Icon className="h-5 w-5" />
+              </motion.span>
+            </div>
+          );
+        })}
       </motion.div>
     </Stage>
   );

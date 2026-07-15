@@ -7,6 +7,7 @@ import { Process } from "@/components/home/Process";
 import { NSWSection } from "@/components/home/NSWSection";
 import { ProductsSection } from "@/components/home/ProductsSection";
 import { AboutTeaser } from "@/components/home/AboutTeaser";
+import { SustainabilitySection } from "@/components/home/SustainabilitySection";
 import { VideoSection } from "@/components/home/VideoSection";
 import { CTABand } from "@/components/home/CTABand";
 
@@ -19,8 +20,9 @@ export default function Home() {
       <ProductsSection />
       <SpecialProducts />
       <AboutTeaser />
-      <Process /> 
+      <Process />
       <Capabilities />
+      <SustainabilitySection />
       <NSWSection />
       <VideoSection />
       <CTABand />

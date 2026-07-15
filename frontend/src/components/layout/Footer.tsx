@@ -87,6 +87,15 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/sustainability"
+                  className="group inline-flex items-center gap-1 text-sm text-steel-300 transition hover:text-white"
+                >
+                  Sustainability &amp; Safety
+                  <ArrowUpRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
+                </Link>
+              </li>
             </ul>
           </div>
 

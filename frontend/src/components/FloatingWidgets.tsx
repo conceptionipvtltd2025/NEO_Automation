@@ -19,7 +19,7 @@ export function FloatingWidgets() {
   const [chatOpen, setChatOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-[6.25rem] right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-[8.75rem] right-5 z-50 flex flex-col items-end gap-4 sm:bottom-[9rem]">
       <AnimatePresence>
         {CHAT_ENABLED && chatOpen && (
           <motion.div
@@ -83,7 +83,7 @@ export function FloatingWidgets() {
         target="_blank"
         rel="noreferrer"
         aria-label="WhatsApp"
-        className="grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-pure shadow-[0_8px_30px_-6px_rgba(37,211,102,0.6)] transition-transform hover:scale-110"
+        className="grid h-14 w-14 place-items-center rounded-full border border-white/20 bg-[#25D366] text-pure shadow-[0_16px_34px_-16px_rgba(37,211,102,0.95)] ring-1 ring-black/10 transition duration-200 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_20px_42px_-18px_rgba(37,211,102,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
       >
         <WhatsAppIcon className="h-7 w-7" />
       </a>

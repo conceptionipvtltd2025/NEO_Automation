@@ -6,6 +6,7 @@ import {
   BatteryCharging,
   Plug,
   Gauge,
+  Droplets,
   Wrench,
   ShieldCheck,
   CheckCircle2,
@@ -45,7 +46,13 @@ const serviced = [
     id: "torque-calibration",
     icon: Gauge,
     title: "Torque Calibration",
-    text: "Calibration and certification against ISO 6789 with documented, audit-ready torque reports.",
+    text: "Calibration and certification on our own bench, with documented, audit-ready torque reports for every tool.",
+  },
+  {
+    id: "hydraulic-tools",
+    icon: Droplets,
+    title: "Hydraulic Tools",
+    text: "Service and overhaul of hydraulic torque wrenches, bolt tensioners and pumps — seal kits, pressure testing and re-certification.",
   },
   {
     id: "repair-spares",
@@ -64,7 +71,8 @@ const serviced = [
 const promises = [
   "All tools & tackles equipped in-house workshop",
   "Service for Pneumatic, Battery & Electric nut runners",
-  "Calibration & certification (ISO 6789)",
+  "Hydraulic tools — wrenches, tensioners & pumps",
+  "Calibration & certification with documented reports",
   "Genuine spares & fast turnaround",
   "OEM-trained service engineers",
   "Annual maintenance contracts (AMC)",

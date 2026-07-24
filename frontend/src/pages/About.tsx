@@ -20,9 +20,12 @@ import { StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
 import { site } from "@/data/site";
 import { asset } from "@/lib/asset";
 
+// Neo is not itself ISO-registered — our OEM partners are. Keep every claim
+// here to what Neo can actually evidence: appointment letters, training
+// certificates, calibration records and installed base.
 const credentials = [
-  { icon: ShieldCheck, title: "ISO 9001:2015", text: "Quality-management certified processes across supply and service." },
-  { icon: BadgeCheck, title: "Authorised Distributor", text: "Officially appointed partner for six global engineering brands." },
+  { icon: ShieldCheck, title: "Certified OEM Equipment", text: "Every product we supply is built and certified by its manufacturer — genuine, never grey imports." },
+  { icon: BadgeCheck, title: "Authorised Distributor", text: "Officially appointed partner for ten global engineering brands." },
   { icon: Users, title: "OEM-Trained Engineers", text: "Factory-certified specialists for installation and calibration." },
   { icon: MapPin, title: "Pan-India Service", text: "On-site support reach across major manufacturing clusters." },
   { icon: Clock, title: "Next-Day Spares", text: "Critical consumables and spares held in stock for fast dispatch." },
@@ -33,7 +36,7 @@ const timeline = [
   { year: "2019", title: "Eepos Aluminium Crane System", text: "Becomes promoter for the Eepos aluminium crane system, expanding into material handling solutions." },
   { year: "2020", title: "Atlas Copco Master Channel Partner", text: "Appointed Master Channel Partner for Atlas Copco PRO series tools across Gujarat, Madhya Pradesh & Mumbai." },
   { year: "2021", title: "SWF & Industry 4.0", text: "Rolls out Smart Workflow Feature deployments across automotive lines." },
-  { year: "2026", title: "1200+ installations", text: "Trusted across automotive, aerospace, data-center & general industry." },
+  { year: "2026", title: "1200+ installations", text: "Trusted across automotive & EV, aerospace, energy and general industrial assembly." },
 ];
 
 const values = [
@@ -205,8 +208,8 @@ export default function About() {
         <SectionHeading
           align="center"
           eyebrow="Credentials You Can Trust"
-          title="Certified, authorised & accountable"
-          subtitle="Our standards are not a claim — they are certified, audited and backed by genuine manufacturer authorisation."
+          title="Authorised, trained & accountable"
+          subtitle="Our standards are not a claim — they are backed by genuine manufacturer authorisation, factory training and documented results."
         />
         <StaggerGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {credentials.map((c) => (

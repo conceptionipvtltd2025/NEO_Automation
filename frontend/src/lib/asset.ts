@@ -26,3 +26,25 @@ export function asset(path: string): string {
   if (/^(https?:)?\/\//.test(path) || path.startsWith("data:")) return path;
   return BASE + path.replace(/^\/+/, "");
 }
+
+/**
+ * Resolve a brand logo that may come from either source:
+ *   • the API / seed database, as a bare public path ("/images/brands/x.png") —
+ *     which would 404 under the production sub-path, so it needs the base
+ *   • an admin upload ("/uploads/x.jpg"), served by the BACKEND, which must NOT
+ *     get the frontend's deploy base
+ *   • an absolute URL or data: URL, passed through
+ *
+ * Brands became admin-editable (and therefore API-supplied), so every logo
+ * render goes through here rather than trusting the stored string.
+ */
+export function brandLogo(path?: string | null): string {
+  const s = (path ?? "").trim();
+  if (!s) return "";
+  if (/^(https?:)?\/\//.test(s) || s.startsWith("data:")) return s;
+  if (s.startsWith("/uploads/") || s.startsWith("uploads/")) return s;
+  // Idempotent: a value that already carries the base (an older record, or one
+  // saved back by the admin) must not get it twice.
+  if (BASE !== "/" && s.startsWith(BASE)) return s;
+  return asset(s);
+}

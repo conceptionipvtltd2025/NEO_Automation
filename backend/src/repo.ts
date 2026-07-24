@@ -27,6 +27,13 @@ export function mapBrand(r: any) {
     category: r.category ?? "",
     blurb: r.blurb ?? "",
     logo: r.logo ?? "",
+    // Product lines within the brand (Atlas Copco → Electric Assembly Tools…).
+    // Admin-editable, so they live in the DB rather than the frontend source.
+    lines: parseJson<
+      { id: string; name: string; brief: string; models?: string[]; categoryId?: string }[]
+    >(r.lines, []),
+    resources: parseJson<{ label: string; href: string }[]>(r.resources, []),
+    sortOrder: Number(r.sort_order ?? 0),
   };
 }
 
@@ -36,6 +43,7 @@ export function mapCategory(r: any) {
     name: r.name,
     description: r.description ?? "",
     icon: r.icon ?? "Tags",
+    sortOrder: Number(r.sort_order ?? 0),
   };
 }
 
@@ -64,6 +72,7 @@ export function mapProduct(r: any) {
     brandId: r.brand_id ?? "",
     brand: r.brand ?? "",
     categoryId: r.category_id ?? "",
+    line: r.line ?? undefined,
     industries: parseJson<string[]>(r.industries, []),
     price: Number(r.price ?? 0),
     rating: Number(r.rating ?? 0),
@@ -96,19 +105,34 @@ export function mapInquiry(r: any) {
 
 /* ───────────────────────── brands ───────────────────────── */
 
+// The client-approved brand sequence is content, not alphabetical — ordered by
+// sort_order with name as the tie-break for anything an admin adds later.
 export async function listBrands() {
-  const rows = await query(`SELECT * FROM brands ORDER BY name`);
+  const rows = await query(`SELECT * FROM brands ORDER BY sort_order, name`);
   return rows.map(mapBrand);
 }
 
 export async function upsertBrand(b: any) {
   await query(
-    `INSERT INTO brands (id, name, color, category, blurb, logo)
-     VALUES (?,?,?,?,?,?)
+    // `lines` is back-quoted: LINES is a MySQL reserved word and an unquoted
+    // occurrence is a syntax error, not a warning.
+    `INSERT INTO brands (id, name, color, category, blurb, logo, \`lines\`, resources, sort_order)
+     VALUES (?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        name=VALUES(name), color=VALUES(color), category=VALUES(category),
-       blurb=VALUES(blurb), logo=VALUES(logo)`,
-    [b.id, b.name, b.color ?? null, b.category ?? null, b.blurb ?? null, b.logo ?? null]
+       blurb=VALUES(blurb), logo=VALUES(logo), \`lines\`=VALUES(\`lines\`),
+       resources=VALUES(resources), sort_order=VALUES(sort_order)`,
+    [
+      b.id,
+      b.name,
+      b.color ?? null,
+      b.category ?? null,
+      b.blurb ?? null,
+      b.logo ?? null,
+      JSON.stringify(b.lines ?? []),
+      JSON.stringify(b.resources ?? []),
+      Number(b.sortOrder ?? 0),
+    ]
   );
   const rows = await query(`SELECT * FROM brands WHERE id=?`, [b.id]);
   return mapBrand(rows[0]);
@@ -120,17 +144,20 @@ export async function deleteBrand(id: string) {
 
 /* ───────────────────────── categories ───────────────────────── */
 
+// Ordered by the curated catalogue sequence; anything unranked (an admin-added
+// category defaults to 0) sorts first, then alphabetically as a tie-break.
 export async function listCategories() {
-  const rows = await query(`SELECT * FROM categories ORDER BY name`);
+  const rows = await query(`SELECT * FROM categories ORDER BY sort_order, name`);
   return rows.map(mapCategory);
 }
 
 export async function upsertCategory(c: any) {
   await query(
-    `INSERT INTO categories (id, name, description, icon)
-     VALUES (?,?,?,?)
-     ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), icon=VALUES(icon)`,
-    [c.id, c.name, c.description ?? null, c.icon ?? "Tags"]
+    `INSERT INTO categories (id, name, description, icon, sort_order)
+     VALUES (?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description),
+       icon=VALUES(icon), sort_order=VALUES(sort_order)`,
+    [c.id, c.name, c.description ?? null, c.icon ?? "Tags", Number(c.sortOrder ?? 0)]
   );
   const rows = await query(`SELECT * FROM categories WHERE id=?`, [c.id]);
   return mapCategory(rows[0]);
@@ -201,12 +228,12 @@ export async function getProduct(id: string) {
 export async function upsertProduct(p: any) {
   await query(
     `INSERT INTO products
-       (id, slug, name, brand_id, brand, category_id, industries, price, rating,
+       (id, slug, name, brand_id, brand, category_id, line, industries, price, rating,
         short_desc, description, features, specs, images, featured, special, badge, visible)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        slug=VALUES(slug), name=VALUES(name), brand_id=VALUES(brand_id), brand=VALUES(brand),
-       category_id=VALUES(category_id), industries=VALUES(industries), price=VALUES(price),
+       category_id=VALUES(category_id), line=VALUES(line), industries=VALUES(industries), price=VALUES(price),
        rating=VALUES(rating), short_desc=VALUES(short_desc), description=VALUES(description),
        features=VALUES(features), specs=VALUES(specs), images=VALUES(images),
        featured=VALUES(featured), special=VALUES(special), badge=VALUES(badge), visible=VALUES(visible)`,
@@ -217,6 +244,7 @@ export async function upsertProduct(p: any) {
       p.brandId ?? null,
       p.brand ?? null,
       p.categoryId ?? null,
+      p.line ?? null,
       JSON.stringify(p.industries ?? []),
       Number(p.price ?? 0),
       Number(p.rating ?? 0),

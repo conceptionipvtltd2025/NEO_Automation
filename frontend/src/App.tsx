@@ -5,6 +5,7 @@ import { RootLayout } from "./components/layout/RootLayout";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
+import BrandDetail from "./pages/BrandDetail";
 import Industries from "./pages/Industries";
 import IndustryDetail from "./pages/IndustryDetail";
 import About from "./pages/About";
@@ -21,6 +22,7 @@ import AdminLogin from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/Products";
 import AdminCategories from "./pages/admin/Categories";
+import AdminBrands from "./pages/admin/Brands";
 import AdminIndustries from "./pages/admin/Industries";
 import AdminInquiries from "./pages/admin/Inquiries";
 import { RequireAuth } from "./pages/admin/RequireAuth";
@@ -39,6 +41,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:slug" element={<ProductDetail />} />
+        <Route path="/brands/:brandId" element={<BrandDetail />} />
         <Route path="/industries" element={<Industries />} />
         <Route path="/industries/:id" element={<IndustryDetail />} />
         <Route path="/nsw" element={<NSW />} />
@@ -64,6 +67,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="products" element={<AdminProducts />} />
         <Route path="categories" element={<AdminCategories />} />
+        <Route path="brands" element={<AdminBrands />} />
         <Route path="industries" element={<AdminIndustries />} />
         <Route path="inquiries" element={<AdminInquiries />} />
       </Route>

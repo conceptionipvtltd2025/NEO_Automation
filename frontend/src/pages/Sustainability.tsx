@@ -29,8 +29,8 @@ const commitment = [
   },
   {
     icon: Scale,
-    title: "Aligned to global norms",
-    text: "Our practices are aligned with internationally recognised environmental and occupational-health frameworks.",
+    title: "Certified at the source",
+    text: "Neo does not hold these registrations itself — the OEMs we represent do, and we distribute their certified equipment unaltered.",
   },
 ];
 
@@ -78,12 +78,12 @@ const sustainabilityPillars = [
   {
     icon: Sprout,
     accent: "bg-iris-500/15 text-iris-400",
-    title: "Environmental Management — ISO 14001",
-    text: "We are progressing our environmental management practices toward ISO 14001 alignment — a structured, audit-ready approach to reducing impact.",
+    title: "Environmental Management",
+    text: "A structured, documented approach to reducing the impact of our own operations — objectives set, controls applied and results reviewed.",
     points: [
       "Documented objectives, controls & review cycles",
       "Continual-improvement mindset",
-      "Designed to withstand customer & third-party audits",
+      "Open to customer & third-party audit",
     ],
   },
   {
@@ -114,8 +114,8 @@ const safetyPillars = [
   {
     icon: HardHat,
     accent: "bg-iris-500/15 text-iris-400",
-    title: "Occupational Health & Safety — ISO 45001",
-    text: "We are aligning our OH&S practices with ISO 45001 principles — formalising how we identify hazards, control risk and protect everyone in our operations.",
+    title: "Occupational Health & Safety",
+    text: "A formalised approach to how we identify hazards, control risk and protect everyone in our workshop and on customer sites.",
     points: [
       "Documented risk assessments & controls",
       "Incident reporting & review cycles",
@@ -150,18 +150,21 @@ const safetyPillars = [
     title: "Product Safety & Traceability",
     text: "Traceable torque and certified calibration are safety features — they prevent the under- and over-tightening that cause field failures.",
     points: [
-      "ISO 6789 documented, audit-ready calibration",
+      "Documented, audit-ready calibration certificates",
       "Transducer-controlled, error-proof tightening",
       "Full traceability of genuine spares",
     ],
   },
 ];
 
+// IMPORTANT: Neo Automation is not itself registered to ISO standards. The
+// manufacturers we represent hold those certifications for the equipment they
+// build, and the site must say exactly that — nothing stronger.
 const standards = [
-  { code: "ISO 9001:2015", label: "Quality Management", status: "Certified" },
-  { code: "ISO 14001", label: "Environmental Management", status: "Aligning" },
-  { code: "ISO 45001", label: "Occupational Health & Safety", status: "Aligning" },
-  { code: "ISO 6789", label: "Torque Calibration", status: "In practice" },
+  { code: "Certified OEMs", label: "Quality, environment & safety certifications held by our manufacturing partners", status: "At the source" },
+  { code: "Authorised Distribution", label: "Appointed partner — genuine equipment, never grey imports", status: "Contracted" },
+  { code: "OEM-Trained Engineers", label: "Factory-certified for installation, service & calibration", status: "In practice" },
+  { code: "Documented Calibration", label: "Individually certified torque with audit-ready reports", status: "In practice" },
 ];
 
 function PillarCard({
@@ -285,9 +288,9 @@ export default function Sustainability() {
       <section className="container-px py-14">
         <SectionHeading
           align="center"
-          eyebrow="Standards & Frameworks"
+          eyebrow="Standards & Partnerships"
           title="Held to standards you can audit"
-          subtitle="Our quality management is certified; our environmental and occupational-health practices are actively aligning to the recognised frameworks below."
+          subtitle="Neo Automation is not itself an ISO-registered organisation — the OEMs whose equipment we distribute hold those certifications. What we guarantee is genuine, certified product, factory-trained people and documented results."
         />
         <StaggerGroup className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {standards.map((s) => (

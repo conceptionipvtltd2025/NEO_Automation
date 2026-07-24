@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Pencil, Trash2, Eye, EyeOff, Star } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
 import type { Product } from "@/data/products";
-import { brands } from "@/data/brands";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
@@ -10,13 +9,15 @@ import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./
 import { slugify, cn } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
 
+// Brand/category defaults are filled from the live lists in openNew() — a
+// hard-coded id here would break as soon as an admin renames or removes one.
 const blank: Product = {
   id: "",
   slug: "",
   name: "",
-  brandId: "atlas-copco",
-  brand: "Atlas Copco",
-  categoryId: "assembly-tools",
+  brandId: "",
+  brand: "",
+  categoryId: "",
   industries: [],
   price: 0,
   rating: 4.5,
@@ -29,7 +30,7 @@ const blank: Product = {
 };
 
 export default function AdminProducts() {
-  const { products, categories, industries, upsertProduct, deleteProduct, toggleProduct } = useCatalog();
+  const { products, categories, industries, brands, upsertProduct, deleteProduct, toggleProduct } = useCatalog();
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Product | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -53,7 +54,14 @@ export default function AdminProducts() {
   };
 
   const openNew = () => {
-    setEditing({ ...blank });
+    // Default to the first brand/category that actually exists right now.
+    const firstBrand = brands[0];
+    setEditing({
+      ...blank,
+      brandId: firstBrand?.id ?? "",
+      brand: firstBrand?.name ?? "",
+      categoryId: categories[0]?.id ?? "",
+    });
     setImages([...blank.images]);
     setFeaturesText("");
     setSpecsText("");
@@ -188,7 +196,8 @@ export default function AdminProducts() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Brand">
-                <select value={editing.brandId} onChange={(e) => setEditing({ ...editing, brandId: e.target.value })} className="admin-input">
+                {/* Changing brand clears the line — lines belong to one brand. */}
+                <select value={editing.brandId} onChange={(e) => setEditing({ ...editing, brandId: e.target.value, line: undefined })} className="admin-input">
                   {brands.map((b) => (
                     <option key={b.id} value={b.id}>{b.name}</option>
                   ))}
@@ -202,6 +211,15 @@ export default function AdminProducts() {
                 </select>
               </Field>
             </div>
+
+            <Field label="Product line (within the brand)">
+              <select value={editing.line ?? ""} onChange={(e) => setEditing({ ...editing, line: e.target.value || undefined })} className="admin-input">
+                <option value="">— none —</option>
+                {(brands.find((b) => b.id === editing.brandId)?.lines ?? []).map((l) => (
+                  <option key={l.id} value={l.id}>{l.name}</option>
+                ))}
+              </select>
+            </Field>
 
             <Field label="Industries">
               <div className="flex flex-wrap gap-2">

@@ -62,6 +62,7 @@ export function NavSearch({
   const products = useCatalog((s) => s.products);
   const categories = useCatalog((s) => s.categories);
   const industries = useCatalog((s) => s.industries);
+  const brands = useCatalog((s) => s.brands);
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -71,8 +72,8 @@ export function NavSearch({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const index = useMemo(
-    () => buildSearchIndex(products, categories, industries),
-    [products, categories, industries]
+    () => buildSearchIndex(products, categories, industries, brands),
+    [products, categories, industries, brands]
   );
   const results = useMemo(
     () => searchSite(index, query, MAX_RESULTS),

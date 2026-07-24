@@ -67,7 +67,11 @@ export const useAuth = create<AuthState>()(
             return { ok: true };
           } catch (err) {
             // Server reachable but rejected the credentials.
-            if (err instanceof ApiError) {
+            // 503 is the exception: the Vite dev proxy answers with it when the
+            // backend isn't running, so it means "unreachable", not "rejected"
+            // — without this the offline demo fallback below could never fire
+            // in dev, and a failed attempt would be recorded against the user.
+            if (err instanceof ApiError && err.status !== 503) {
               return registerFail();
             }
             // Network error / backend down → fall back to local demo check.

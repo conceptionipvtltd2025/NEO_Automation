@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { brands, type Brand } from "@/data/brands";
+import { useCatalog } from "@/store/useCatalog";
+import { BrandLogoPlate } from "@/components/BrandLogoPlate";
 import { Marquee } from "@/components/ui/Marquee";
 import { Reveal } from "@/components/ui/Reveal";
 import { SpotlightCard } from "@/components/ui/SpotlightCard";
@@ -24,64 +24,15 @@ const gridCard: Variants = {
   },
 };
 
-function Wordmark({ name, color }: { name: string; color: string }) {
-  return (
-    <span
-      className="font-display text-2xl font-bold tracking-tight text-steel-400 grayscale transition-all duration-300 hover:scale-105 hover:text-white hover:grayscale-0 sm:text-3xl"
-      style={{ ["--brand" as string]: color }}
-    >
-      <span className="hover:[color:var(--brand)]">{name}</span>
-    </span>
-  );
-}
-
-/**
- * Renders the official brand logo on a clean tile. If the logo file isn't
- * present yet (or fails to load) it gracefully falls back to the wordmark,
- * so dropping a PNG/SVG into /public/images/brands/<id>.png is all it takes.
- */
-function BrandLogo({ brand }: { brand: Brand }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) return <Wordmark name={brand.name} color={brand.color} />;
-  return (
-    // bg-pure (literal white) — NOT bg-white, which flips to near-ink in the
-    // light theme and would hide the dark brand artwork (GEDORE, GESIPA…). A
-    // constant white chip keeps every logo fully visible in BOTH themes.
-    <span className="inline-flex h-12 max-w-[170px] items-center justify-center rounded-xl bg-pure px-3.5 py-2 shadow-sm ring-1 ring-black/10">
-      <img
-        src={brand.logo}
-        alt={`${brand.name} logo`}
-        loading="lazy"
-        onError={() => setFailed(true)}
-        className="h-full w-auto max-w-full object-contain"
-      />
-    </span>
-  );
-}
-
-/**
- * Logo variant for the scrolling marquee strip — a wider white tile sized for
- * the band. Falls back to the wordmark if the logo file is missing (e.g. PFERD
- * until its logo is supplied), so the strip never shows a broken image.
- */
-function MarqueeLogo({ brand }: { brand: Brand }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) return <Wordmark name={brand.name} color={brand.color} />;
-  return (
-    // Constant white chip (see BrandLogo) so logos read in both themes.
-    <span className="inline-flex h-12 max-w-[200px] items-center justify-center rounded-xl bg-pure px-4 py-2 shadow-sm ring-1 ring-black/10 sm:h-14">
-      <img
-        src={brand.logo}
-        alt={`${brand.name} logo`}
-        loading="lazy"
-        onError={() => setFailed(true)}
-        className="h-full w-auto max-w-full object-contain"
-      />
-    </span>
-  );
-}
+// Logo rendering (plate sizing, white-chip reasoning, wordmark fallback) lives
+// in components/BrandLogoPlate.tsx — shared with the /products brand strip and
+// the brand page so the set stays visually consistent.
 
 export function Brands() {
+  // Live from the catalogue store — brands and their product lines are
+  // admin-editable, with the seed array as the offline fallback.
+  const brands = useCatalog((s) => s.brands);
+
   return (
     <section id="brands" className="relative py-16">
       <div className="container-px">
@@ -102,7 +53,7 @@ export function Brands() {
                 className="group flex items-center gap-5 px-4"
                 style={{ ["--brand" as string]: b.color }}
               >
-                <MarqueeLogo brand={b} />
+                <BrandLogoPlate brand={b} size="sm" />
                 <span className="h-1.5 w-1.5 rounded-full bg-neo-600" />
               </div>
             ))}
@@ -122,27 +73,35 @@ export function Brands() {
           {brands.map((b) => (
             <motion.div key={b.id} variants={gridCard}>
               <SpotlightCard
-                className="h-full p-6"
+                className="flex h-full flex-col p-6"
                 spotColor={`${b.color}26`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <BrandLogo brand={b} />
+                {/* Logo on its own line: the plate is a fixed size for every
+                    brand, so cramming a category pill alongside it squeezed the
+                    taller logos. The pill sits under it, where it can breathe. */}
+                <BrandLogoPlate brand={b} size="md" />
+
+                <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-steel-200">
+                  {/* Brand colour as a dot rather than the label colour — the
+                      navy brands (Legris, GEDORE) are unreadable as text on a
+                      dark card. */}
                   <span
-                    className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                    style={{
-                      color: b.color,
-                      background: `${b.color}1a`,
-                    }}
-                  >
-                    {b.category}
-                  </span>
-                </div>
+                    aria-hidden
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ background: b.color }}
+                  />
+                  {b.category}
+                </span>
+
                 <p className="mt-4 text-sm leading-relaxed text-steel-400">
                   {b.blurb}
                 </p>
+
+                {/* mt-auto pins the link to the bottom so every card in the row
+                    lines up regardless of blurb length. */}
                 <Link
-                  to={`/products?brand=${b.id}`}
-                  className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-white/80 transition hover:text-white"
+                  to={`/brands/${b.id}`}
+                  className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-medium text-white/80 transition hover:text-white"
                 >
                   View {b.name} range
                   <ArrowUpRight className="h-4 w-4 text-neo-500" />

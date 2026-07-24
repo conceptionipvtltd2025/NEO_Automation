@@ -52,7 +52,7 @@ export function IndustriesShowcase() {
         <SectionHeading
           eyebrow="Industries We Power"
           title="Built for the floors that build the world"
-          subtitle="From zero-defect automotive lines to hyperscale data centers, our solutions are engineered for the most demanding environments on earth."
+          subtitle="From zero-defect automotive and EV lines to aerospace, energy and semiconductor fabs, our solutions are engineered for the most demanding environments on earth."
           action={
             <Link to="/industries" className="btn-ghost text-[13px]">
               All Industries <ArrowUpRight className="h-4 w-4" />

@@ -19,14 +19,20 @@ const TABLES: string[] = [
     color VARCHAR(16),
     category VARCHAR(128),
     blurb TEXT,
-    logo VARCHAR(255)
+    logo VARCHAR(255),
+    -- LINES is a MySQL reserved word (LOAD DATA … LINES TERMINATED BY), so the
+    -- identifier must be back-quoted everywhere it appears in SQL.
+    \`lines\` JSON,
+    resources JSON,
+    sort_order INT DEFAULT 0
   ) ENGINE=InnoDB`,
 
   `CREATE TABLE IF NOT EXISTS categories (
     id VARCHAR(64) PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
     description TEXT,
-    icon VARCHAR(64)
+    icon VARCHAR(64),
+    sort_order INT DEFAULT 0
   ) ENGINE=InnoDB`,
 
   `CREATE TABLE IF NOT EXISTS industries (
@@ -51,6 +57,7 @@ const TABLES: string[] = [
     brand_id VARCHAR(64),
     brand VARCHAR(128),
     category_id VARCHAR(64),
+    line VARCHAR(64),
     industries JSON,
     price BIGINT DEFAULT 0,
     rating DECIMAL(2,1) DEFAULT 0,
@@ -89,6 +96,19 @@ const TABLES: string[] = [
 const ALTERS: string[] = [
   `ALTER TABLE industries ADD COLUMN visible TINYINT(1) DEFAULT 1`,
   `ALTER TABLE industries ADD COLUMN created_at BIGINT DEFAULT 0`,
+  // Catalogue sequence is client-specified content, not alphabetical — the
+  // twelve solution families must list in the order given in seedData.
+  `ALTER TABLE categories ADD COLUMN sort_order INT DEFAULT 0`,
+  // Second-level catalogue: which brand product line a product belongs to
+  // (e.g. Atlas Copco → electric-assembly-tools).
+  `ALTER TABLE products ADD COLUMN line VARCHAR(64)`,
+  // Brand product lines moved out of the frontend source file and into the DB
+  // so the admin panel can add/edit/reorder them. `lines` holds the array of
+  // { id, name, brief, models[], categoryId, image }; `resources` the
+  // literature links. Note the back-quotes: LINES is a MySQL reserved word.
+  "ALTER TABLE brands ADD COLUMN `lines` JSON",
+  `ALTER TABLE brands ADD COLUMN resources JSON`,
+  `ALTER TABLE brands ADD COLUMN sort_order INT DEFAULT 0`,
 ];
 
 export async function migrate() {

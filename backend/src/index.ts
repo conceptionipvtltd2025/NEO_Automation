@@ -93,10 +93,25 @@ async function start() {
     });
   } catch (e: any) {
     console.error("\n❌  Failed to start server.");
-    if (e?.code === "ECONNREFUSED" || e?.code === "ER_ACCESS_DENIED_ERROR") {
+    // These two failures look alike in the stack but have opposite fixes, so
+    // spell them out separately — "check MySQL is running" is actively
+    // misleading when MySQL *is* running and only the password is wrong.
+    if (e?.code === "ECONNREFUSED") {
       console.error(
-        "    Could not connect to MySQL. Check that MySQL is running and that\n" +
-          "    DB_HOST / DB_PORT / DB_USER / DB_PASSWORD in backend/.env are correct."
+        `    Nothing is listening on ${process.env.DB_HOST || "localhost"}:${
+          process.env.DB_PORT || 3306
+        } — MySQL is not running.\n` +
+          "    Windows:  net start MySQL80   (in an Administrator terminal)\n" +
+          "    Then check DB_HOST / DB_PORT in backend/.env."
+      );
+    } else if (e?.code === "ER_ACCESS_DENIED_ERROR") {
+      const withPassword = process.env.DB_PASSWORD ? "the password given" : "no password";
+      console.error(
+        `    MySQL is running and reachable, but rejected user "${
+          process.env.DB_USER || "root"
+        }" with ${withPassword}.\n` +
+          "    Set DB_USER / DB_PASSWORD in backend/.env to your MySQL credentials.\n" +
+          '    Verify them first with:  mysql -u root -p -e "SELECT 1"'
       );
     }
     console.error(e);

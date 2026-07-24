@@ -2,6 +2,11 @@
  * One-off maintenance: bring an ALREADY-SEEDED database up to date with the
  * current industry seed.
  *
+ * SUPERSEDED for the 2026 catalogue revision — use `npm run sync:catalogue`
+ * instead. That script covers industries *and* categories/brands, remaps
+ * products off retired ids and removes the segments the client dropped (Data
+ * Center); this one only ever adds and re-stamps industries.
+ *
  * Why this exists: seed() only fills a table when it's completely empty, so a
  * site that was first seeded with the original six industries never picks up
  * verticals added to seedData.ts later. This script closes that gap without the

@@ -13,7 +13,6 @@ import {
   MessageSquareQuote,
 } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
-import { brands } from "@/data/brands";
 import { Modal } from "@/components/ui/Modal";
 import { InquiryForm } from "@/components/InquiryForm";
 import { ProductCard } from "@/components/ProductCard";
@@ -31,6 +30,7 @@ const trust = [
 export default function ProductDetail() {
   const { slug } = useParams();
   const products = useCatalog((s) => s.products);
+  const brands = useCatalog((s) => s.brands);
   const product = products.find((p) => p.slug === slug);
   const [activeImg, setActiveImg] = useState(0);
   const [tab, setTab] = useState<"desc" | "specs">("desc");

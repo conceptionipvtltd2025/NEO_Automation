@@ -243,7 +243,14 @@ export function MegaMenu({
       exit="exit"
       className="absolute left-0 right-0 top-full z-40 pt-3"
     >
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-ink-900/95 p-6 shadow-card backdrop-blur-2xl lg:p-8">
+      {/* max-h + internal scroll: with twelve catalogue families the columns
+          outgrew the viewport and `overflow-hidden` silently cut the last entry
+          in half. data-lenis-prevent lets the wheel scroll THIS panel rather
+          than the page behind it. */}
+      <div
+        data-lenis-prevent
+        className="relative max-h-[calc(100vh-8rem)] overflow-y-auto overscroll-contain rounded-3xl border border-white/10 bg-ink-900/95 p-6 shadow-card backdrop-blur-2xl lg:p-8"
+      >
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neo-600/70 to-transparent"

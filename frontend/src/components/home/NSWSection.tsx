@@ -56,7 +56,7 @@ export function NSWSection() {
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-steel-300">
                   An all tools & tackles equipped service workshop for servicing
                   all types of Pneumatic, Battery and Electric nut runners — with
-                  genuine spares, ISO-certified calibration and fast turnaround.
+                  genuine spares, documented calibration and fast turnaround.
                 </p>
               </Reveal>
 

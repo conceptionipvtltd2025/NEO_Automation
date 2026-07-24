@@ -26,12 +26,20 @@ const pillars = [
   {
     icon: BadgeCheck,
     accent: "bg-neo-600/15 text-neo-400",
-    title: "Traceable & certified",
-    text: "ISO 6789 calibration and error-proof, documented tightening.",
+    title: "Traceable by design",
+    text: "Documented calibration and error-proof, recorded tightening.",
   },
 ];
 
-const standards = ["ISO 9001:2015", "ISO 14001", "ISO 45001", "ISO 6789"];
+// Neo is not itself certified to these standards — our OEM partners are, and we
+// distribute their certified equipment. Keep this framing: the client was
+// explicit that the site must not imply Neo holds the registrations.
+const standards = [
+  "OEM-certified equipment",
+  "Authorised distribution",
+  "OEM-trained engineers",
+  "Documented calibration",
+];
 
 export function SustainabilitySection() {
   return (
@@ -44,7 +52,7 @@ export function SustainabilitySection() {
             <SectionHeading
               eyebrow="Responsibility"
               title="Sustainability & safety, built into every tool"
-              subtitle="Precision with responsibility — from ISO-aligned environmental practice and responsible sourcing to a safety-first culture and ergonomic, traceable tooling, Neo builds sustainability and operator safety into everything we supply and service."
+              subtitle="Precision with responsibility — from responsible sourcing and lower-waste operations to a safety-first culture and ergonomic, traceable tooling, Neo builds sustainability and operator safety into everything we supply and service."
             />
 
             <Reveal delay={0.15}>

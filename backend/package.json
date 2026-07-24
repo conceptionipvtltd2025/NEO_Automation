@@ -11,8 +11,11 @@
     "serve": "node dist/index.js",
     "seed": "tsx src/seed.ts",
     "backfill:industries": "tsx src/backfillIndustries.ts",
+    "sync:catalogue": "tsx src/syncCatalogue.ts",
+    "check:brands": "tsx src/checkBrandLines.ts",
     "_comment_prod": "On a production install (no devDependencies) tsx is absent — use the compiled build instead:",
-    "backfill:industries:prod": "node dist/backfillIndustries.js"
+    "backfill:industries:prod": "node dist/backfillIndustries.js",
+    "sync:catalogue:prod": "node dist/syncCatalogue.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

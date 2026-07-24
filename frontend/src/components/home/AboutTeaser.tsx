@@ -38,8 +38,8 @@ export function AboutTeaser() {
             </motion.div>
 
             <div className="absolute -left-4 top-8 hidden rounded-2xl border border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur-xl sm:block">
-              <p className="font-display text-xl font-bold text-white">ISO 9001</p>
-              <p className="text-[11px] text-steel-400">Quality certified</p>
+              <p className="font-display text-xl font-bold text-white">Genuine</p>
+              <p className="text-[11px] text-steel-400">Authorised distribution</p>
             </div>
           </div>
         </Reveal>

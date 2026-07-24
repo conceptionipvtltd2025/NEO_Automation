@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { products as seedProducts, type Product } from "@/data/products";
 import { categories as seedCategories, type Category } from "@/data/categories";
 import { industries as seedIndustries, type Industry } from "@/data/industries";
+import { brands as seedBrands, type Brand } from "@/data/brands";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/store/useAuth";
 
@@ -10,6 +11,7 @@ type CatalogState = {
   products: Product[];
   categories: Category[];
   industries: Industry[];
+  brands: Brand[];
   loaded: boolean;
   /** Last write error surfaced to the admin (null when the last write succeeded). */
   lastError: string | null;
@@ -27,6 +29,9 @@ type CatalogState = {
   upsertIndustry: (i: Industry) => void;
   deleteIndustry: (id: string) => void;
   toggleIndustry: (id: string) => void;
+  // brands (including their product lines)
+  upsertBrand: (b: Brand) => void;
+  deleteBrand: (id: string) => void;
   resetAll: () => void;
 };
 
@@ -35,6 +40,10 @@ type CatalogState = {
 // an edit saved when it didn't:
 //  • 401 → the session/token is invalid or expired → force re-login.
 //  • other API error / network down → record a message for the admin banner.
+/** Next free position for a record appended to an ordered list. */
+const nextSortOrder = (list: { sortOrder?: number }[]) =>
+  list.reduce((max, x) => Math.max(max, x.sortOrder ?? 0), 0) + 1;
+
 const persistWrite = (p: Promise<unknown>, action: string) => {
   p.then(() => {
     // Success — clear any stale error.
@@ -64,6 +73,7 @@ export const useCatalog = create<CatalogState>()(
       products: seedProducts,
       categories: seedCategories,
       industries: seedIndustries,
+      brands: seedBrands,
       loaded: false,
       lastError: null,
 
@@ -71,12 +81,22 @@ export const useCatalog = create<CatalogState>()(
 
       load: async () => {
         try {
-          const [products, categories, industries] = await Promise.all([
+          const [products, categories, industries, brands] = await Promise.all([
             api.get<Product[]>("/products"),
             api.get<Category[]>("/categories"),
             api.get<Industry[]>("/industries"),
+            api.get<Brand[]>("/brands"),
           ]);
-          set({ products, categories, industries, loaded: true });
+          set({
+            products,
+            categories,
+            industries,
+            // A database seeded before brands carried product lines would blank
+            // the whole brand experience, so fall back to the seed if the API
+            // returns nothing usable.
+            brands: brands?.length ? brands : seedBrands,
+            loaded: true,
+          });
         } catch {
           // Backend unreachable — keep whatever is in the persisted store / seed.
           set({ loaded: true });
@@ -109,14 +129,22 @@ export const useCatalog = create<CatalogState>()(
 
       upsertCategory: (c) => {
         set((s) => {
-          const exists = s.categories.some((x) => x.id === c.id);
+          const prev = s.categories.find((x) => x.id === c.id);
+          // Keep the catalogue sequence. The admin form doesn't edit sortOrder,
+          // so an incoming record without one would be written as 0 and jump to
+          // the front of a client-approved order.
+          const withOrder: Category = {
+            ...c,
+            sortOrder: c.sortOrder ?? prev?.sortOrder ?? nextSortOrder(s.categories),
+          };
           return {
-            categories: exists
-              ? s.categories.map((x) => (x.id === c.id ? c : x))
-              : [c, ...s.categories], // prepend so a new category shows immediately
+            categories: prev
+              ? s.categories.map((x) => (x.id === c.id ? withOrder : x))
+              : [...s.categories, withOrder],
           };
         });
-        persistWrite(api.put(`/categories/${c.id}`, c), "category");
+        const payload = get().categories.find((x) => x.id === c.id) ?? c;
+        persistWrite(api.put(`/categories/${c.id}`, payload), "category");
       },
       deleteCategory: (id) => {
         set((s) => ({ categories: s.categories.filter((x) => x.id !== id) }));
@@ -157,23 +185,55 @@ export const useCatalog = create<CatalogState>()(
         persistWrite(api.patch(`/industries/${id}/toggle`), "industry");
       },
 
+      upsertBrand: (b) => {
+        set((s) => {
+          const prev = s.brands.find((x) => x.id === b.id);
+          // New brands go last: the existing ten are a client-approved
+          // sequence, so an addition shouldn't jump the queue. An edit keeps
+          // whatever position it already had.
+          const withOrder: Brand = {
+            ...b,
+            lines: b.lines ?? [],
+            sortOrder: b.sortOrder ?? prev?.sortOrder ?? nextSortOrder(s.brands),
+          };
+          return {
+            brands: prev
+              ? s.brands.map((x) => (x.id === b.id ? withOrder : x))
+              : [...s.brands, withOrder],
+          };
+        });
+        const payload = get().brands.find((x) => x.id === b.id) ?? b;
+        persistWrite(api.put(`/brands/${b.id}`, payload), "brand");
+      },
+      deleteBrand: (id) => {
+        set((s) => ({ brands: s.brands.filter((x) => x.id !== id) }));
+        persistWrite(api.del(`/brands/${id}`), "deletion");
+      },
+
       resetAll: () =>
         set({
           products: seedProducts,
           categories: seedCategories,
           industries: seedIndustries,
+          brands: seedBrands,
         }),
     }),
     {
       name: "neo-catalog",
-      version: 4,
-      // v4 expanded the industry seed. A visitor's persisted v3 catalogue would
-      // otherwise mask the new rows forever, so drop the cache and fall back to
-      // the seed — `load()` re-fetches server truth on the next boot anyway.
+      version: 6,
+      // v6 moved brands (and their product lines) into the store so they can be
+      // edited in the admin panel.
+      // v5 is the client's catalogue revision: ten industry segments (Data
+      // Center dropped), twelve solution families replacing the six old
+      // categories, and brand product lines on products. A visitor's persisted
+      // v4 catalogue would otherwise keep serving retired ids forever, so drop
+      // the cache and fall back to the seed — `load()` re-fetches server truth
+      // on the next boot anyway.
       migrate: () => ({
         products: seedProducts,
         categories: seedCategories,
         industries: seedIndustries,
+        brands: seedBrands,
       }),
     }
   )

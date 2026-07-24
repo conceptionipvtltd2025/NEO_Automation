@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { UploadCloud, X, Star, Link2 } from "lucide-react";
+import { UploadCloud, X, Star, Link2, Trash2 } from "lucide-react";
 import { safeImg, onImgError, isValidImageRef } from "@/lib/image";
 import { api } from "@/lib/api";
 
@@ -47,11 +47,20 @@ export function ImageInput({
   value,
   onChange,
   max,
+  paste = true,
 }: {
   value: string[];
   onChange: (imgs: string[]) => void;
   /** Cap the number of images. `max={1}` = single-image mode (new replaces old). */
   max?: number;
+  /**
+   * Listen for Ctrl+V anywhere in the form. The listener is GLOBAL, so only one
+   * ImageInput per form may have it — with several mounted (the brand editor
+   * renders one per product line) a single paste would fan out to every one of
+   * them, uploading the same file repeatedly. Pass `paste={false}` on the
+   * secondary inputs.
+   */
+  paste?: boolean;
 }) {
   const commit = (next: string[]) => onChange(max ? next.slice(-max) : next);
   const [url, setUrl] = useState("");
@@ -93,6 +102,7 @@ export function ImageInput({
   // Paste an image anywhere in the form (Ctrl+V). Ignores plain-text pastes so
   // it never interferes with typing into the other fields.
   useEffect(() => {
+    if (!paste) return;
     const onPaste = (e: ClipboardEvent) => {
       const items = e.clipboardData?.items;
       if (!items) return;
@@ -110,7 +120,7 @@ export function ImageInput({
     };
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-  }, []);
+  }, [paste]);
 
   const remove = (i: number) => onChange(value.filter((_, idx) => idx !== i));
   const makeCover = (i: number) => {
@@ -135,41 +145,58 @@ export function ImageInput({
   return (
     <div className="space-y-3">
       {value.length > 0 && (
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          {value.map((src, i) => (
-            <div
-              key={i}
-              className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-ink-800"
-            >
-              <img src={safeImg(src)} onError={onImgError} alt={`Image ${i + 1}`} className="h-full w-full object-cover" />
-              {i === 0 && value.length > 1 && (
-                <span className="absolute left-1.5 top-1.5 rounded-full bg-neo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-pure">
-                  Cover
-                </span>
-              )}
-              <div className="absolute inset-0 flex items-center justify-center gap-1.5 bg-ink-950/65 opacity-0 transition group-hover:opacity-100">
-                {i !== 0 && (
-                  <button
-                    type="button"
-                    onClick={() => makeCover(i)}
-                    title="Set as cover"
-                    className="grid h-7 w-7 place-items-center rounded-lg bg-white/15 text-white transition hover:bg-white/25"
-                  >
-                    <Star className="h-3.5 w-3.5" />
-                  </button>
+        <>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {value.map((src, i) => (
+              <div
+                key={i}
+                className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-ink-800"
+              >
+                <img src={safeImg(src)} onError={onImgError} alt={`Image ${i + 1}`} className="h-full w-full object-cover" />
+                {i === 0 && value.length > 1 && (
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-neo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-pure">
+                    Cover
+                  </span>
                 )}
+
+                {/* ALWAYS visible, not hover-only: the remove control used to
+                    live inside the hover overlay, which made it invisible until
+                    you happened to hover and unreachable on a touch screen. */}
                 <button
                   type="button"
                   onClick={() => remove(i)}
                   title="Remove image"
-                  className="grid h-7 w-7 place-items-center rounded-lg bg-red-600/85 text-white transition hover:bg-red-600"
+                  aria-label={`Remove image ${i + 1}`}
+                  className="absolute right-1.5 top-1.5 grid h-7 w-7 place-items-center rounded-lg bg-ink-950/80 text-pure ring-1 ring-white/20 backdrop-blur-sm transition hover:bg-red-600 hover:ring-red-400"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
+
+                {i !== 0 && (
+                  <div className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-ink-950/85 to-transparent p-1.5 opacity-0 transition group-hover:opacity-100">
+                    <button
+                      type="button"
+                      onClick={() => makeCover(i)}
+                      title="Set as cover"
+                      className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 text-[10px] font-medium text-pure transition hover:bg-white/25"
+                    >
+                      <Star className="h-3 w-3" /> Cover
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => onChange([])}
+            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-steel-400 transition hover:text-neo-400"
+          >
+            <Trash2 className="h-3 w-3" />
+            {value.length > 1 ? `Remove all ${value.length} images` : "Remove image"}
+          </button>
+        </>
       )}
 
       {/* Upload / drop / paste zone */}

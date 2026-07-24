@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useCatalog } from "@/store/useCatalog";
-import { brands as allBrands } from "@/data/brands";
 import {
   navItems as baseNavItems,
   type NavItem,
@@ -17,6 +16,7 @@ export function useNavItems(): NavItem[] {
   const categories = useCatalog((s) => s.categories);
   const industries = useCatalog((s) => s.industries);
   const products = useCatalog((s) => s.products);
+  const allBrands = useCatalog((s) => s.brands);
 
   return useMemo(() => {
     const visIndustries = industries.filter((i) => i.visible !== false);
@@ -36,17 +36,26 @@ export function useNavItems(): NavItem[] {
     const productsColumns: NavColumn[] = [
       {
         heading: "Shop by Category",
-        links: categories.slice(0, 8).map((c) => ({
-          label: c.name,
-          href: `/products?category=${c.id}`,
-          desc: c.description,
-        })),
+        // Six, not eight: with twelve families the column ran past the bottom
+        // of the panel. The rest are one click away on the catalogue grid.
+        links: [
+          ...categories.slice(0, 6).map((c) => ({
+            label: c.name,
+            href: `/products?category=${c.id}`,
+            desc: c.description,
+          })),
+          {
+            label: `All ${categories.length} categories`,
+            href: "/products#catalogue",
+            desc: "The complete catalogue grid",
+          },
+        ],
       },
       {
         heading: "Shop by Brand",
         links: brandList.slice(0, 6).map((b) => ({
           label: b.name,
-          href: `/products?brand=${b.id}`,
+          href: `/brands/${b.id}`,
           desc: b.category,
         })),
       },
@@ -116,5 +125,5 @@ export function useNavItems(): NavItem[] {
       }
       return item;
     });
-  }, [categories, industries, products]);
+  }, [categories, industries, products, allBrands]);
 }

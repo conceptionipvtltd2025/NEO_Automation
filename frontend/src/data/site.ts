@@ -38,7 +38,7 @@ export const site = {
   },
   stats: [
     { value: 19, suffix: "+", label: "Years of Engineering" },
-    { value: 8, suffix: "+", label: "Global Brand Partners" },
+    { value: 10, suffix: "+", label: "Global Brand Partners" },
     { value: 600, suffix: "+", label: "Delivered Solutions To Customers" },
     { value: 99.2, suffix: "%", label: "Uptime Reliability" },
   ],
@@ -98,32 +98,34 @@ export const navItems: NavItem[] = [
         {
           heading: "Shop by Category",
           links: [
-            { label: "Assembly & Tightening", href: "/products?category=assembly-tools", desc: "Smart cordless & electric tightening with traceability" },
-            { label: "Riveting Systems", href: "/products?category=riveting-systems", desc: "Blind rivet & rivet-nut setting tools for structural joining" },
-            { label: "Crane Systems", href: "/products?category=crane-systems", desc: "Modular aluminium cranes & ergonomic lifting" },
-            { label: "Hand Tools & Storage", href: "/products?category=hand-tools", desc: "Torque wrenches, premium hand tools & trolleys" },
-            { label: "Abrasives & Cutting", href: "/products?category=abrasives-cutting", desc: "Cutting discs, grinding wheels & surface finishing" },
-            { label: "Fluid & Pneumatic Fittings", href: "/products?category=fluid-fittings", desc: "Push-fit connectors for leak-free fluid & air" },
+            { label: "Assembly & Tightening", href: "/products?category=assembly-tightening", desc: "Electric, cordless & pneumatic tightening with traceability" },
+            { label: "Riveting System", href: "/products?category=riveting-systems", desc: "Blind rivet & rivet-nut setting tools for structural joining" },
+            { label: "Dispensing & Gluing System", href: "/products?category=dispensing-gluing", desc: "Metered adhesive, sealant & grease dispensing" },
+            { label: "Material Removal Tools", href: "/products?category=material-removal", desc: "Grinders, sanders & high-performance abrasives" },
+            { label: "Air Line Accessories", href: "/products?category=air-line-accessories", desc: "Couplings, hoses, reels & safety air guns" },
+            { label: "Aluminum Crane System", href: "/products?category=aluminium-crane-system", desc: "Modular aluminium cranes & ergonomic lifting" },
+            { label: "Hand Tools & Storage System", href: "/products?category=hand-tools-storage", desc: "Torque wrenches, premium hand tools & trolleys" },
+            { label: "Compressed Air Piping System", href: "/products?category=compressed-air-piping", desc: "Leak-free aluminium air, vacuum & inert gas lines" },
           ],
         },
         {
           heading: "Shop by Brand",
           links: [
-            { label: "Atlas Copco", href: "/products?brand=atlas-copco", desc: "Smart transducer-controlled assembly systems" },
-            { label: "GESIPA", href: "/products?brand=gesipa", desc: "German blind-riveting technology since 1931" },
-            { label: "GEDORE", href: "/products?brand=gedore", desc: "Precision hand tools, Made in Germany" },
-            { label: "PFERD", href: "/products?brand=pferd", desc: "TRUST BLUE abrasives & surface work" },
-            { label: "CEJN", href: "/products?brand=cejn", desc: "Swedish quick-connect pneumatics" },
-            { label: "eepos", href: "/products?brand=eepos", desc: "Modular aluminium crane systems" },
+            { label: "Atlas Copco", href: "/brands/atlas-copco", desc: "Smart transducer-controlled assembly systems" },
+            { label: "GESIPA", href: "/brands/gesipa", desc: "German blind-riveting technology since 1931" },
+            { label: "eepos", href: "/brands/eepos", desc: "Modular aluminium crane systems" },
+            { label: "CEJN", href: "/brands/cejn", desc: "Swedish quick-connect pneumatics" },
+            { label: "Transair", href: "/brands/transair", desc: "Aluminium compressed-air piping" },
+            { label: "All ten brands", href: "/products#brands", desc: "Browse every range we distribute" },
           ],
         },
         {
           heading: "Shop by Application",
           links: [
-            { label: "Automotive line assembly", href: "/products?industry=automotive", desc: "Zero-defect tightening at line speed" },
+            { label: "Automotive & EV assembly", href: "/products?industry=automotive", desc: "Zero-defect tightening at line speed" },
+            { label: "Industrial assembly", href: "/products?industry=industrial-assembly", desc: "Flexible stations for a high-mix line" },
             { label: "Aerospace joining", href: "/products?industry=aerospace", desc: "Aviation-grade, mission-critical fasteners" },
-            { label: "Electronics & EV", href: "/products?industry=electronics-ev", desc: "Micro-precision for high-volume electronics" },
-            { label: "General industries", href: "/products?industry=general-industries", desc: "One tooling partner for every process" },
+            { label: "Metal fabrication", href: "/products?industry=metal-fabrication", desc: "Cutting, grinding & air line tooling" },
             { label: "Browse full catalogue", href: "/products", desc: "All products, filters & search" },
           ],
         },
@@ -145,17 +147,17 @@ export const navItems: NavItem[] = [
         {
           heading: "Mobility & Transport",
           links: [
-            { label: "Automotive", href: "/industries/automotive", desc: "Zero-defect assembly for the mobility era" },
+            { label: "Automotive Manufacturing & EV Assembly", href: "/industries/automotive", desc: "Every stage of vehicle build, body shop to battery pack" },
             { label: "Aerospace", href: "/industries/aerospace", desc: "Where every fastener is mission-critical" },
-            { label: "Electronics & EV", href: "/industries/electronics-ev", desc: "Micro-precision for high-volume electronics" },
+            { label: "Railway", href: "/industries/railway", desc: "Tools and service for trains, trams and carriages" },
           ],
         },
         {
-          heading: "Infrastructure & Energy",
+          heading: "Industry & Energy",
           links: [
-            { label: "Data Center", href: "/industries/data-center", desc: "Infrastructure assembled to the micron" },
-            { label: "Energy & Utilities", href: "/industries/energy-utilities", desc: "Heavy-duty tooling for critical infrastructure" },
-            { label: "General Industries", href: "/industries/general-industries", desc: "Tooling the world's workshops" },
+            { label: "Industrial Assembly", href: "/industries/industrial-assembly", desc: "Assembly solutions that flex with your product mix" },
+            { label: "Energy", href: "/industries/energy", desc: "World-class bolting for oil & gas, power and wind" },
+            { label: "Metal Fabrication", href: "/industries/metal-fabrication", desc: "High-productivity material removal and air line tools" },
           ],
         },
         {
@@ -193,7 +195,8 @@ export const navItems: NavItem[] = [
         {
           heading: "Calibration & Support",
           links: [
-            { label: "Torque Calibration", href: "/nsw#torque-calibration", desc: "ISO 6789 certification, audit-ready reports" },
+            { label: "Torque Calibration", href: "/nsw#torque-calibration", desc: "Documented, audit-ready torque certificates" },
+            { label: "Hydraulic Tools", href: "/nsw#hydraulic-tools", desc: "Tensioners, wrenches & pumps — service & seal kits" },
             { label: "Repair & Genuine Spares", href: "/nsw#repair-spares", desc: "100% genuine spares, fast turnaround" },
             { label: "Preventive Maintenance", href: "/nsw#preventive-maintenance", desc: "AMC contracts that maximise tool life" },
           ],
@@ -210,7 +213,7 @@ export const navItems: NavItem[] = [
       featured: {
         eyebrow: "Neo Service Workshop",
         title: "Nut runners, restored & certified",
-        blurb: "An in-house workshop with genuine spares, OEM-trained engineers and ISO 6789 calibration — built around your uptime.",
+        blurb: "An in-house workshop with genuine spares, OEM-trained engineers and documented torque calibration — built around your uptime.",
         href: "/nsw",
         cta: "Explore Service",
         bgImage: nswHero,
@@ -234,7 +237,7 @@ export const navItems: NavItem[] = [
         {
           heading: "Trust & Responsibility",
           links: [
-            { label: "Credentials & certifications", href: "/about#credentials", desc: "ISO 9001:2015, authorised distributor, OEM-trained" },
+            { label: "Credentials & partnerships", href: "/about#credentials", desc: "Authorised distributor, OEM-trained engineers" },
             { label: "Sustainability & Safety", href: "/sustainability", desc: "Our environmental and safety-first commitments" },
             { label: "Terms of use", href: "/terms", desc: "Products, quotations & governing terms" },
             { label: "Privacy policy", href: "/privacy", desc: "How we collect and protect your data" },

@@ -5,7 +5,7 @@ import { query } from "./db";
  * multipleStatements on the pool. JSON columns hold the array/object fields that
  * the frontend types expect (industries, features, specs, images, capabilities, stat).
  */
-const TABLES: string[] = [
+export const TABLES: string[] = [
   `CREATE TABLE IF NOT EXISTS admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(64) NOT NULL UNIQUE,

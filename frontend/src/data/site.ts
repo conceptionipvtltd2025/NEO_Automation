@@ -230,7 +230,7 @@ export const navItems: NavItem[] = [
           links: [
             { label: "Our story", href: "/about#story", desc: "Ahmedabad-based, founded 2007 by Baldev Solanki" },
             { label: "Mission & vision", href: "/about#mission-vision", desc: "Precision, traceable tooling for every floor" },
-            { label: "Our journey", href: "/about#timeline", desc: "Milestones from 2019 to 1200+ installations" },
+            { label: "Our journey", href: "/about#timeline", desc: "Milestones from 2007 to AGV/AMR solutions" },
             { label: "Core values", href: "/about#values", desc: "Integrity, Precision, Partnership, Excellence" },
           ],
         },

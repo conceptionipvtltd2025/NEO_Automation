@@ -40,7 +40,7 @@ logger.error = (msg, opts) => {
 export default defineConfig({
   customLogger: logger,
   plugins: [react()],
-  base: "/neo-website/",
+  base: process.env.VITE_BASE ?? "/neo-website/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

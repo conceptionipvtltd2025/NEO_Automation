@@ -7,7 +7,7 @@ import { requireAuth } from "../auth";
 
 const router = Router();
 
-/** Absolute path to the folder where uploaded images live on disk. */
+/** Absolute path to the folder where uploaded files live on disk. */
 export const UPLOADS_DIR = path.join(process.cwd(), "uploads");
 
 /**
@@ -30,6 +30,27 @@ const EXT_BY_MIME: Record<string, string> = {
   "image/avif": "avif",
 };
 
+// Documents (product literature). Some browsers/OSes label a PDF as
+// application/octet-stream, so the filename extension is checked as well.
+const DOC_EXT_BY_MIME: Record<string, string> = {
+  "application/pdf": "pdf",
+  "application/x-pdf": "pdf",
+  "application/acrobat": "pdf",
+  "text/pdf": "pdf",
+};
+
+const MAX_BYTES = 25 * 1024 * 1024; // 25 MB — datasheets are far bigger than photos
+
+/** The extension to store a file under, or "" when the type isn't allowed. */
+function extFor(file: Express.Multer.File): string {
+  const mime = (file.mimetype || "").toLowerCase();
+  if (EXT_BY_MIME[mime]) return EXT_BY_MIME[mime];
+  if (DOC_EXT_BY_MIME[mime]) return "pdf";
+  // Fall back to the extension for types the browser reported vaguely.
+  if (/\.pdf$/i.test(file.originalname || "")) return "pdf";
+  return "";
+}
+
 /**
  * Multer stores the incoming file straight to disk with a unique, safe name.
  *
@@ -45,44 +66,62 @@ const storage = multer.diskStorage({
       .catch((err) => cb(err, UPLOADS_DIR));
   },
   filename: (_req, file, cb) => {
-    const ext = EXT_BY_MIME[file.mimetype.toLowerCase()] || "bin";
-    cb(null, `${Date.now().toString(36)}-${randomBytes(6).toString("hex")}.${ext}`);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
-  fileFilter: (_req, file, cb) => {
-    if (EXT_BY_MIME[file.mimetype.toLowerCase()]) cb(null, true);
-    else cb(new Error(`Unsupported image type: ${file.mimetype}`));
+    cb(
+      null,
+      `${Date.now().toString(36)}-${randomBytes(6).toString("hex")}.${extFor(file) || "bin"}`
+    );
   },
 });
 
 /**
- * POST /api/uploads  (admin, multipart/form-data)
- * Field: `file` — the image binary.
- * Returns: { url: "https://…/uploads/ab12.jpg" }.
+ * One multer instance handles both images and PDFs. They used to be separate
+ * endpoints, which meant an admin panel talking to a backend that predates the
+ * document route got a bare 404 and an unexplained "upload failed" — accepting
+ * both on `/api/uploads` removes that whole failure mode.
  */
-router.post("/", requireAuth, (req, res) => {
+const upload = multer({
+  storage,
+  limits: { fileSize: MAX_BYTES },
+  fileFilter: (_req, file, cb) => {
+    if (extFor(file)) cb(null, true);
+    else cb(new Error(`Unsupported file type: ${file.mimetype} (images and PDF only)`));
+  },
+});
+
+/** Shared handler: store the file, answer with its public URL and size. */
+function handleUpload(req: any, res: any) {
   upload.single("file")(req, res, (err: unknown) => {
     if (err) {
       const message =
         err instanceof multer.MulterError
           ? err.code === "LIMIT_FILE_SIZE"
-            ? "Image too large (max 10 MB)."
+            ? "File too large (max 25 MB)."
             : err.message
           : err instanceof Error
             ? err.message
             : "Upload failed.";
-      const status = /Unsupported image type/.test(message) ? 415 : 400;
+      const status = /Unsupported file type/.test(message) ? 415 : 400;
       return res.status(status).json({ error: message });
     }
     if (!req.file) {
       return res.status(400).json({ error: "No file received (expected form field `file`)." });
     }
-    return res.status(201).json({ url: `${uploadsBaseUrl()}/${req.file.filename}` });
+    return res.status(201).json({
+      url: `${uploadsBaseUrl()}/${req.file.filename}`,
+      size: req.file.size,
+      name: req.file.originalname,
+    });
   });
-});
+}
+
+/**
+ * POST /api/uploads      (admin, multipart/form-data) — image or PDF.
+ * POST /api/uploads/doc  (admin, multipart/form-data) — same thing; the admin
+ *   panel posts product literature here so the intent is readable in the logs.
+ * Field: `file` — the binary.
+ * Returns: { url: "https://…/uploads/ab12.pdf", size, name }.
+ */
+router.post("/", requireAuth, handleUpload);
+router.post("/doc", requireAuth, handleUpload);
 
 export default router;

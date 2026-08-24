@@ -11,15 +11,20 @@ import {
   Check,
   ArrowLeft,
   MessageSquareQuote,
+  FileText,
+  Download,
 } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
+import type { ProductDocument } from "@/data/products";
 import { Modal } from "@/components/ui/Modal";
 import { InquiryForm } from "@/components/InquiryForm";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { GridBackground, Aurora } from "@/components/ui/Backgrounds";
-import { cn } from "@/lib/utils";
+import { cn, formatBytes } from "@/lib/utils";
 import NotFound from "./NotFound";
+
+type TabId = "desc" | "specs" | "docs";
 
 const trust = [
   { icon: ShieldCheck, label: "Genuine & warranty-backed" },
@@ -27,18 +32,58 @@ const trust = [
   { icon: Headphones, label: "Engineering support" },
 ];
 
+/** One downloadable PDF — used both in the buying column and the Downloads tab. */
+function DocLink({ doc, index = 0 }: { doc: ProductDocument; index?: number }) {
+  const size = formatBytes(doc.size);
+  return (
+    <motion.a
+      href={doc.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-neo-600/40 hover:bg-white/[0.06]"
+    >
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-neo-600/15 text-neo-400 transition group-hover:bg-neo-600 group-hover:text-pure">
+        <FileText className="h-4 w-4" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium text-white">{doc.label}</span>
+        <span className="mt-0.5 block text-[11px] text-steel-500">
+          PDF{size ? ` · ${size}` : ""} · opens in a new tab
+        </span>
+      </span>
+      <Download className="h-4 w-4 shrink-0 text-steel-500 transition group-hover:text-neo-400" />
+    </motion.a>
+  );
+}
+
 export default function ProductDetail() {
   const { slug } = useParams();
   const products = useCatalog((s) => s.products);
   const brands = useCatalog((s) => s.brands);
   const product = products.find((p) => p.slug === slug);
   const [activeImg, setActiveImg] = useState(0);
-  const [tab, setTab] = useState<"desc" | "specs">("desc");
+  const [tab, setTab] = useState<TabId>("desc");
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   if (!product) return <NotFound />;
 
   const brand = brands.find((b) => b.id === product.brandId);
+  // Downloads only earn a tab when the admin has attached literature to this
+  // product — an empty tab would just be a dead end for the visitor.
+  const documents = (product.documents ?? []).filter((d) => d?.url);
+  const tabs: { id: TabId; label: string }[] = [
+    { id: "desc", label: "Description & Features" },
+    { id: "specs", label: "Specifications" },
+    ...(documents.length
+      ? [{ id: "docs" as TabId, label: `Downloads (${documents.length})` }]
+      : []),
+  ];
+  // A product edited to drop its last PDF while the tab is open would otherwise
+  // render an empty panel.
+  const activeTab: TabId = tab === "docs" && !documents.length ? "desc" : tab;
   const related = products
     .filter((p) => p.id !== product.id && p.categoryId === product.categoryId && p.visible !== false)
     .slice(0, 4);
@@ -146,6 +191,27 @@ export default function ProductDetail() {
                 ))}
               </div>
 
+              {/* Literature sits in the buying column, not only behind the
+                  Downloads tab — a datasheet is part of the decision, so it has
+                  to be visible without hunting for it. */}
+              {documents.length > 0 && (
+                <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs uppercase tracking-wider text-steel-500">
+                      Documentation
+                    </p>
+                    <span className="rounded-full border border-neo-600/30 bg-neo-600/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neo-400">
+                      {documents.length} PDF{documents.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {documents.map((doc, i) => (
+                      <DocLink key={`${doc.url}-${i}`} doc={doc} index={i} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {brand && (
                 <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-4">
                   <p className="text-xs uppercase tracking-wider text-steel-500">
@@ -160,21 +226,18 @@ export default function ProductDetail() {
 
           {/* Tabs */}
           <div className="mt-16">
-            <div className="flex gap-2 border-b border-white/10">
-              {[
-                { id: "desc", label: "Description & Features" },
-                { id: "specs", label: "Specifications" },
-              ].map((t) => (
+            <div className="flex flex-wrap gap-2 border-b border-white/10">
+              {tabs.map((t) => (
                 <button
                   key={t.id}
-                  onClick={() => setTab(t.id as "desc" | "specs")}
+                  onClick={() => setTab(t.id)}
                   className={cn(
                     "relative px-4 py-3 text-sm font-medium transition",
-                    tab === t.id ? "text-white" : "text-steel-400 hover:text-white"
+                    activeTab === t.id ? "text-white" : "text-steel-400 hover:text-white"
                   )}
                 >
                   {t.label}
-                  {tab === t.id && (
+                  {activeTab === t.id && (
                     <motion.span
                       layoutId="detail-tab"
                       className="absolute inset-x-0 -bottom-px h-0.5 bg-neo-600"
@@ -185,7 +248,7 @@ export default function ProductDetail() {
             </div>
 
             <div className="py-8">
-              {tab === "desc" ? (
+              {activeTab === "desc" ? (
                 <div className="grid gap-8 lg:grid-cols-2">
                   <p className="text-base leading-relaxed text-steel-300">
                     {product.description}
@@ -206,7 +269,7 @@ export default function ProductDetail() {
                     </ul>
                   </div>
                 </div>
-              ) : (
+              ) : activeTab === "specs" ? (
                 <div className="overflow-hidden rounded-2xl border border-white/10">
                   {product.specs.map((s, i) => (
                     <div
@@ -219,6 +282,12 @@ export default function ProductDetail() {
                       <span className="text-steel-400">{s.label}</span>
                       <span className="font-medium text-white">{s.value}</span>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {documents.map((doc, i) => (
+                    <DocLink key={`${doc.url}-${i}`} doc={doc} index={i} />
                   ))}
                 </div>
               )}

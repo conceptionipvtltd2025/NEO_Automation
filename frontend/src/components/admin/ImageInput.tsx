@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { UploadCloud, X, Star, Link2, Trash2 } from "lucide-react";
 import { safeImg, onImgError, isValidImageRef } from "@/lib/image";
-import { api } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
+import { useAuth } from "@/store/useAuth";
 
 /**
  * Reads an image File, downscales it to `maxDim` on its longest edge, and returns
@@ -89,11 +90,17 @@ export function ImageInput({
       }
       commit([...valueRef.current, ...urls]);
     } catch (err) {
-      setUploadErr(
-        err instanceof Error && err.message
-          ? `Image upload failed: ${err.message}`
-          : "Image upload failed — check your connection and try again."
-      );
+      // 401 = the admin session expired mid-edit, not a bad image.
+      if (err instanceof ApiError && err.status === 401) {
+        setUploadErr("Your session expired — sign in again, then re-add the image.");
+        useAuth.getState().expireSession();
+      } else {
+        setUploadErr(
+          err instanceof Error && err.message
+            ? `Image upload failed: ${err.message}`
+            : "Image upload failed — check your connection and try again."
+        );
+      }
     } finally {
       setBusy(false);
     }

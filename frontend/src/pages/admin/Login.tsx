@@ -11,6 +11,7 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const login = useAuth((s) => s.login);
   const isAuthed = useAuth((s) => s.isAuthed);
+  const sessionExpired = useAuth((s) => s.sessionExpired);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +22,14 @@ export default function AdminLogin() {
   useEffect(() => {
     if (isAuthed) navigate(ADMIN_BASE, { replace: true });
   }, [isAuthed, navigate]);
+
+  // Arriving here because the token ran out is not a failed login — say so, so
+  // nobody assumes the password stopped working.
+  useEffect(() => {
+    if (sessionExpired) {
+      setError("Your session expired. Please sign in again to continue.");
+    }
+  }, [sessionExpired]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

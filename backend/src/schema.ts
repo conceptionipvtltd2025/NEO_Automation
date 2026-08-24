@@ -66,6 +66,7 @@ export const TABLES: string[] = [
     features JSON,
     specs JSON,
     images JSON,
+    documents JSON,
     featured TINYINT(1) DEFAULT 0,
     special TINYINT(1) DEFAULT 0,
     badge VARCHAR(96),
@@ -108,6 +109,9 @@ const ALTERS: string[] = [
   // literature links. Note the back-quotes: LINES is a MySQL reserved word.
   "ALTER TABLE brands ADD COLUMN `lines` JSON",
   `ALTER TABLE brands ADD COLUMN resources JSON`,
+  // Per-product literature: an array of { label, url, size } PDF datasheets the
+  // admin uploads for a single product (brand-level `resources` is separate).
+  `ALTER TABLE products ADD COLUMN documents JSON`,
   `ALTER TABLE brands ADD COLUMN sort_order INT DEFAULT 0`,
 ];
 

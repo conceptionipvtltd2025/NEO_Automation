@@ -81,6 +81,8 @@ export function mapProduct(r: any) {
     features: parseJson<string[]>(r.features, []),
     specs: parseJson<{ label: string; value: string }[]>(r.specs, []),
     images: parseJson<string[]>(r.images, []),
+    // Per-product PDF literature (datasheets, manuals, certificates).
+    documents: parseJson<{ label: string; url: string; size?: number }[]>(r.documents, []),
     featured: bool(r.featured),
     special: bool(r.special),
     badge: r.badge ?? undefined,
@@ -229,14 +231,14 @@ export async function upsertProduct(p: any) {
   await query(
     `INSERT INTO products
        (id, slug, name, brand_id, brand, category_id, line, industries, price, rating,
-        short_desc, description, features, specs, images, featured, special, badge, visible)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        short_desc, description, features, specs, images, documents, featured, special, badge, visible)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        slug=VALUES(slug), name=VALUES(name), brand_id=VALUES(brand_id), brand=VALUES(brand),
        category_id=VALUES(category_id), line=VALUES(line), industries=VALUES(industries), price=VALUES(price),
        rating=VALUES(rating), short_desc=VALUES(short_desc), description=VALUES(description),
        features=VALUES(features), specs=VALUES(specs), images=VALUES(images),
-       featured=VALUES(featured), special=VALUES(special), badge=VALUES(badge), visible=VALUES(visible)`,
+       documents=VALUES(documents), featured=VALUES(featured), special=VALUES(special), badge=VALUES(badge), visible=VALUES(visible)`,
     [
       p.id,
       p.slug,
@@ -253,6 +255,15 @@ export async function upsertProduct(p: any) {
       JSON.stringify(p.features ?? []),
       JSON.stringify(p.specs ?? []),
       JSON.stringify(p.images ?? []),
+      JSON.stringify(
+        (p.documents ?? [])
+          .filter((d: any) => d && d.url)
+          .map((d: any) => ({
+            label: String(d.label || "Datasheet"),
+            url: String(d.url),
+            ...(Number(d.size) > 0 ? { size: Number(d.size) } : {}),
+          }))
+      ),
       p.featured ? 1 : 0,
       p.special ? 1 : 0,
       p.badge ?? null,

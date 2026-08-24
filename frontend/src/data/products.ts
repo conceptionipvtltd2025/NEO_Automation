@@ -1,3 +1,15 @@
+/**
+ * A downloadable PDF attached to a single product — datasheet, manual,
+ * certificate. Uploaded from the admin panel (Products → Product documents),
+ * which stores the file on the backend and keeps only its URL here.
+ */
+export type ProductDocument = {
+  label: string;
+  url: string;
+  /** Bytes, when the file was uploaded through the admin (absent for URLs). */
+  size?: number;
+};
+
 export type Product = {
   id: string;
   slug: string;
@@ -15,6 +27,8 @@ export type Product = {
   features: string[];
   specs: { label: string; value: string }[];
   images: string[];
+  /** PDF literature shown in the Downloads tab on the product page. */
+  documents?: ProductDocument[];
   featured?: boolean;
   special?: boolean;
   badge?: string;

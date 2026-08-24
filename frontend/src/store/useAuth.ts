@@ -10,9 +10,36 @@ type AuthState = {
   token: string | null;
   attempts: number;
   lockedUntil: number | null;
+  /** Set when a session was dropped because its token was no longer valid. */
+  sessionExpired: boolean;
   login: (u: string, p: string) => Promise<LoginResult>;
   logout: () => void;
+  /** Drop the session and tell the login screen why. */
+  expireSession: () => void;
+  /** Validate the persisted session; call it when the admin area mounts. */
+  checkSession: () => Promise<void>;
 };
+
+/**
+ * True when a JWT's own `exp` claim is in the past.
+ *
+ * The login state is persisted in localStorage but the token only lives 7 days
+ * (JWT_EXPIRES_IN), so a panel left open — or reopened weeks later — used to
+ * look signed in while every write came back 401. Reading `exp` catches that
+ * with no round trip; anything unreadable is treated as expired.
+ */
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return true;
+    const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    const { exp } = JSON.parse(json) as { exp?: number };
+    if (!exp) return false; // no expiry claim — let the server decide
+    return exp * 1000 <= Date.now();
+  } catch {
+    return true;
+  }
+}
 
 // Fallback demo credentials (AR-01) — used only if the backend is unreachable.
 // When the API is up, authentication is server-side (bcrypt + JWT).
@@ -40,7 +67,14 @@ export const useAuth = create<AuthState>()(
 
       const succeed = (user: string, token: string | null) => {
         setToken(token);
-        set({ isAuthed: true, user, token, attempts: 0, lockedUntil: null });
+        set({
+          isAuthed: true,
+          user,
+          token,
+          attempts: 0,
+          lockedUntil: null,
+          sessionExpired: false,
+        });
       };
 
       return {
@@ -49,6 +83,7 @@ export const useAuth = create<AuthState>()(
         token: null,
         attempts: 0,
         lockedUntil: null,
+        sessionExpired: false,
 
         login: async (u, pw) => {
           const { lockedUntil } = get();
@@ -85,7 +120,31 @@ export const useAuth = create<AuthState>()(
 
         logout: () => {
           setToken(null);
-          set({ isAuthed: false, user: null, token: null });
+          set({ isAuthed: false, user: null, token: null, sessionExpired: false });
+        },
+
+        expireSession: () => {
+          setToken(null);
+          set({ isAuthed: false, user: null, token: null, sessionExpired: true });
+        },
+
+        checkSession: async () => {
+          const { isAuthed, token, expireSession } = get();
+          if (!isAuthed) return;
+          // Cheap local check first — an expired JWT needs no round trip.
+          if (token && isTokenExpired(token)) {
+            expireSession();
+            return;
+          }
+          try {
+            await api.get("/auth/me");
+            set({ sessionExpired: false });
+          } catch (err) {
+            // Only a real rejection ends the session. A network error means the
+            // backend is unreachable, and the panel is meant to stay usable
+            // offline (it falls back to the persisted catalogue).
+            if (err instanceof ApiError && err.status === 401) expireSession();
+          }
         },
       };
     },

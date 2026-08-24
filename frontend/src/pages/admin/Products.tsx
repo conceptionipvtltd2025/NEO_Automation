@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Pencil, Trash2, Eye, EyeOff, Star } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff, Star, FileText } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
-import type { Product } from "@/data/products";
+import type { Product, ProductDocument } from "@/data/products";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
+import { PdfInput } from "@/components/admin/PdfInput";
 import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
 import { slugify, cn } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
@@ -26,6 +27,7 @@ const blank: Product = {
   features: [],
   specs: [],
   images: ["https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1000&q=80"],
+  documents: [],
   visible: true,
 };
 
@@ -36,6 +38,7 @@ export default function AdminProducts() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   // image list + text mirrors for the other list fields
   const [images, setImages] = useState<string[]>([]);
+  const [documents, setDocuments] = useState<ProductDocument[]>([]);
   const [featuresText, setFeaturesText] = useState("");
   const [specsText, setSpecsText] = useState("");
 
@@ -49,6 +52,7 @@ export default function AdminProducts() {
   const openEdit = (p: Product) => {
     setEditing(p);
     setImages(p.images);
+    setDocuments(p.documents ?? []);
     setFeaturesText(p.features.join("\n"));
     setSpecsText(p.specs.map((s) => `${s.label}: ${s.value}`).join("\n"));
   };
@@ -63,6 +67,7 @@ export default function AdminProducts() {
       categoryId: categories[0]?.id ?? "",
     });
     setImages([...blank.images]);
+    setDocuments([]);
     setFeaturesText("");
     setSpecsText("");
   };
@@ -78,6 +83,10 @@ export default function AdminProducts() {
       slug: editing.slug || slugify(editing.name),
       brand: brandObj?.name ?? editing.brand,
       images: images.filter(Boolean),
+      // Drop half-finished rows: a document is only useful once it has a file.
+      documents: documents
+        .filter((d) => d.url.trim())
+        .map((d) => ({ ...d, label: d.label.trim() || "Datasheet" })),
       features: featuresText.split("\n").map((s) => s.trim()).filter(Boolean),
       specs: specsText
         .split("\n")
@@ -131,8 +140,16 @@ export default function AdminProducts() {
                     <img src={safeImg(p.images[0])} onError={onImgError} alt="" className="h-11 w-11 rounded-lg object-cover" />
                     <div>
                       <p className="font-medium text-white">{p.name}</p>
-                      <p className="flex items-center gap-1 text-xs text-steel-500">
-                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> {p.rating}
+                      <p className="flex items-center gap-2 text-xs text-steel-500">
+                        <span className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> {p.rating}
+                        </span>
+                        {/* At-a-glance marker for which products carry literature. */}
+                        {(p.documents?.length ?? 0) > 0 && (
+                          <span className="flex items-center gap-1 text-neo-400">
+                            <FileText className="h-3 w-3" /> {p.documents!.length} PDF
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -253,6 +270,10 @@ export default function AdminProducts() {
 
             <Field label="Product images">
               <ImageInput value={images} onChange={setImages} />
+            </Field>
+
+            <Field label="Product documents (PDF) — datasheets, manuals, certificates">
+              <PdfInput value={documents} onChange={setDocuments} />
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-2">

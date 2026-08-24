@@ -53,9 +53,10 @@ const persistWrite = (p: Promise<unknown>, action: string) => {
       useCatalog.setState({
         lastError: "Your session expired — please sign in again to save changes.",
       });
-      // Drop the invalid session so the route guard sends them to login.
+      // Drop the invalid session so the route guard sends them to login, with
+      // the reason recorded for the login screen.
       try {
-        useAuth.getState().logout();
+        useAuth.getState().expireSession();
       } catch {
         /* ignore */
       }

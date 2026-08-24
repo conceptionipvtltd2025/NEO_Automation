@@ -100,11 +100,33 @@ export const api = {
    * a real image file and returns { url }, so product records hold a short URL.
    */
   upload: (file: Blob, filename = "image.jpg") => uploadFile(file, filename),
+  /**
+   * Upload a PDF document (product datasheet / manual) and get back its stored
+   * file URL plus size. Same multipart transport as `upload`.
+   *
+   * `/uploads/doc` is the intent-revealing endpoint, but a backend deployed
+   * before it existed answers 404 — in that case fall back to the generic
+   * `/uploads` route rather than surfacing a mystery failure to the admin.
+   */
+  uploadDoc: async (file: Blob, filename = "document.pdf") => {
+    try {
+      return await uploadFile(file, filename, "/uploads/doc");
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        return await uploadFile(file, filename, "/uploads");
+      }
+      throw err;
+    }
+  },
 };
 
 /** Multipart file upload — separate from `request()` because the browser must
  *  set the multipart Content-Type (with boundary) itself, so we don't add one. */
-async function uploadFile(file: Blob, filename: string): Promise<{ url: string }> {
+async function uploadFile(
+  file: Blob,
+  filename: string,
+  path = "/uploads"
+): Promise<{ url: string; size?: number }> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30000); // uploads can be slower
 
@@ -116,7 +138,7 @@ async function uploadFile(file: Blob, filename: string): Promise<{ url: string }
   form.append("file", file, filename);
 
   try {
-    const res = await fetch(`${BASE}/uploads`, {
+    const res = await fetch(`${BASE}${path}`, {
       method: "POST",
       headers, // no Content-Type — the browser adds multipart boundary
       body: form,
@@ -132,7 +154,7 @@ async function uploadFile(file: Blob, filename: string): Promise<{ url: string }
       }
       throw new ApiError(message, res.status);
     }
-    return (await res.json()) as { url: string };
+    return (await res.json()) as { url: string; size?: number };
   } finally {
     clearTimeout(timer);
   }

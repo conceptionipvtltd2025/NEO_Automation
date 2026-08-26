@@ -11,7 +11,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.6, delay: (index % 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      className="group"
+      className="group h-full"
     >
       <Link
         to={`/products/${product.slug}`}
@@ -27,12 +27,12 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-900/90 via-transparent to-transparent" />
           {product.badge && (
-            <span className="absolute left-3 top-3 rounded-full border border-neo-600/40 bg-neo-600/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-neo-300 backdrop-blur-md">
+            <span className="absolute left-3 top-3 rounded-full border border-neo-600/40 bg-neo-600/15 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-neo-300 backdrop-blur-md">
               {product.badge}
             </span>
           )}
-          <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-ink-950/70 px-2.5 py-1 text-[11px] font-medium text-amber-400 backdrop-blur-md">
-            <Star className="h-3 w-3 fill-amber-400" /> {product.rating}
+          <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-ink-950/70 px-2.5 py-1 text-[13px] font-medium text-amber-400 backdrop-blur-md">
+            <Star className="h-3.5 w-3.5 fill-amber-400" /> {product.rating}
           </span>
           <span className="absolute bottom-3 left-3 text-xs font-medium uppercase tracking-wider text-steel-300">
             {product.brand}
@@ -40,14 +40,14 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
 
         <div className="flex flex-1 flex-col p-5">
-          <h3 className="font-display text-base font-semibold leading-snug text-white transition-colors group-hover:text-neo-300">
+          <h3 className="line-clamp-2 min-h-[3rem] font-display text-base font-semibold leading-snug text-white transition-colors group-hover:text-neo-300">
             {product.name}
           </h3>
           <p className="mt-2 line-clamp-2 flex-1 text-sm text-steel-400">
             {product.shortDesc}
           </p>
           <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-steel-500">
+            <span className="text-[13px] font-medium uppercase tracking-wider text-steel-500">
               View details
             </span>
             <span className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-steel-300 transition-all duration-300 group-hover:border-neo-600 group-hover:bg-neo-600 group-hover:text-pure">

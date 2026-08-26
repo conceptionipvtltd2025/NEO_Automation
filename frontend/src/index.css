@@ -29,10 +29,13 @@
 
     --steel-100: 240 243 248;
     --steel-200: 211 217 227;
-    --steel-300: 173 182 197;
-    --steel-400: 135 145 163;
-    --steel-500: 99 109 127;
-    --steel-600: 71 79 94;
+    /* Muted copy runs brighter than the original scale: at the larger type
+       size the old steel-400/500 greys were the main reason small print read as
+       "not clearly visible". Hue is unchanged — only luminance. */
+    --steel-300: 200 208 220;
+    --steel-400: 170 180 196;
+    --steel-500: 140 150 168;
+    --steel-600: 104 113 130;
     --steel-700: 50 56 68;
 
     /* `white` token → cool light foreground / translucent light overlays */
@@ -64,9 +67,9 @@
 
     --steel-100: 17 21 29; /* strongest text         */
     --steel-200: 33 39 51;
-    --steel-300: 55 63 78; /* muted body / nav       */
-    --steel-400: 79 89 105; /* secondary text (AA on silver) */
-    --steel-500: 106 116 133;
+    --steel-300: 45 53 67; /* muted body / nav       */
+    --steel-400: 64 73 89; /* secondary text (AAA on silver) */
+    --steel-500: 88 98 115;
     --steel-600: 140 149 165;
     --steel-700: 186 193 205;
 
@@ -96,11 +99,11 @@
     --ink-600: 70 78 93;
     --ink-500: 94 104 122;
     --steel-100: 240 243 248;
-    --steel-200: 211 217 227;
-    --steel-300: 173 182 197;
-    --steel-400: 135 145 163;
-    --steel-500: 99 109 127;
-    --steel-600: 71 79 94;
+    --steel-200: 214 220 230;
+    --steel-300: 200 208 220;
+    --steel-400: 170 180 196;
+    --steel-500: 140 150 168;
+    --steel-600: 104 113 130;
     --steel-700: 50 56 68;
     --fg: 255 255 255;
     --grid-line: 150 170 214;
@@ -123,7 +126,14 @@
   }
 
   body {
-    @apply bg-ink-950 text-steel-100 font-sans antialiased overflow-x-hidden;
+    @apply bg-ink-950 text-steel-100 font-sans antialiased;
+    /* `clip`, NOT `hidden`. `overflow-x: hidden` forces the other axis to `auto`,
+       which turns <body> into a scroll container — and because <body> is not the
+       element that actually scrolls, that silently breaks EVERY `position:
+       sticky` on the site (the industries panel, the industry-detail sidebar).
+       `clip` stops the horizontal pan just as hard without creating a
+       scrollport, so sticky keeps working. */
+    overflow-x: clip;
     background-attachment: fixed;
     background-image: radial-gradient(
         ellipse 80% 50% at 50% -10%,

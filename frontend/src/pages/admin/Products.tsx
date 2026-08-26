@@ -6,7 +6,15 @@ import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { PdfInput } from "@/components/admin/PdfInput";
-import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
+import { SpecsInput } from "@/components/admin/SpecsInput";
+import {
+  AdminToolbar,
+  AdminForm,
+  IconBtn,
+  Field,
+  usePagination,
+  AdminPagination,
+} from "./Categories";
 import { slugify, cn } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
 
@@ -40,7 +48,10 @@ export default function AdminProducts() {
   const [images, setImages] = useState<string[]>([]);
   const [documents, setDocuments] = useState<ProductDocument[]>([]);
   const [featuresText, setFeaturesText] = useState("");
-  const [specsText, setSpecsText] = useState("");
+  // Specs are edited as real label/value rows (see components/admin/SpecsInput).
+  // The old `Label: Value` textarea silently discarded any line it couldn't
+  // split, so a filled-in form could save an empty spec table.
+  const [specs, setSpecs] = useState<Product["specs"]>([]);
 
   const filtered = products.filter(
     (p) =>
@@ -54,7 +65,7 @@ export default function AdminProducts() {
     setImages(p.images);
     setDocuments(p.documents ?? []);
     setFeaturesText(p.features.join("\n"));
-    setSpecsText(p.specs.map((s) => `${s.label}: ${s.value}`).join("\n"));
+    setSpecs(p.specs.map((s) => ({ ...s })));
   };
 
   const openNew = () => {
@@ -69,7 +80,8 @@ export default function AdminProducts() {
     setImages([...blank.images]);
     setDocuments([]);
     setFeaturesText("");
-    setSpecsText("");
+    // Start with one empty row so the section reads as fillable, not empty.
+    setSpecs([{ label: "", value: "" }]);
   };
 
   const save = (e: React.FormEvent) => {
@@ -88,12 +100,10 @@ export default function AdminProducts() {
         .filter((d) => d.url.trim())
         .map((d) => ({ ...d, label: d.label.trim() || "Datasheet" })),
       features: featuresText.split("\n").map((s) => s.trim()).filter(Boolean),
-      specs: specsText
-        .split("\n")
-        .map((line) => {
-          const [label, ...rest] = line.split(":");
-          return { label: label?.trim() ?? "", value: rest.join(":").trim() };
-        })
+      // Only complete rows are stored — and the editor has already flagged any
+      // half-filled row in place, so nothing disappears without warning.
+      specs: specs
+        .map((s) => ({ label: s.label.trim(), value: s.value.trim() }))
         .filter((s) => s.label && s.value),
     };
     upsertProduct(product);
@@ -201,7 +211,7 @@ export default function AdminProducts() {
         maxWidth="max-w-2xl"
       >
         {editing && (
-          <form onSubmit={save} className="space-y-4">
+          <AdminForm onSubmit={save} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Product name">
                 <input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" />
@@ -276,14 +286,13 @@ export default function AdminProducts() {
               <PdfInput value={documents} onChange={setDocuments} />
             </Field>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Features (one per line)">
-                <textarea rows={4} value={featuresText} onChange={(e) => setFeaturesText(e.target.value)} className="admin-input resize-none" />
-              </Field>
-              <Field label="Specs (one per line — Label: Value)">
-                <textarea rows={4} value={specsText} onChange={(e) => setSpecsText(e.target.value)} className="admin-input resize-none" placeholder={"Torque Range: 5 – 50 Nm\nWeight: 1.1 kg"} />
-              </Field>
-            </div>
+            <Field label="Features (one per line)">
+              <textarea rows={4} value={featuresText} onChange={(e) => setFeaturesText(e.target.value)} className="admin-input resize-none" placeholder={"Shut-off clutch for repeatable torque\nCool-running at high duty cycles"} />
+            </Field>
+
+            <Field label="Specifications">
+              <SpecsInput value={specs} onChange={setSpecs} />
+            </Field>
 
             <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4">
               <ToggleChip label="Visible" checked={editing.visible !== false} onChange={(v) => setEditing({ ...editing, visible: v })} />
@@ -296,10 +305,10 @@ export default function AdminProducts() {
             </div>
 
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[13px]">Cancel</button>
-              <button type="submit" className="btn-primary flex-1 justify-center text-[13px]">Save product</button>
+              <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[14.5px]">Cancel</button>
+              <button type="submit" className="btn-primary flex-1 justify-center text-[14.5px]">Save product</button>
             </div>
-          </form>
+          </AdminForm>
         )}
       </Modal>
 

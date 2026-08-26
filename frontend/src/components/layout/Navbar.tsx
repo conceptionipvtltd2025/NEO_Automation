@@ -87,7 +87,12 @@ export function Navbar() {
           <div className="relative" onMouseLeave={scheduleClose}>
             <div
               className={cn(
-                "mt-3 flex items-center justify-between rounded-2xl border px-4 py-2 transition-all duration-500 sm:px-5",
+                // A 3-column grid rather than justify-between: with a 165px
+                // logo on one side and a 250px action cluster on the other,
+                // space-between pushed the nav off-centre and let the three
+                // groups touch at 1280px. auto | 1fr | auto centres the nav on
+                // the BAR and keeps a real gutter either side at every width.
+                "mt-3 grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-2xl border px-4 py-3 transition-all duration-500 sm:px-5 xl:gap-8",
                 scrolled || activeMega || searchOpen
                   ? "border-white/10 bg-ink-900/80 shadow-card backdrop-blur-xl"
                   : "border-transparent bg-transparent",
@@ -98,7 +103,7 @@ export function Navbar() {
                 <Logo />
               </Link>
 
-              <nav className="hidden items-center gap-0.5 md:flex">
+              <nav className="hidden items-center justify-center gap-1 xl:flex">
                 {navItems.map((item) => {
                   const hasMega = !!item.mega;
                   const routeActive =
@@ -121,7 +126,7 @@ export function Navbar() {
                         onClick={closeMega}
                         aria-expanded={hasMega ? megaOpen : undefined}
                         className={cn(
-                          "group relative flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[13px] font-medium transition-colors lg:px-3 xl:px-4 xl:text-sm",
+                          "group relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-2.5 text-[14px] font-medium transition-colors",
                           routeActive || megaOpen
                             ? "text-white"
                             : "text-steel-300 hover:text-white"
@@ -131,8 +136,8 @@ export function Navbar() {
                         {hasMega && (
                           <ChevronDown
                             className={cn(
-                              "relative z-10 h-3.5 w-3.5 text-steel-500 transition-transform duration-300",
-                              megaOpen && "rotate-180 text-steel-200"
+                              "relative z-10 h-4 w-4 text-steel-400 transition-transform duration-300",
+                              megaOpen && "rotate-180 text-white"
                             )}
                           />
                         )}
@@ -156,13 +161,24 @@ export function Navbar() {
               </nav>
 
               <div
-                className="flex items-center gap-2"
+                className="flex items-center justify-end gap-2 xl:gap-2.5"
                 onMouseEnter={closeMega}
               >
+                {/* Hairline between the navigation and the action cluster —
+                    it stops "Contact" and the search icon reading as one run
+                    of controls. */}
+                <span
+                  aria-hidden
+                  className="mr-1 hidden h-6 w-px bg-white/15 xl:block"
+                />
                 <NavSearch onOpenChange={setSearchOpen} />
                 <ThemeToggle />
-                <Magnetic className="hidden xl:block">
-                  <Link to="/inquiry" className="btn-primary whitespace-nowrap text-[13px]">
+                {/* The quote CTA needs ~170px. Seven nav items, the lockup, search and the
+                    theme toggle already fill a 1280px bar, so the button joins at the
+                    first width where it fits WITH gutters rather than squeezing them
+                    to zero. Below that it still lives in the mobile drawer. */}
+                <Magnetic className="hidden min-[1440px]:block">
+                  <Link to="/inquiry" className="btn-primary whitespace-nowrap px-5 text-[14.5px] 2xl:px-7">
                     Get a Quote
                     <ArrowUpRight className="h-4 w-4" />
                   </Link>
@@ -170,7 +186,7 @@ export function Navbar() {
                 <button
                   onClick={() => setOpen(true)}
                   aria-label="Open menu"
-                  className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-white md:hidden"
+                  className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-white xl:hidden"
                 >
                   <Menu className="h-5 w-5" />
                 </button>
@@ -197,7 +213,7 @@ export function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 md:hidden"
+            className="fixed inset-0 z-50 xl:hidden"
           >
             <div
               className="absolute inset-0 bg-ink-950/80 backdrop-blur-xl"
@@ -272,7 +288,7 @@ export function Navbar() {
                                 </Link>
                                 {item.mega.columns.map((col) => (
                                   <div key={col.heading}>
-                                    <p className="px-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-steel-500">
+                                    <p className="px-1 text-[13px] font-semibold uppercase tracking-[0.18em] text-steel-500">
                                       {col.heading}
                                     </p>
                                     <ul className="mt-1.5 space-y-0.5">

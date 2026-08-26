@@ -17,7 +17,14 @@ import type { Brand, BrandLine } from "@/data/brands";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
-import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
+import {
+  AdminToolbar,
+  AdminForm,
+  IconBtn,
+  Field,
+  usePagination,
+  AdminPagination,
+} from "./Categories";
 import { slugify, cn } from "@/lib/utils";
 import { onImgError } from "@/lib/image";
 import { lineImage } from "@/lib/lineImage";
@@ -60,7 +67,7 @@ function FormSection({
           <div>
             <h4 className="font-display text-sm font-semibold text-white">{title}</h4>
             {hint && (
-              <p className="mt-0.5 max-w-prose text-[11px] leading-snug text-steel-500">
+              <p className="mt-0.5 max-w-prose text-[13px] leading-snug text-steel-500">
                 {hint}
               </p>
             )}
@@ -226,15 +233,15 @@ export default function AdminBrands() {
               </div>
 
               <div className="flex-1 p-4">
-                <p className="line-clamp-2 text-[13px] leading-relaxed text-steel-400">
+                <p className="line-clamp-2 text-[14.5px] leading-relaxed text-steel-400">
                   {b.blurb}
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-steel-300">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[13px] text-steel-300">
                     <Layers className="h-3 w-3" />
                     {lineCount} {lineCount === 1 ? "line" : "lines"}
                   </span>
-                  <span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-steel-300">
+                  <span className="rounded-full border border-white/10 px-2.5 py-1 text-[13px] text-steel-300">
                     {productCount} {productCount === 1 ? "product" : "products"}
                   </span>
                 </div>
@@ -262,7 +269,7 @@ export default function AdminBrands() {
         maxWidth="max-w-4xl"
       >
         {editing && (
-          <form onSubmit={save} className="space-y-5">
+          <AdminForm onSubmit={save} className="space-y-5">
             {/* ── 1. Identity ─────────────────────────────────────────── */}
             <FormSection
               icon={Tag}
@@ -350,7 +357,7 @@ export default function AdminBrands() {
                     brand={{ ...editing, logo: logo[0] ?? "" }}
                     size="md"
                   />
-                  <p className="mt-1.5 text-center text-[10px] uppercase tracking-wider text-steel-600">
+                  <p className="mt-1.5 text-center text-[12px] uppercase tracking-wider text-steel-600">
                     Preview
                   </p>
                 </div>
@@ -371,7 +378,7 @@ export default function AdminBrands() {
                 <button
                   type="button"
                   onClick={addLine}
-                  className="btn-primary shrink-0 text-[13px]"
+                  className="btn-primary shrink-0 text-[14.5px]"
                 >
                   <Plus className="h-4 w-4" /> Add line
                 </button>
@@ -380,16 +387,16 @@ export default function AdminBrands() {
               {editing.lines.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-white/15 py-10 text-center">
                   <Layers className="mx-auto h-6 w-6 text-steel-600" />
-                  <p className="mt-2 text-[13px] text-steel-400">
+                  <p className="mt-2 text-[14.5px] text-steel-400">
                     No product lines yet.
                   </p>
-                  <p className="mt-1 text-[11px] text-steel-600">
+                  <p className="mt-1 text-[13px] text-steel-600">
                     e.g. “Electric Assembly Tools”, “Pop Rivet Tools”
                   </p>
                   <button
                     type="button"
                     onClick={addLine}
-                    className="btn-ghost mx-auto mt-4 text-[13px]"
+                    className="btn-ghost mx-auto mt-4 text-[14.5px]"
                   >
                     <Plus className="h-4 w-4" /> Add the first line
                   </button>
@@ -416,7 +423,7 @@ export default function AdminBrands() {
                             aria-expanded={isOpen}
                             className="flex min-w-0 flex-1 items-center gap-3 rounded-lg px-1.5 py-1 text-left transition hover:bg-white/[0.04]"
                           >
-                            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-white/[0.06] text-[11px] font-semibold text-steel-300">
+                            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-white/[0.06] text-[13px] font-semibold text-steel-300">
                               {idx + 1}
                             </span>
                             <span className="h-9 w-14 shrink-0 overflow-hidden rounded-md border border-white/10 bg-ink-950">
@@ -428,12 +435,12 @@ export default function AdminBrands() {
                               />
                             </span>
                             <span className="min-w-0 flex-1">
-                              <span className="block truncate text-[13px] font-medium text-white">
+                              <span className="block truncate text-[14.5px] font-medium text-white">
                                 {l.name || (
                                   <span className="text-steel-500">Untitled line</span>
                                 )}
                               </span>
-                              <span className="block truncate text-[11px] text-steel-500">
+                              <span className="block truncate text-[13px] text-steel-500">
                                 {inUse} product{inUse === 1 ? "" : "s"}
                                 {l.brief ? ` · ${l.brief}` : " · no brief yet"}
                               </span>
@@ -588,7 +595,7 @@ export default function AdminBrands() {
                                     max={1}
                                     paste={false}
                                   />
-                                  <p className="mt-1.5 text-[11px] text-steel-500">
+                                  <p className="mt-1.5 text-[13px] text-steel-500">
                                     {l.image
                                       ? "Custom image for this line."
                                       : "Optional — otherwise a product from this line, or the catalogue family photo, is used."}
@@ -624,22 +631,22 @@ export default function AdminBrands() {
             {/* Sticky actions — the form is long, so Save must always be one
                 click away rather than a scroll to the bottom. */}
             <div className="sticky bottom-0 -mx-6 -mb-6 flex items-center gap-3 border-t border-white/10 bg-ink-900/95 px-6 py-4 backdrop-blur-xl">
-              <p className="mr-auto hidden items-center gap-2 text-[11px] text-steel-500 sm:flex">
+              <p className="mr-auto hidden items-center gap-2 text-[13px] text-steel-500 sm:flex">
                 <Info className="h-3.5 w-3.5" />
                 Lines without a name are discarded on save.
               </p>
               <button
                 type="button"
                 onClick={() => setEditing(null)}
-                className="btn-ghost justify-center text-[13px]"
+                className="btn-ghost justify-center text-[14.5px]"
               >
                 Cancel
               </button>
-              <button type="submit" className="btn-primary justify-center text-[13px]">
+              <button type="submit" className="btn-primary justify-center text-[14.5px]">
                 {editing.id ? "Save changes" : "Create brand"}
               </button>
             </div>
-          </form>
+          </AdminForm>
         )}
       </Modal>
 

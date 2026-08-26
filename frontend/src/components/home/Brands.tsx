@@ -81,7 +81,7 @@ export function Brands() {
                     taller logos. The pill sits under it, where it can breathe. */}
                 <BrandLogoPlate brand={b} size="md" />
 
-                <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-steel-200">
+                <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-steel-200">
                   {/* Brand colour as a dot rather than the label colour — the
                       navy brands (Legris, GEDORE) are unreadable as text on a
                       dark card. */}

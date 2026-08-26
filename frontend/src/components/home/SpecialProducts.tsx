@@ -98,7 +98,7 @@ export function SpecialProducts() {
                         {prod.brand}
                       </span>
                       {prod.badge && (
-                        <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] text-steel-300">
+                        <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[12px] text-steel-300">
                           {prod.badge}
                         </span>
                       )}

@@ -18,6 +18,8 @@ import {
   Recycle,
   HardHat,
   Wind,
+  Zap,
+  Gauge,
 } from "lucide-react";
 
 /**
@@ -62,7 +64,7 @@ export function ProductsHeaderArt() {
           </span>
           <div className="leading-tight">
             <p className="text-sm font-semibold text-white">{c.label}</p>
-            <p className="text-[10px] text-steel-400">Catalogue</p>
+            <p className="text-[12px] text-steel-400">Catalogue</p>
           </div>
         </motion.div>
       ))}
@@ -184,7 +186,7 @@ export function AboutHeaderArt() {
         className="absolute left-1/2 top-1/2 grid h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-ink-900/80 shadow-2xl shadow-black/50 backdrop-blur-md"
       >
         <span className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-bold tracking-tight text-white">
-          NE<span className="text-neo-500">O</span>
+          N<span className="text-neo-500">E</span>O
         </span>
       </motion.div>
     </Stage>
@@ -252,7 +254,7 @@ export function InquiryHeaderArt() {
           <div className="h-2.5 w-2/3 rounded-full bg-white/10" />
         </div>
         <div className="flex items-center justify-end">
-          <span className="flex items-center gap-1.5 rounded-full bg-neo-600 px-3 py-1.5 text-[11px] font-semibold text-pure">
+          <span className="flex items-center gap-1.5 rounded-full bg-neo-600 px-3 py-1.5 text-[13px] font-semibold text-pure">
             Send <Send className="h-3 w-3" />
           </span>
         </div>
@@ -288,6 +290,61 @@ export function LegalHeaderArt() {
       >
         <ShieldCheck className="h-6 w-6" />
       </motion.span>
+    </Stage>
+  );
+}
+
+/* ─────────────── Safety — pulsing shield with orbiting hazard controls ─────────────── */
+export function SafetyHeaderArt() {
+  const orbit = [HardHat, Zap, Gauge, Wrench];
+  return (
+    <Stage>
+      {/* pulse rings radiating from the shield */}
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          aria-hidden
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-neo-500/25"
+          initial={{ width: 80, height: 80, opacity: 0.6 }}
+          animate={{ width: 300, height: 300, opacity: 0 }}
+          transition={{ duration: 3.6, repeat: Infinity, ease: "easeOut", delay: i * 1.2 }}
+        />
+      ))}
+
+      {/* centre shield */}
+      <motion.div
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute left-1/2 top-1/2 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-ink-900/85 text-neo-400 shadow-2xl shadow-black/50 backdrop-blur-md"
+      >
+        <ShieldCheck className="h-11 w-11" />
+      </motion.div>
+
+      {/* the four control disciplines circling it */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 34, repeat: Infinity, ease: "linear" }}
+        className="absolute left-1/2 top-1/2 h-[76%] w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/10"
+      >
+        {orbit.map((Icon, i) => {
+          const angle = (i / orbit.length) * 360;
+          return (
+            <div
+              key={i}
+              className="absolute left-1/2 top-1/2"
+              style={{ transform: `rotate(${angle}deg) translateY(-50%) translateX(-50%)` }}
+            >
+              <motion.span
+                animate={{ rotate: -360 }}
+                transition={{ duration: 34, repeat: Infinity, ease: "linear" }}
+                className="grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-ink-900/90 text-white shadow-lg backdrop-blur-md"
+              >
+                <Icon className="h-5 w-5" />
+              </motion.span>
+            </div>
+          );
+        })}
+      </motion.div>
     </Stage>
   );
 }

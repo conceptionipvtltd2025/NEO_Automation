@@ -210,7 +210,7 @@ export function NavSearch({
                   Search the entire site — products, brands, industries,
                   services and pages.
                 </p>
-                <p className="mt-2 text-[11px] text-steel-600">
+                <p className="mt-2 text-[13px] text-steel-600">
                   Try “tensor”, “aerospace”, “calibration” or “sustainability”.
                 </p>
               </div>
@@ -220,7 +220,7 @@ export function NavSearch({
                   const Icon = GROUP_ICON[grp.group];
                   return (
                     <div key={grp.group} className="mb-1.5 last:mb-0">
-                      <p className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-steel-600">
+                      <p className="px-2 pb-1 pt-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-steel-600">
                         {GROUP_LABEL[grp.group]}
                       </p>
                       <ul className="space-y-0.5">
@@ -271,7 +271,7 @@ export function NavSearch({
                                     {r.title}
                                   </span>
                                   {r.subtitle && (
-                                    <span className="block truncate text-[11px] text-steel-500">
+                                    <span className="block truncate text-[13px] text-steel-500">
                                       {r.subtitle}
                                     </span>
                                   )}
@@ -320,7 +320,7 @@ export function NavSearch({
             )}
 
             {q && flat.length > 0 && (
-              <div className="flex items-center justify-between border-t border-white/10 px-3 py-2 text-[10px] text-steel-600">
+              <div className="flex items-center justify-between border-t border-white/10 px-3 py-2 text-[12px] text-steel-600">
                 <span className="flex items-center gap-1.5">
                   <kbd className="rounded border border-white/10 bg-white/[0.03] px-1.5 py-0.5">↑</kbd>
                   <kbd className="rounded border border-white/10 bg-white/[0.03] px-1.5 py-0.5">↓</kbd>

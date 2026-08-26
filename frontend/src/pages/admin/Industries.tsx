@@ -5,7 +5,14 @@ import type { Industry } from "@/data/industries";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ImageInput } from "@/components/admin/ImageInput";
-import { AdminToolbar, IconBtn, Field, usePagination, AdminPagination } from "./Categories";
+import {
+  AdminToolbar,
+  AdminForm,
+  IconBtn,
+  Field,
+  usePagination,
+  AdminPagination,
+} from "./Categories";
 import { slugify, cn } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
 
@@ -90,7 +97,7 @@ export default function AdminIndustries() {
               </span>
               <span
                 className={cn(
-                  "absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium backdrop-blur",
+                  "absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[13px] font-medium backdrop-blur",
                   ind.visible === false
                     ? "border-white/10 bg-black/40 text-steel-300"
                     : "border-emerald-500/30 bg-emerald-500/15 text-emerald-300"
@@ -135,7 +142,7 @@ export default function AdminIndustries() {
         maxWidth="max-w-xl"
       >
         {editing && (
-          <form onSubmit={save} className="space-y-4">
+          <AdminForm onSubmit={save} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Name">
                 <input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" />
@@ -172,10 +179,10 @@ export default function AdminIndustries() {
               <textarea rows={4} value={capsText} onChange={(e) => setCapsText(e.target.value)} className="admin-input resize-none" />
             </Field>
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[13px]">Cancel</button>
-              <button type="submit" className="btn-primary flex-1 justify-center text-[13px]">Save industry</button>
+              <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[14.5px]">Cancel</button>
+              <button type="submit" className="btn-primary flex-1 justify-center text-[14.5px]">Save industry</button>
             </div>
-          </form>
+          </AdminForm>
         )}
       </Modal>
 

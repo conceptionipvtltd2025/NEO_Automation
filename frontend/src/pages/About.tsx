@@ -128,6 +128,11 @@ const timeline: Milestone[] = [
   },
 ];
 
+// The array above is authored chronologically because that is how the client
+// maintains it — but the page shows it NEWEST FIRST, so a visitor lands on
+// where Neo is today and reads back to 2007.
+const timelineNewestFirst = [...timeline].reverse();
+
 const values = [
   { icon: Heart, title: "Integrity", text: "Genuine equipment, honest advice, always." },
   { icon: Rocket, title: "Precision", text: "Obsessed with accuracy and reliability." },
@@ -261,7 +266,7 @@ export default function About() {
                     <p className="font-display text-2xl font-bold text-white">
                       <Counter value={s.value} suffix={s.suffix} decimals={s.value % 1 !== 0 ? 1 : 0} />
                     </p>
-                    <p className="mt-1 text-[11px] uppercase tracking-wider text-steel-500">
+                    <p className="mt-1 text-[13px] uppercase tracking-wider text-steel-500">
                       {s.label}
                     </p>
                   </div>
@@ -309,7 +314,7 @@ export default function About() {
             className="pointer-events-none absolute bottom-6 left-2 top-6 w-px -translate-x-1/2 bg-gradient-to-b from-neo-600/50 via-white/10 to-transparent"
           />
 
-          {timeline.map((t, i) => {
+          {timelineNewestFirst.map((t, i) => {
             const accent = t.color ?? "#ed1c24";
             const Icon = t.icon;
             return (
@@ -382,7 +387,7 @@ export default function About() {
                     </div>
                   </div>
 
-                  <p className="relative mt-4 text-sm leading-relaxed text-steel-400 sm:text-[15px]">
+                  <p className="relative mt-4 text-sm leading-relaxed text-steel-400 sm:text-[16px]">
                     {t.text}
                   </p>
                 </div>

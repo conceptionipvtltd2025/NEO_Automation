@@ -61,7 +61,7 @@ export default function Dashboard() {
                   <s.icon className="h-5 w-5" />
                 </span>
                 {s.badge ? (
-                  <span className="rounded-full bg-neo-600 px-2 py-0.5 text-[11px] font-bold text-pure">
+                  <span className="rounded-full bg-neo-600 px-2 py-0.5 text-[13px] font-bold text-pure">
                     {s.badge} new
                   </span>
                 ) : (
@@ -105,7 +105,7 @@ export default function Dashboard() {
                 </div>
                 <span
                   className={cn(
-                    "shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium capitalize",
+                    "shrink-0 rounded-full border px-2.5 py-1 text-[13px] font-medium capitalize",
                     statusStyle[inq.status]
                   )}
                 >
@@ -132,7 +132,7 @@ export default function Dashboard() {
             <Clock className="h-7 w-7 text-volt-400" />
             <p className="mt-4 font-display text-3xl font-bold text-white">{newCount}</p>
             <p className="mt-1 text-sm text-steel-300">Awaiting response</p>
-            <Link to={`${ADMIN_BASE}/inquiries`} className="btn-ghost mt-4 w-full justify-center text-[13px]">
+            <Link to={`${ADMIN_BASE}/inquiries`} className="btn-ghost mt-4 w-full justify-center text-[14.5px]">
               Review now
             </Link>
           </div>

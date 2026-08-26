@@ -96,6 +96,25 @@ export default {
           700: "rgb(var(--steel-700) / <alpha-value>)",
         },
       },
+      fontSize: {
+        // Bumped one notch across the board for legibility — the old 12px
+        // captions and 14px body copy were hard to read for many visitors.
+        // Line-heights are set alongside so denser blocks stay comfortable.
+        "2xs": ["0.8125rem", { lineHeight: "1.15rem" }], // 13px
+        xs: ["0.845rem", { lineHeight: "1.25rem" }], // 13.5px (was 12px)
+        sm: ["0.97rem", { lineHeight: "1.55rem" }], // 15.5px (was 14px)
+        base: ["1.09rem", { lineHeight: "1.8rem" }], // 17.5px (was 16px)
+        lg: ["1.21rem", { lineHeight: "1.9rem" }], // 19.4px (was 18px)
+        xl: ["1.33rem", { lineHeight: "1.95rem" }], // 21.3px (was 20px)
+        "2xl": ["1.6rem", { lineHeight: "2.1rem" }], // 25.6px (was 24px)
+        "3xl": ["1.95rem", { lineHeight: "2.35rem" }], // 31px (was 30px)
+        "4xl": ["2.35rem", { lineHeight: "2.6rem" }], // 37.6px (was 36px)
+        "5xl": ["3rem", { lineHeight: "1.08" }],
+        "6xl": ["3.75rem", { lineHeight: "1.05" }],
+        "7xl": ["4.5rem", { lineHeight: "1.03" }],
+        "8xl": ["6rem", { lineHeight: "1" }],
+        "9xl": ["8rem", { lineHeight: "1" }],
+      },
       fontFamily: {
         sans: ["Sora", "Inter", "system-ui", "sans-serif"],
         display: ["Clash Display", "Sora", "sans-serif"],

@@ -130,8 +130,8 @@ export function AdminLayout() {
                     className={cn(
                       "grid place-items-center rounded-full bg-neo-600 font-bold text-pure",
                       mini
-                        ? "absolute right-1.5 top-1.5 h-4 min-w-4 px-1 text-[9px]"
-                        : "ml-auto h-5 min-w-5 px-1.5 text-[11px]"
+                        ? "absolute right-1.5 top-1.5 h-4 min-w-4 px-1 text-[11px]"
+                        : "ml-auto h-5 min-w-5 px-1.5 text-[13px]"
                     )}
                   >
                     {newCount}

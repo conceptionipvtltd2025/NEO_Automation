@@ -39,7 +39,7 @@ export function AboutTeaser() {
 
             <div className="absolute -left-4 top-8 hidden rounded-2xl border border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur-xl sm:block">
               <p className="font-display text-xl font-bold text-white">Genuine</p>
-              <p className="text-[11px] text-steel-400">Authorised distribution</p>
+              <p className="text-[13px] text-steel-400">Authorised distribution</p>
             </div>
           </div>
         </Reveal>
@@ -87,7 +87,7 @@ export function AboutTeaser() {
           </div>
 
           <Reveal delay={0.36}>
-            <Link to="/about" className="btn-ghost mt-8 text-[13px]">
+            <Link to="/about" className="btn-ghost mt-8 text-[14.5px]">
               More about Neo <ArrowUpRight className="h-4 w-4" />
             </Link>
           </Reveal>

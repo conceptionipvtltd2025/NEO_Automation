@@ -102,7 +102,7 @@ export function Process() {
                   <s.icon className="h-7 w-7 transition-transform duration-500 group-hover:rotate-6" />
                   {/* step badge */}
                   <span
-                    className="absolute -right-2.5 -top-2.5 grid h-7 w-7 place-items-center rounded-full font-display text-[11px] font-bold text-white shadow-lg transition-transform duration-500 group-hover:scale-110"
+                    className="absolute -right-2.5 -top-2.5 grid h-7 w-7 place-items-center rounded-full font-display text-[13px] font-bold text-white shadow-lg transition-transform duration-500 group-hover:scale-110"
                     style={{
                       background: "rgb(var(--accent))",
                       boxShadow: "0 4px 14px -3px rgb(var(--accent) / 0.7)",

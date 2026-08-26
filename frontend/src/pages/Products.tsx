@@ -246,10 +246,10 @@ export default function Products() {
                     <Icon className="h-5 w-5" />
                   </span>
                   <span>
-                    <span className="block font-display text-[15px] font-semibold text-white">
+                    <span className="block font-display text-[16px] font-semibold text-white">
                       {c.name}
                     </span>
-                    <span className="mt-1.5 block text-[13px] leading-relaxed text-steel-400">
+                    <span className="mt-1.5 block text-[14.5px] leading-relaxed text-steel-400">
                       {c.description}
                     </span>
                   </span>
@@ -339,13 +339,13 @@ export default function Products() {
                   <p className="font-display text-sm font-semibold text-white">
                     {activeBrand.name} product lines
                   </p>
-                  <p className="mt-1 text-[13px] text-steel-400">
+                  <p className="mt-1 text-[14.5px] text-steel-400">
                     {activeBrand.category} · {activeBrand.lines.length} ranges
                   </p>
                 </div>
                 <Link
                   to={`/brands/${activeBrand.id}`}
-                  className="btn-ghost text-[13px]"
+                  className="btn-ghost text-[14.5px]"
                 >
                   Full {activeBrand.name} range
                   <ArrowUpRight className="h-4 w-4" />
@@ -379,7 +379,7 @@ export default function Products() {
                 {/* The chosen line explains itself without a second click. */}
                 <p
                   key={line}
-                  className="mt-4 max-w-3xl text-[13px] leading-relaxed text-steel-400"
+                  className="mt-4 max-w-3xl text-[14.5px] leading-relaxed text-steel-400"
                 >
                   {line === "all"
                     ? activeBrand.blurb
@@ -422,7 +422,7 @@ export default function Products() {
             <p className="mt-1 text-sm text-steel-400">
               Try adjusting your filters or search.
             </p>
-            <button onClick={reset} className="btn-ghost mt-5 text-[13px]">
+            <button onClick={reset} className="btn-ghost mt-5 text-[14.5px]">
               Reset filters
             </button>
           </div>
@@ -611,7 +611,7 @@ function LineTile({
       <span className="flex items-start justify-between gap-1.5">
         <span
           title={label}
-          className="line-clamp-2 text-[11.5px] font-semibold leading-tight text-pure drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"
+          className="line-clamp-2 text-[13px] font-semibold leading-tight text-pure drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"
         >
           {label}
         </span>
@@ -621,7 +621,7 @@ function LineTile({
           <Check className="mt-px h-3.5 w-3.5 shrink-0 text-pure drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
         )}
       </span>
-      <span className="mt-1 text-[10px] font-medium uppercase tracking-wider text-pure/70">
+      <span className="mt-1 text-[12px] font-medium uppercase tracking-wider text-pure/70">
         {count} {count === 1 ? "product" : "products"}
       </span>
     </button>
@@ -637,7 +637,7 @@ function BrandTile({ brand }: { brand: Brand }) {
       className="group flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:border-neo-600/30 hover:bg-white/[0.04]"
     >
       <BrandLogoPlate brand={brand} size="md" className="w-full" />
-      <span className="text-[11px] leading-tight text-steel-400 transition group-hover:text-white">
+      <span className="text-[13px] leading-tight text-steel-400 transition group-hover:text-white">
         {brand.category}
       </span>
     </Link>

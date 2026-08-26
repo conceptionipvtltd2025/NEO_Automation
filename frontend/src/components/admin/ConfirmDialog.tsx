@@ -25,7 +25,7 @@ export function ConfirmDialog({
         <h3 className="mt-5 font-display text-lg font-bold text-white">{title}</h3>
         <p className="mt-2 text-sm text-steel-400">{message}</p>
         <div className="mt-6 flex gap-3">
-          <button onClick={onClose} className="btn-ghost flex-1 justify-center text-[13px]">
+          <button onClick={onClose} className="btn-ghost flex-1 justify-center text-[14.5px]">
             Cancel
           </button>
           <button
@@ -33,7 +33,7 @@ export function ConfirmDialog({
               onConfirm();
               onClose();
             }}
-            className="flex-1 justify-center rounded-full bg-red-600 px-5 py-3 text-[13px] font-semibold text-white transition hover:bg-red-500"
+            className="flex-1 justify-center rounded-full bg-red-600 px-5 py-3 text-[14.5px] font-semibold text-white transition hover:bg-red-500"
           >
             {confirmLabel}
           </button>

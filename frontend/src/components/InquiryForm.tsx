@@ -142,7 +142,7 @@ export function InquiryForm({
                 newCaptcha();
                 setStatus("idle");
               }}
-              className="btn-ghost mt-6 text-[13px]"
+              className="btn-ghost mt-6 text-[14.5px]"
             >
               Submit another
             </button>

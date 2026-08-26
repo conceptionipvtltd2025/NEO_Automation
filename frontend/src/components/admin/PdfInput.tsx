@@ -146,7 +146,7 @@ export function PdfInput({
                   aria-label={`Title for document ${i + 1}`}
                   className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-sm text-white outline-none transition focus:border-neo-600/50"
                 />
-                <p className="mt-1 flex items-center gap-2 text-[11px] text-steel-500">
+                <p className="mt-1 flex items-center gap-2 text-[13px] text-steel-500">
                   <a
                     href={doc.url}
                     target="_blank"
@@ -223,7 +223,7 @@ export function PdfInput({
             </>
           )}
         </p>
-        <p className="text-[10px] text-steel-500">
+        <p className="text-[12px] text-steel-500">
           Datasheets, manuals, certificates — PDF only, up to 25 MB each
         </p>
         <input
@@ -270,7 +270,7 @@ export function PdfInput({
             className="admin-input pl-9"
           />
         </div>
-        <button type="button" onClick={addUrl} className="btn-ghost shrink-0 text-[13px]">
+        <button type="button" onClick={addUrl} className="btn-ghost shrink-0 text-[14.5px]">
           Add link
         </button>
       </div>

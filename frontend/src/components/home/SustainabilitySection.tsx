@@ -60,7 +60,7 @@ export function SustainabilitySection() {
                 {standards.map((s) => (
                   <span
                     key={s}
-                    className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px] font-medium text-steel-300"
+                    className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[13px] font-medium text-steel-300"
                   >
                     {s}
                   </span>
@@ -89,7 +89,7 @@ export function SustainabilitySection() {
                   <h3 className="mt-4 font-display text-base font-semibold text-white">
                     {p.title}
                   </h3>
-                  <p className="mt-2 text-[13px] leading-relaxed text-steel-400">
+                  <p className="mt-2 text-[14.5px] leading-relaxed text-steel-400">
                     {p.text}
                   </p>
                 </div>

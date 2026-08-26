@@ -189,7 +189,7 @@ function PillarCard({
       <p className="mt-2 text-sm leading-relaxed text-steel-400">{text}</p>
       <ul className="mt-4 space-y-2 border-t border-white/10 pt-4">
         {points.map((p) => (
-          <li key={p} className="flex items-start gap-2.5 text-[13px] text-steel-300">
+          <li key={p} className="flex items-start gap-2.5 text-[14.5px] text-steel-300">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-neo-500" />
             {p}
           </li>
@@ -242,7 +242,7 @@ export default function Sustainability() {
                   <p className="font-display text-3xl font-bold text-gradient-aurora">
                     <Counter value={m.value} suffix={m.suffix} />
                   </p>
-                  <p className="mt-1.5 text-[11px] leading-snug text-steel-500">
+                  <p className="mt-1.5 text-[13px] leading-snug text-steel-500">
                     {m.label}
                   </p>
                 </div>
@@ -301,7 +301,7 @@ export default function Sustainability() {
                 </span>
                 <p className="mt-4 font-display text-lg font-bold text-white">{s.code}</p>
                 <p className="mt-1 text-xs text-steel-400">{s.label}</p>
-                <span className="mt-3 inline-block rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-steel-300">
+                <span className="mt-3 inline-block rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-steel-300">
                   {s.status}
                 </span>
               </div>

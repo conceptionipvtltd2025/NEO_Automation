@@ -50,7 +50,7 @@ function DocLink({ doc, index = 0 }: { doc: ProductDocument; index?: number }) {
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-medium text-white">{doc.label}</span>
-        <span className="mt-0.5 block text-[11px] text-steel-500">
+        <span className="mt-0.5 block text-[13px] text-steel-500">
           PDF{size ? ` · ${size}` : ""} · opens in a new tab
         </span>
       </span>
@@ -184,7 +184,7 @@ export default function ProductDetail() {
                     className="rounded-xl border border-white/10 bg-white/[0.02] p-3 text-center"
                   >
                     <t.icon className="mx-auto h-5 w-5 text-neo-500" />
-                    <p className="mt-2 text-[11px] leading-tight text-steel-400">
+                    <p className="mt-2 text-[13px] leading-tight text-steel-400">
                       {t.label}
                     </p>
                   </div>
@@ -200,7 +200,7 @@ export default function ProductDetail() {
                     <p className="text-xs uppercase tracking-wider text-steel-500">
                       Documentation
                     </p>
-                    <span className="rounded-full border border-neo-600/30 bg-neo-600/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neo-400">
+                    <span className="rounded-full border border-neo-600/30 bg-neo-600/10 px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wider text-neo-400">
                       {documents.length} PDF{documents.length > 1 ? "s" : ""}
                     </span>
                   </div>

@@ -102,7 +102,7 @@ export default function AdminInquiries() {
         search={search}
         setSearch={setSearch}
       >
-        <button onClick={exportCSV} className="btn-ghost text-[13px]">
+        <button onClick={exportCSV} className="btn-ghost text-[14.5px]">
           <Download className="h-4 w-4" /> Export CSV
         </button>
       </AdminToolbar>
@@ -285,7 +285,7 @@ export default function AdminInquiries() {
                     setViewing({ ...viewing, status: "responded" });
                   }
                 }}
-                className="btn-primary ml-auto text-[13px]"
+                className="btn-primary ml-auto text-[14.5px]"
               >
                 <Mail className="h-4 w-4" /> Reply by email
               </a>

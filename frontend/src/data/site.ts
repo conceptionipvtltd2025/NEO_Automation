@@ -122,7 +122,8 @@ export const navItems: NavItem[] = [
         {
           heading: "Shop by Application",
           links: [
-            { label: "Automotive & EV assembly", href: "/products?industry=automotive", desc: "Zero-defect tightening at line speed" },
+            { label: "Automotive manufacturing", href: "/products?industry=automotive", desc: "Zero-defect tightening at line speed" },
+            { label: "EV assembly", href: "/products?industry=ev-assembly", desc: "Battery, pack & e-drive joining" },
             { label: "Industrial assembly", href: "/products?industry=industrial-assembly", desc: "Flexible stations for a high-mix line" },
             { label: "Aerospace joining", href: "/products?industry=aerospace", desc: "Aviation-grade, mission-critical fasteners" },
             { label: "Metal fabrication", href: "/products?industry=metal-fabrication", desc: "Cutting, grinding & air line tooling" },
@@ -147,7 +148,8 @@ export const navItems: NavItem[] = [
         {
           heading: "Mobility & Transport",
           links: [
-            { label: "Automotive Manufacturing & EV Assembly", href: "/industries/automotive", desc: "Every stage of vehicle build, body shop to battery pack" },
+            { label: "Automotive Manufacturing", href: "/industries/automotive", desc: "Every stage of vehicle build, body shop to final assembly" },
+            { label: "EV Assembly", href: "/industries/ev-assembly", desc: "Battery modules, packs and e-drives" },
             { label: "Aerospace", href: "/industries/aerospace", desc: "Where every fastener is mission-critical" },
             { label: "Railway", href: "/industries/railway", desc: "Tools and service for trains, trams and carriages" },
           ],
@@ -156,6 +158,7 @@ export const navItems: NavItem[] = [
           heading: "Industry & Energy",
           links: [
             { label: "Industrial Assembly", href: "/industries/industrial-assembly", desc: "Assembly solutions that flex with your product mix" },
+            { label: "Electronics", href: "/industries/electronics", desc: "Energy-efficient precision for low-torque operations" },
             { label: "Energy", href: "/industries/energy", desc: "World-class bolting for oil & gas, power and wind" },
             { label: "Metal Fabrication", href: "/industries/metal-fabrication", desc: "High-productivity material removal and air line tools" },
           ],
@@ -221,6 +224,48 @@ export const navItems: NavItem[] = [
     },
   },
   {
+    label: "Safety",
+    href: "/safety",
+    mega: {
+      columns: [
+        {
+          heading: "How We Work Safely",
+          links: [
+            { label: "The four safety disciplines", href: "/safety#disciplines", desc: "Operator, process, electrical and site" },
+            { label: "Hazard & control guide", href: "/safety#hazards", desc: "Seven risks we design out of the station" },
+            { label: "Safety through service", href: "/safety#in-service", desc: "A tool stays safe only if it is kept safe" },
+            { label: "Training & competence", href: "/safety#training", desc: "Operator training at every handover" },
+          ],
+        },
+        {
+          heading: "Safety Equipment",
+          links: [
+            { label: "Torque reaction & fixturing", href: "/products?category=sockets-fixtures-spm", desc: "Reaction arms and fixtures that take the load" },
+            { label: "Ergonomic lifting & cranes", href: "/products?category=aluminium-crane-system", desc: "Modular aluminium cranes and balancers" },
+            { label: "Air line safety", href: "/products?category=air-line-accessories", desc: "Safety couplings, reels and regulated air guns" },
+            { label: "VDE insulated hand tools", href: "/products?category=hand-tools-storage", desc: "1000 V tested tools for live HV work" },
+          ],
+        },
+        {
+          heading: "Proof & Accountability",
+          links: [
+            { label: "Torque calibration", href: "/nsw#torque-calibration", desc: "Documented, audit-ready certificates" },
+            { label: "Preventive maintenance", href: "/nsw#preventive-maintenance", desc: "Catch drift before it becomes an incident" },
+            { label: "Standards & accountability", href: "/safety#training", desc: "Exactly what is certified, and by whom" },
+            { label: "Book a safety walk-through", href: "/inquiry", desc: "We walk your stations and come back costed" },
+          ],
+        },
+      ],
+      featured: {
+        eyebrow: "Safety First",
+        title: "Safety is engineered, not enforced",
+        blurb: "Reaction force, weight, insulation, guarding and traceability are designed in long before anyone writes a work instruction.",
+        href: "/safety",
+        cta: "Explore Safety",
+      },
+    },
+  },
+  {
     label: "Company",
     href: "/about",
     mega: {
@@ -238,7 +283,8 @@ export const navItems: NavItem[] = [
           heading: "Trust & Responsibility",
           links: [
             { label: "Credentials & partnerships", href: "/about#credentials", desc: "Authorised distributor, OEM-trained engineers" },
-            { label: "Sustainability & Safety", href: "/sustainability", desc: "Our environmental and safety-first commitments" },
+            { label: "Safety", href: "/safety", desc: "How we design risk out of the workstation" },
+            { label: "Sustainability", href: "/sustainability", desc: "Environmental responsibility & circularity" },
             { label: "Terms of use", href: "/terms", desc: "Products, quotations & governing terms" },
             { label: "Privacy policy", href: "/privacy", desc: "How we collect and protect your data" },
           ],

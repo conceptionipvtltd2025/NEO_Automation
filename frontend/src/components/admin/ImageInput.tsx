@@ -161,7 +161,7 @@ export function ImageInput({
               >
                 <img src={safeImg(src)} onError={onImgError} alt={`Image ${i + 1}`} className="h-full w-full object-cover" />
                 {i === 0 && value.length > 1 && (
-                  <span className="absolute left-1.5 top-1.5 rounded-full bg-neo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-pure">
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-neo-600 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-pure">
                     Cover
                   </span>
                 )}
@@ -185,7 +185,7 @@ export function ImageInput({
                       type="button"
                       onClick={() => makeCover(i)}
                       title="Set as cover"
-                      className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 text-[10px] font-medium text-pure transition hover:bg-white/25"
+                      className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 text-[12px] font-medium text-pure transition hover:bg-white/25"
                     >
                       <Star className="h-3 w-3" /> Cover
                     </button>
@@ -198,7 +198,7 @@ export function ImageInput({
           <button
             type="button"
             onClick={() => onChange([])}
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-steel-400 transition hover:text-neo-400"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-steel-400 transition hover:text-neo-400"
           >
             <Trash2 className="h-3 w-3" />
             {value.length > 1 ? `Remove all ${value.length} images` : "Remove image"}
@@ -231,7 +231,7 @@ export function ImageInput({
             </>
           )}
         </p>
-        <p className="text-[10px] text-steel-500">PNG, JPG or WebP — auto-resized for the web</p>
+        <p className="text-[12px] text-steel-500">PNG, JPG or WebP — auto-resized for the web</p>
         <input
           ref={fileRef}
           type="file"
@@ -270,7 +270,7 @@ export function ImageInput({
             className="admin-input pl-9"
           />
         </div>
-        <button type="button" onClick={addUrl} className="btn-ghost shrink-0 text-[13px]">
+        <button type="button" onClick={addUrl} className="btn-ghost shrink-0 text-[14.5px]">
           Add URL
         </button>
       </div>

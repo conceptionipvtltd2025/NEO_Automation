@@ -2,13 +2,13 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { IndustriesHeaderArt } from "@/components/ui/HeaderArt";
-import { IndustryTile } from "@/components/IndustryTile";
+import { IndustryGrid } from "@/components/IndustryGrid";
 import { useCatalog } from "@/store/useCatalog";
 import { cn } from "@/lib/utils";
 
-// The full seed set fits on one page; pagination only kicks in once an admin
-// adds beyond this.
-const PAGE_SIZE = 12;
+// The full catalogue fits on one page; pagination only kicks in once an admin
+// adds well beyond the current set, so every sector stays visible at a glance.
+const PAGE_SIZE = 24;
 
 export default function Industries() {
   const allIndustries = useCatalog((s) => s.industries);
@@ -46,11 +46,7 @@ export default function Industries() {
       />
 
       <section className="container-px pb-12">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {paged.map((ind, i) => (
-            <IndustryTile key={ind.id} industry={ind} index={i} />
-          ))}
-        </div>
+        <IndustryGrid industries={paged} />
 
         {industries.length === 0 && (
           <p className="py-20 text-center text-steel-400">

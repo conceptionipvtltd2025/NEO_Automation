@@ -10,6 +10,7 @@ import Industries from "./pages/Industries";
 import IndustryDetail from "./pages/IndustryDetail";
 import About from "./pages/About";
 import Sustainability from "./pages/Sustainability";
+import Safety from "./pages/Safety";
 import Contact from "./pages/Contact";
 import Inquiry from "./pages/Inquiry";
 import NSW from "./pages/NSW";
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/nsw" element={<NSW />} />
         <Route path="/about" element={<About />} />
         <Route path="/sustainability" element={<Sustainability />} />
+        <Route path="/safety" element={<Safety />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/inquiry" element={<Inquiry />} />
         <Route path="/terms" element={<Legal kind="terms" />} />

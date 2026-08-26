@@ -61,7 +61,7 @@ export function IndustryTile({ industry: ind, index = 0 }: Props) {
           />
 
           {/* Stat chip */}
-          <div className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-[11px] backdrop-blur-md">
+          <div className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-[13px] backdrop-blur-md">
             <strong className="text-white">{ind.stat.value}</strong>{" "}
             <span className="text-steel-300">{ind.stat.label}</span>
           </div>
@@ -95,7 +95,7 @@ export function IndustryTile({ industry: ind, index = 0 }: Props) {
                 {ind.capabilities.slice(0, 3).map((c) => (
                   <span
                     key={c}
-                    className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[11px] text-steel-200 backdrop-blur-sm"
+                    className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[13px] text-steel-200 backdrop-blur-sm"
                   >
                     {c}
                   </span>

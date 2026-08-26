@@ -6,15 +6,26 @@ import { Reveal } from "@/components/ui/Reveal";
 import { asset } from "@/lib/asset";
 
 // YouTube video shown on the homepage. Swap the ID to change the clip.
-const YT_ID = "dDjZkJ9iWHI";
-// Poster is a clean frame lifted straight from our own brand b-roll
-// (precision-drilling close-up) — an actual video screenshot rather than a
-// stock photo, and free of the third-party text baked into the YouTube thumb.
-const POSTER = asset("images/showreel-poster.jpg");
+// Currently: Atlas Copco — "Smart Integrated Assembly | Realizing the potential
+// of Industry 4.0"  →  youtube.com/watch?v=vqNblg2TgPU
+const YT_ID = "vqNblg2TgPU";
+// The poster is the video's OWN thumbnail, taken straight from the YouTube CDN
+// and keyed off YT_ID — so changing the ID above changes the cover with it, no
+// second edit and no stale frame from a previous clip.
+// `maxresdefault` only exists for videos uploaded in HD; onError below steps
+// down to `hqdefault` (always present) and finally to our local brand frame, so
+// the card can never render broken.
+const POSTER = `https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg`;
+const POSTER_FALLBACK = `https://i.ytimg.com/vi/${YT_ID}/hqdefault.jpg`;
+const POSTER_LOCAL = asset("images/showreel-poster.jpg");
 
-// Caption shown over the poster (edit to taste).
-const VIDEO_TITLE = "Engineering Tomorrow's Industry";
-const VIDEO_META = "Watch the showreel";
+// Caption shown over the poster. It names the actual film and credits the brand
+// that made it — this is a partner's corporate video, not a Neo showreel, and
+// captioning it as ours would be a claim we can't make. It sits TOP-left: this
+// thumbnail carries the Atlas Copco logo and its own two-line title along the
+// bottom edge, which is where the caption used to be.
+const VIDEO_TITLE = "Smart Integrated Assembly";
+const VIDEO_META = "Industry 4.0 · Atlas Copco";
 
 export function VideoSection() {
   const [playing, setPlaying] = useState(false);
@@ -31,7 +42,11 @@ export function VideoSection() {
         />
 
         <Reveal delay={0.1}>
-          <div className="group relative mx-auto mt-14 h-[360px] w-full max-w-6xl overflow-hidden rounded-3xl border border-white/10 shadow-card sm:h-[440px] lg:h-[520px]">
+          {/* force-dark pins the dark token set inside the card. Without it the
+              "cinematic darkening" scrims below become cinematic *lightening*
+              in the light theme (ink-950 flips to pale platinum), which bleached
+              the poster to near-white and turned the white caption near-black. */}
+          <div className="force-dark group relative mx-auto mt-14 h-[360px] w-full max-w-6xl overflow-hidden rounded-3xl border border-white/10 shadow-card sm:h-[440px] lg:h-[520px]">
             {/* crisp inner edge */}
             <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl ring-1 ring-inset ring-white/10" />
 
@@ -39,8 +54,11 @@ export function VideoSection() {
               <iframe
                 className="absolute inset-0 h-full w-full"
                 src={`https://www.youtube-nocookie.com/embed/${YT_ID}?autoplay=1&rel=0&modestbranding=1`}
-                title="Neo Automation video"
-                allow="accelerated-fullscreen; autoplay; encrypted-media; picture-in-picture"
+                title={`${VIDEO_TITLE} — ${VIDEO_META}`}
+                // "accelerated-fullscreen" is not a real Permissions-Policy
+                // token; the one that actually grants an embed fullscreen is
+                // "fullscreen" (alongside the allowFullScreen attribute).
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
               />
             ) : (
@@ -50,19 +68,31 @@ export function VideoSection() {
                 aria-label="Play video"
                 className="absolute inset-0 h-full w-full text-left"
               >
-                {/* Poster */}
+                {/* Poster — the video's own thumbnail, with two graceful
+                    step-downs if YouTube doesn't hold that size. */}
                 <img
                   src={POSTER}
-                  alt="Neo Automation video thumbnail"
+                  alt={`${VIDEO_TITLE} — video thumbnail`}
                   loading="lazy"
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    if (img.dataset.step === "local") return;
+                    if (img.dataset.step === "hq") {
+                      img.dataset.step = "local";
+                      img.src = POSTER_LOCAL;
+                    } else {
+                      img.dataset.step = "hq";
+                      img.src = POSTER_FALLBACK;
+                    }
+                  }}
                   className="h-full w-full scale-105 object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110"
                 />
 
-                {/* Cinematic darkening — makes the play button + caption pop and
-                    mutes any text baked into the YouTube thumbnail. */}
-                <div className="absolute inset-0 bg-ink-950/45" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/25 to-ink-950/15" />
-                <div className="absolute inset-0 bg-gradient-to-r from-ink-950/55 via-transparent to-ink-950/35" />
+                {/* A restrained vignette, not the old blanket dimming: the
+                    thumbnail is the point now, so it only needs enough contrast
+                    for the play button and the top-left caption to read. */}
+                <div className="absolute inset-0 bg-ink-950/25" />
+                <div className="absolute inset-0 bg-gradient-to-b from-ink-950/70 via-transparent to-ink-950/45" />
 
                 {/* Play button with double pulse ring */}
                 <span className="absolute left-1/2 top-1/2 z-10 grid -translate-x-1/2 -translate-y-1/2 place-items-center">
@@ -83,9 +113,10 @@ export function VideoSection() {
                   </span>
                 </span>
 
-                {/* Caption — bottom-left, SWF style */}
-                <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-9">
-                  <h3 className="font-display text-2xl font-bold text-white sm:text-3xl">
+                {/* Caption — TOP-left, clear of the logo and title burned into
+                    the bottom of the YouTube thumbnail. */}
+                <div className="absolute inset-x-0 top-0 z-10 p-6 sm:p-8">
+                  <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
                     {VIDEO_TITLE}
                   </h3>
                   <p className="mt-1.5 flex items-center gap-2 text-sm text-steel-300">

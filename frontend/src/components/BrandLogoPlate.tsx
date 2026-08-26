@@ -28,7 +28,7 @@ const SIZES = {
 } as const;
 
 const FALLBACK_TEXT = {
-  sm: "text-[13px]",
+  sm: "text-[14.5px]",
   md: "text-base",
   lg: "text-2xl",
   xl: "text-3xl",

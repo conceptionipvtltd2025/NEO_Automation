@@ -1,4 +1,5 @@
 import {
+  BatteryCharging,
   Car,
   Plane,
   Server,
@@ -22,6 +23,7 @@ import {
  * industry added here shows the right icon everywhere at once.
  */
 export const industryIcons: Record<string, LucideIcon> = {
+  BatteryCharging,
   Car,
   Plane,
   Server,

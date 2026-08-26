@@ -48,7 +48,7 @@ function LineCard({
           // near-white, and several brand colours (Legris #0a3d91, GEDORE
           // #1e4d9b) are barely above the dark fill. The brand colour appears
           // as a dot instead, where contrast doesn't matter.
-          <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-ink-950/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-pure ring-1 ring-inset ring-white/15 backdrop-blur-sm">
+          <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-ink-950/80 px-2.5 py-1 text-[12px] font-semibold uppercase tracking-wider text-pure ring-1 ring-inset ring-white/15 backdrop-blur-sm">
             <span
               aria-hidden
               className="h-1.5 w-1.5 rounded-full"
@@ -72,7 +72,7 @@ function LineCard({
             {line.models.map((m) => (
               <li
                 key={m}
-                className="flex items-start gap-2.5 text-[13px] text-steel-300"
+                className="flex items-start gap-2.5 text-[14.5px] text-steel-300"
               >
                 <Check
                   className="mt-0.5 h-3.5 w-3.5 shrink-0"
@@ -202,7 +202,7 @@ export default function BrandDetail() {
                   href={r.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[13px] text-steel-300 transition hover:border-neo-600/40 hover:text-white"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[14.5px] text-steel-300 transition hover:border-neo-600/40 hover:text-white"
                 >
                   <FileText className="h-3.5 w-3.5 text-neo-500" />
                   {r.label}
@@ -222,7 +222,7 @@ export default function BrandDetail() {
             </h2>
             <Link
               to={`/products?brand=${brand.id}`}
-              className="btn-ghost text-[13px]"
+              className="btn-ghost text-[14.5px]"
             >
               Browse all <ArrowUpRight className="h-4 w-4" />
             </Link>

@@ -25,28 +25,53 @@ const img = (id: string) =>
 // order *is* the on-site order. Admin-added industries get a real timestamp and
 // surface above these.
 //
-// The ten segments below (and their sequence) are the client-approved list —
+// The eleven segments below (and their sequence) are the client-approved list —
 // they mirror the Atlas Copco ITBA industry-solutions taxonomy. Do not reorder
 // or add without a brief: `npm run sync:catalogue` in the backend replays this
 // exact order onto a live database.
 export const industries: Industry[] = [
   {
     id: "automotive",
-    name: "Automotive Manufacturing & EV Assembly",
+    name: "Automotive Manufacturing",
     short: "Precision at line speed",
-    tagline: "Every stage of vehicle build — from body shop to battery pack",
+    tagline: "Every stage of vehicle build — from body shop to final assembly",
     description:
-      "We support every stage of automotive production: tightening, dispensing, riveting and fastening. From body-in-white and paint shop through final assembly — and into EV battery-module and pack lines — our transducer-controlled tools hold takt time while documenting every safety-critical joint.",
+      "We support every stage of automotive production: tightening, dispensing, riveting and fastening. From body-in-white and paint shop through trim, chassis and final assembly, our transducer-controlled tools hold takt time while documenting every safety-critical joint.",
     image: img("1589320012458-ce28bd1c86b1"),
     icon: "Car",
     accent: "#7c86f0",
     capabilities: [
       "Smart tightening & torque traceability",
-      "EV battery module & pack assembly",
       "Structural blind riveting (BIW)",
       "Dispensing, gluing & sealing systems",
+      "Error-proofing & line-side handling",
     ],
     stat: { value: "40%", label: "faster takt cycles" },
+  },
+  {
+    // Split out of "Automotive Manufacturing & EV Assembly" at the client's
+    // request — electrification is its own discipline (HV safety, cell-to-pack
+    // joining, insulated tooling) and deserves its own segment.
+    // NOTE(imagery): a verified in-repo photo of an e-mobility test/assembly
+    // cell — harnesses, HV cabling and a vehicle panel on the bench. Swap in the
+    // client's own battery-line photography from the admin panel when it lands;
+    // never point this at an unverified stock id.
+    id: "ev-assembly",
+    name: "EV Assembly",
+    short: "Battery, pack & e-drive",
+    tagline: "Battery modules, packs and e-drives — joined, insulated, documented",
+    description:
+      "Electrification changes the joint before it changes the vehicle. Battery-module and pack lines demand low-and-high torque in the same station, VDE-insulated tooling for live high-voltage work, structural bonding and riveting on aluminium trays, and a documented result for every single fastener. We build EV stations around exactly that: measured tightening, error-proofing and full traceability from cell stacking to e-drive marriage.",
+    image: img("1581091226825-a6a2a5aee158"),
+    icon: "BatteryCharging",
+    accent: "#7c86f0",
+    capabilities: [
+      "Battery module & pack tightening",
+      "VDE-insulated HV tool sets",
+      "Structural riveting & bonding on alloy trays",
+      "100% torque traceability to the MES",
+    ],
+    stat: { value: "100%", label: "joints documented" },
   },
   {
     id: "industrial-assembly",
@@ -104,7 +129,7 @@ export const industries: Industry[] = [
   },
   {
     id: "electronics",
-    name: "Electronic",
+    name: "Electronics",
     short: "Low torque, high volume",
     tagline: "Energy-efficient precision for low-torque operations",
     description:

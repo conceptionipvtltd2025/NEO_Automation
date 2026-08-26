@@ -19,7 +19,11 @@ export function useNavItems(): NavItem[] {
   const allBrands = useCatalog((s) => s.brands);
 
   return useMemo(() => {
-    const visIndustries = industries.filter((i) => i.visible !== false);
+    // Newest first — the same order the home showcase and /industries use, so
+    // the header never disagrees with the page it links to.
+    const visIndustries = industries
+      .filter((i) => i.visible !== false)
+      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
     const visProducts = products.filter((p) => p.visible !== false);
 
     // Show brands that actually have products in the catalogue (fall back to all).

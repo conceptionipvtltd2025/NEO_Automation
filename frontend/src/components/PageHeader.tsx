@@ -63,8 +63,12 @@ export function PageHeader({
           </motion.span>
         )}
 
-        <h1 className="mt-5 max-w-4xl font-display text-[clamp(2.2rem,5.5vw,4rem)] font-bold leading-[1.02] tracking-tight text-gradient">
-          <WordsReveal text={title} highlightWords={1} />
+        {/* The page banner headline is deliberately FLAT WHITE — no silver
+            gradient and no animated accent word. Every other heading on the
+            site keeps its gradient; this is the one line the client wanted
+            plain so it reads cleanly at a glance. */}
+        <h1 className="mt-5 max-w-4xl font-display text-[clamp(2.2rem,5.5vw,4rem)] font-bold leading-[1.02] tracking-tight text-white">
+          <WordsReveal text={title} />
         </h1>
 
         {subtitle && (

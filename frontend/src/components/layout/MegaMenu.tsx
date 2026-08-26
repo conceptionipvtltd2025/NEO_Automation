@@ -72,9 +72,9 @@ function FeaturedCard({
         <h4 className="mt-4 font-display text-lg font-bold leading-tight text-white">
           {featured.title}
         </h4>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-steel-300">{featured.blurb}</p>
+        <p className="mt-2 text-[14px] leading-relaxed text-steel-300">{featured.blurb}</p>
       </div>
-      <span className="relative mt-6 inline-flex items-center gap-1.5 text-[13px] font-semibold text-neo-400 transition group-hover:text-neo-300">
+      <span className="relative mt-6 inline-flex items-center gap-1.5 text-[14.5px] font-semibold text-neo-400 transition group-hover:text-neo-300">
         {featured.cta}
         <ArrowRight className="h-4 w-4 transition duration-200 group-hover:translate-x-1" />
       </span>
@@ -96,7 +96,7 @@ function ColumnsLayout({
       <div className="grid flex-1 gap-x-8 gap-y-7 sm:grid-cols-3">
         {columns.map((col) => (
           <motion.div key={col.heading} variants={cell}>
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-steel-500">
+            <h3 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-steel-500">
               {col.heading}
             </h3>
             <ul className="mt-4 space-y-0.5">
@@ -108,13 +108,13 @@ function ColumnsLayout({
                     className="group/link -mx-3 block rounded-xl px-3 py-2 transition hover:bg-white/[0.05]"
                   >
                     <span className="flex items-center gap-1.5">
-                      <span className="text-[13.5px] font-medium text-white transition-colors group-hover/link:text-neo-300">
+                      <span className="text-[15px] font-medium text-white transition-colors group-hover/link:text-neo-300">
                         {l.label}
                       </span>
                       <ArrowUpRight className="h-3.5 w-3.5 shrink-0 -translate-x-1 text-steel-600 opacity-0 transition duration-200 group-hover/link:translate-x-0 group-hover/link:text-neo-400 group-hover/link:opacity-100" />
                     </span>
                     {l.desc && (
-                      <span className="mt-0.5 block text-[11.5px] leading-snug text-steel-500">
+                      <span className="mt-0.5 block text-[13px] leading-snug text-steel-500">
                         {l.desc}
                       </span>
                     )}
@@ -142,23 +142,15 @@ function TilesLayout({
   advice: { label: string; href: string }[];
   onNavigate: () => void;
 }) {
-  // Cap at 8 tiles and pick a column count that keeps every row balanced, so the
-  // panel stays tidy no matter how many industries the admin adds.
-  const shown = tiles.slice(0, 8);
-  const n = shown.length;
-  const cols =
-    n <= 2
-      ? "sm:grid-cols-2"
-      : n === 4
-      ? "sm:grid-cols-2 lg:grid-cols-4"
-      : n > 6
-      ? "sm:grid-cols-3 lg:grid-cols-4"
-      : "sm:grid-cols-3";
+  // Every industry is listed — the panel scrolls internally if it ever needs
+  // to. A wrapping flex row (rather than a grid) keeps the final row CENTRED,
+  // so an odd count never leaves a lopsided gap on the right.
+  const shown = tiles.slice(0, 16);
 
   return (
     <div>
       <motion.div variants={cell} className="mb-5 flex items-center justify-between">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-steel-500">
+        <h3 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-steel-500">
           Industries we power
         </h3>
         <Link
@@ -171,9 +163,13 @@ function TilesLayout({
         </Link>
       </motion.div>
 
-      <div className={cn("grid grid-cols-2 gap-3", cols)}>
+      <div className="flex flex-wrap justify-center gap-3">
         {shown.map((t) => (
-          <motion.div key={t.href} variants={cell}>
+          <motion.div
+            key={t.href}
+            variants={cell}
+            className="w-[calc(50%-0.375rem)] sm:w-[calc(33.3333%-0.5rem)] lg:w-[calc(25%-0.5625rem)]"
+          >
             <Link
               to={t.href}
               onClick={onNavigate}
@@ -188,7 +184,7 @@ function TilesLayout({
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-3">
                 <p className="text-sm font-semibold text-pure">{t.label}</p>
-                {t.desc && <p className="mt-0.5 text-[11px] text-pure/70">{t.desc}</p>}
+                {t.desc && <p className="mt-0.5 text-[13px] text-pure/70">{t.desc}</p>}
               </div>
               <span className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-ink-950/50 text-pure opacity-0 backdrop-blur transition group-hover:opacity-100">
                 <ArrowUpRight className="h-4 w-4" />

@@ -45,7 +45,7 @@ export default function Contact() {
                       </p>
                       <p
                         className={`mt-1 break-words font-medium text-white ${
-                          c.label === "Email" ? "text-[13px]" : "text-sm"
+                          c.label === "Email" ? "text-[14.5px]" : "text-sm"
                         }`}
                       >
                         {c.value}

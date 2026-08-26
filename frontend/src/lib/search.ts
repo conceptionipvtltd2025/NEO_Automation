@@ -51,9 +51,17 @@ const STATIC_ENTRIES: SearchEntry[] = [
   { id: "page:industries", title: "Industries", subtitle: "Sectors we power", href: "/industries", group: "Page", keywords: "industries sectors applications automotive manufacturing ev assembly battery industrial assembly aerospace energy oil gas wind electronic electronics home appliances white goods metal fabrication welding heavy equipment machinery excavator semiconductor wafer fab cleanroom railway rail rolling stock trains" },
   { id: "page:service", title: "Service", subtitle: "Neo Service Workshop — nut runners restored & certified", href: "/nsw", group: "Page", keywords: "nsw neo service workshop repair calibration service nut runner hydraulic tools tensioner amc spares" },
   { id: "page:about", title: "About Neo", subtitle: "Precision is our heritage", href: "/about", group: "Page", keywords: "about company history baldev solanki ahmedabad 2007 heritage" },
-  { id: "page:sustainability", title: "Sustainability & Safety", subtitle: "Our environmental and safety-first commitments", href: "/sustainability", group: "Page", keywords: "sustainability safety environment responsible sourcing circularity ergonomics esg community traceability green csr" },
+  { id: "page:safety", title: "Safety", subtitle: "Safety is engineered, not enforced", href: "/safety", group: "Page", keywords: "safety ehs hse operator ergonomics torque reaction kickback vde insulated 1000v high voltage hv ev battery compressed air safety coupling blow gun abrasive guard ppe hard hat lifting load test calibration traceability poka yoke error proofing risk hazard control training competence occupational health" },
   { id: "page:contact", title: "Contact", subtitle: "We'd love to hear from you", href: "/contact", group: "Page", keywords: "contact address phone email hours map directions location get in touch" },
   { id: "page:inquiry", title: "Get a Quote", subtitle: "Tell us what you need", href: "/inquiry", group: "Page", keywords: "quote inquiry enquiry pricing request availability recommendation" },
+
+  { id: "page:sustainability", title: "Sustainability", subtitle: "Our environmental and responsibility commitments", href: "/sustainability", group: "Page", keywords: "sustainability environment responsible sourcing circularity esg community green csr recycling" },
+
+  // Safety sections
+  { id: "sec:safety-disciplines", title: "Four Safety Disciplines", subtitle: "Operator, process, electrical and site", href: "/safety#disciplines", group: "Section", keywords: "operator safety process safety electrical safety vde site workshop safety ergonomics" },
+  { id: "sec:safety-hazards", title: "Hazard & Control", subtitle: "Seven risks we design out of the station", href: "/safety#hazards", group: "Section", keywords: "torque reaction kickback manual handling strain live electrical hv ev compressed air abrasive rotating undocumented torque suspended loads" },
+  { id: "sec:safety-service", title: "Safety Through Service", subtitle: "A tool stays safe only if it is kept safe", href: "/safety#in-service", group: "Section", keywords: "certified genuine spares oem trained preventive maintenance amc calibration" },
+  { id: "sec:safety-training", title: "Safety Training & Standards", subtitle: "Training, competence and accountability", href: "/safety#training", group: "Section", keywords: "training competence handover standards accountability iso 45001 audit ehs" },
 
   // Home sections
   { id: "sec:brands", title: "Our Brands", subtitle: "The world's finest brands, delivered by Neo", href: "/#brands", group: "Section", keywords: "authorised distribution atlas copco gesipa gedore pferd cejn partners logos" },

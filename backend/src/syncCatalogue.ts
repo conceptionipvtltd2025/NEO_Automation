@@ -50,6 +50,18 @@ const RETIRED_INDUSTRIES: Record<string, string | null> = {
   trailers: null,
 };
 
+/**
+ * Industry ids INTRODUCED by a revision.
+ *
+ * upsertIndustry() creates the segment itself, but nothing re-tags the products
+ * already in the database — so a brand-new segment lands with an empty
+ * "Recommended for …" shelf and an empty /products?industry=… filter. For every
+ * id listed here we copy the seed's tagging onto the live product rows: the tag
+ * is ADDED where it is missing and nothing is ever removed, so an admin's own
+ * tagging is untouched.
+ */
+const ADDED_INDUSTRIES = ["ev-assembly"];
+
 /** Category ids replaced by the twelve-family catalogue. */
 const RETIRED_CATEGORIES: Record<string, string | null> = {
   "assembly-tools": "assembly-tightening",
@@ -161,6 +173,43 @@ export async function syncCatalogue({ dryRun = false, keepRetired = false }: Opt
         : "")
   );
 
+  /* 4c ─ tag products into industries introduced by this revision --------- */
+  let addedTags = 0;
+  if (ADDED_INDUSTRIES.length) {
+    const wanted = new Map<string, string[]>();
+    for (const p of seedProducts as any[]) {
+      const add = (p.industries as string[]).filter(
+        (id) => ADDED_INDUSTRIES.includes(id) && seedIds.industries.has(id)
+      );
+      if (add.length) wanted.set(p.id, add);
+    }
+
+    // Re-read: step 4 may have rewritten some of these rows already.
+    const rows: any[] = await query(`SELECT id, industries FROM products`);
+    for (const row of rows) {
+      const add = wanted.get(row.id);
+      if (!add) continue;
+      const current: string[] = Array.isArray(row.industries)
+        ? row.industries
+        : JSON.parse(row.industries || "[]");
+      const missing = add.filter((id) => !current.includes(id));
+      if (!missing.length) continue;
+      // Prepend so the new segment reads first, matching the seed's order.
+      const next = [...missing, ...current];
+      if (!dryRun) {
+        await query(`UPDATE products SET industries=? WHERE id=?`, [
+          JSON.stringify(next),
+          row.id,
+        ]);
+      }
+      addedTags++;
+    }
+  }
+  console.log(
+    `${plan} tag ${addedTags} product(s) into new industries: ` +
+      (ADDED_INDUSTRIES.join(", ") || "none")
+  );
+
   /* 5 ─ delete the retired rows themselves -------------------------------- */
   const deadIndustries = Object.keys(RETIRED_INDUSTRIES).filter(
     (id) => !seedIds.industries.has(id)
@@ -202,7 +251,7 @@ export async function syncCatalogue({ dryRun = false, keepRetired = false }: Opt
     );
   }
 
-  return { categoryMoves, industryMoves, deadIndustries, deadCategories };
+  return { categoryMoves, industryMoves, addedTags, deadIndustries, deadCategories };
 }
 
 if (require.main === module) {

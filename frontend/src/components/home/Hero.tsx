@@ -107,7 +107,7 @@ export function Hero() {
             {["Engineering", "Tomorrow's"].map((word, i) => (
               <span key={i} className="block overflow-hidden">
                 <motion.span
-                  className="inline-block text-titanium"
+                  className="inline-block text-white"
                   initial={{ y: "110%" }}
                   animate={{ y: 0 }}
                   transition={{ duration: 0.9, delay: 0.1 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
@@ -118,7 +118,7 @@ export function Hero() {
             ))}
             <span className="block overflow-hidden">
               <motion.span
-                className="inline-block text-shimmer-anim"
+                className="inline-block text-white"
                 initial={{ y: "110%" }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.9, delay: 0.34, ease: [0.22, 1, 0.36, 1] }}
@@ -134,9 +134,9 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.5 }}
             className="mt-6 max-w-xl text-base leading-relaxed text-steel-300 sm:text-lg"
           >
-            Delivering innovative solutions that improve
-            <span className="font-medium text-red-600">Productivity, Quality, Safety</span>,
-            and <span className="font-medium text-red-600">Traceability</span> in manufacturing operations.
+            Delivering innovative solutions that improve{" "}
+            <span className="font-medium text-neo-500">Productivity, Quality, Safety</span>,
+            and <span className="font-medium text-neo-500">Traceability</span> in manufacturing operations.
           </motion.p>
 
           <motion.div
@@ -161,7 +161,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="mt-12 grid max-w-lg grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4"
+            className="mt-12 grid max-w-2xl grid-cols-2 items-start gap-x-6 gap-y-6 sm:grid-cols-4"
           >
             {site.stats.map((s) => (
               <div key={s.label}>
@@ -172,7 +172,7 @@ export function Hero() {
                     decimals={s.value % 1 !== 0 ? 1 : 0}
                   />
                 </div>
-                <div className="mt-1 text-[11px] uppercase tracking-wider text-steel-400">
+                <div className="mt-1.5 text-[12.5px] uppercase leading-snug tracking-wider text-steel-300">
                   {s.label}
                 </div>
               </div>
@@ -189,7 +189,7 @@ export function Hero() {
             className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-4"
           >
             <span className="flex items-center gap-3">
-              <span className="bg-gradient-to-r from-white to-steel-400 bg-clip-text text-[11px] font-semibold uppercase tracking-[0.3em] text-transparent">
+              <span className="bg-gradient-to-r from-white to-steel-400 bg-clip-text text-[13px] font-semibold uppercase tracking-[0.3em] text-transparent">
                 Follow us
               </span>
               <span className="h-px w-10 bg-gradient-to-r from-neo-500 to-transparent" />

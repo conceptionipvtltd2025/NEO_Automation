@@ -27,7 +27,7 @@ export function ProductsSection() {
           title="Precision tools for every process"
           subtitle="A curated range of assembly, riveting, lifting, finishing and fluid solutions — all genuine, all supported."
           action={
-            <Link to="/products" className="btn-ghost text-[13px]">
+            <Link to="/products" className="btn-ghost text-[14.5px]">
               Browse all <ArrowUpRight className="h-4 w-4" />
             </Link>
           }
@@ -70,6 +70,9 @@ export function ProductsSection() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.35 }}
+                // Pass the stretched grid-item height down, or the card inside
+                // shrinks to its own content and the row goes ragged.
+                className="h-full"
               >
                 <ProductCard product={p} index={i} />
               </motion.div>

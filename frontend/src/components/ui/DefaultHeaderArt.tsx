@@ -34,7 +34,7 @@ export function DefaultHeaderArt() {
         className="absolute left-1/2 top-1/2 grid h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-ink-900/80 shadow-2xl shadow-black/50 backdrop-blur-md"
       >
         <span className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-bold tracking-tight text-white">
-          NE<span className="text-neo-500">O</span>
+          N<span className="text-neo-500">E</span>O
         </span>
       </motion.div>
 

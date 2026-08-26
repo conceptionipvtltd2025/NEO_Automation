@@ -98,7 +98,7 @@ export default function AdminCategories() {
         title={editing?.id ? "Edit category" : "Add category"}
       >
         {editing && (
-          <form onSubmit={save} className="space-y-4">
+          <AdminForm onSubmit={save} className="space-y-4">
             <Field label="Name">
               <input
                 required
@@ -118,14 +118,14 @@ export default function AdminCategories() {
               />
             </Field>
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[13px]">
+              <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[14.5px]">
                 Cancel
               </button>
-              <button type="submit" className="btn-primary flex-1 justify-center text-[13px]">
+              <button type="submit" className="btn-primary flex-1 justify-center text-[14.5px]">
                 Save category
               </button>
             </div>
-          </form>
+          </AdminForm>
         )}
       </Modal>
 
@@ -285,7 +285,7 @@ export function AdminToolbar({
         </div>
         {children}
         {onAdd && (
-          <button onClick={onAdd} className="btn-primary text-[13px]">
+          <button onClick={onAdd} className="btn-primary text-[14.5px]">
             <Plus className="h-4 w-4" /> {addLabel}
           </button>
         )}
@@ -315,6 +315,51 @@ export function IconBtn({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * The `<form>` every admin modal should use.
+ *
+ * Why it exists: an HTML form *implicitly submits* when Enter is pressed in any
+ * single-line input. In these dialogs that meant typing the product name and
+ * hitting Enter instantly saved a half-empty record and closed the modal — the
+ * record came back blank, and it only "worked" when the admin opened it again
+ * and pressed the actual Save button. Nothing on screen explained it.
+ *
+ * So Enter is inert here unless it comes from the Save/Cancel buttons
+ * themselves, or from a textarea (where it just inserts a newline).
+ * Ctrl/Cmd+Enter is kept as a deliberate keyboard save.
+ */
+export function AdminForm({
+  onSubmit,
+  className,
+  children,
+}: {
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key !== "Enter") return;
+    const el = e.target as HTMLElement;
+    // A real button (Save / Cancel / any type="button" helper) keeps its own
+    // Enter behaviour.
+    if (el.tagName === "BUTTON") return;
+    if (e.metaKey || e.ctrlKey) {
+      e.preventDefault();
+      e.currentTarget.requestSubmit();
+      return;
+    }
+    // Textareas own Enter — it's a newline, not a save.
+    if (el.tagName === "TEXTAREA") return;
+    e.preventDefault();
+  };
+
+  return (
+    <form onSubmit={onSubmit} onKeyDown={onKeyDown} className={className}>
+      {children}
+    </form>
   );
 }
 

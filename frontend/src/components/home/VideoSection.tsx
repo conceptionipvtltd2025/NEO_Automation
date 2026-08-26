@@ -9,21 +9,19 @@ import { asset } from "@/lib/asset";
 // Currently: Atlas Copco — "Smart Integrated Assembly | Realizing the potential
 // of Industry 4.0"  →  youtube.com/watch?v=vqNblg2TgPU
 const YT_ID = "vqNblg2TgPU";
-// The poster is the video's OWN thumbnail, taken straight from the YouTube CDN
-// and keyed off YT_ID — so changing the ID above changes the cover with it, no
-// second edit and no stale frame from a previous clip.
-// `maxresdefault` only exists for videos uploaded in HD; onError below steps
-// down to `hqdefault` (always present) and finally to our local brand frame, so
-// the card can never render broken.
-const POSTER = `https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg`;
-const POSTER_FALLBACK = `https://i.ytimg.com/vi/${YT_ID}/hqdefault.jpg`;
-const POSTER_LOCAL = asset("images/showreel-poster.jpg");
+// Poster: Earth from space, composed to 16:9 with the globe right-of-centre so
+// the caption on the left lands on near-black. Built from NASA's Apollo 17
+// "Blue Marble" (AS17-148-22727) — a US Government work, public domain.
+// Served locally, so there's no third-party image request before play and the
+// cover never changes underneath us.
+const POSTER = asset("images/video-poster-earth.jpg");
+// If that file is ever missing, fall back to our own b-roll frame rather than
+// a broken image.
+const POSTER_FALLBACK = asset("images/showreel-poster.jpg");
 
 // Caption shown over the poster. It names the actual film and credits the brand
 // that made it — this is a partner's corporate video, not a Neo showreel, and
-// captioning it as ours would be a claim we can't make. It sits TOP-left: this
-// thumbnail carries the Atlas Copco logo and its own two-line title along the
-// bottom edge, which is where the caption used to be.
+// captioning it as ours would be a claim we can't make.
 const VIDEO_TITLE = "Smart Integrated Assembly";
 const VIDEO_META = "Industry 4.0 · Atlas Copco";
 
@@ -68,31 +66,24 @@ export function VideoSection() {
                 aria-label="Play video"
                 className="absolute inset-0 h-full w-full text-left"
               >
-                {/* Poster — the video's own thumbnail, with two graceful
-                    step-downs if YouTube doesn't hold that size. */}
+                {/* Poster */}
                 <img
                   src={POSTER}
-                  alt={`${VIDEO_TITLE} — video thumbnail`}
+                  alt="Earth from space — watch the Neo Automation feature video"
                   loading="lazy"
                   onError={(e) => {
                     const img = e.currentTarget;
-                    if (img.dataset.step === "local") return;
-                    if (img.dataset.step === "hq") {
-                      img.dataset.step = "local";
-                      img.src = POSTER_LOCAL;
-                    } else {
-                      img.dataset.step = "hq";
-                      img.src = POSTER_FALLBACK;
-                    }
+                    if (img.dataset.fallback) return;
+                    img.dataset.fallback = "1";
+                    img.src = POSTER_FALLBACK;
                   }}
                   className="h-full w-full scale-105 object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110"
                 />
 
-                {/* A restrained vignette, not the old blanket dimming: the
-                    thumbnail is the point now, so it only needs enough contrast
-                    for the play button and the top-left caption to read. */}
-                <div className="absolute inset-0 bg-ink-950/25" />
-                <div className="absolute inset-0 bg-gradient-to-b from-ink-950/70 via-transparent to-ink-950/45" />
+                {/* A restrained vignette: the poster is already deep space, so
+                    it only needs enough falloff at the foot for the caption. */}
+                <div className="absolute inset-0 bg-ink-950/15" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/15 to-transparent" />
 
                 {/* Play button with double pulse ring */}
                 <span className="absolute left-1/2 top-1/2 z-10 grid -translate-x-1/2 -translate-y-1/2 place-items-center">
@@ -113,10 +104,9 @@ export function VideoSection() {
                   </span>
                 </span>
 
-                {/* Caption — TOP-left, clear of the logo and title burned into
-                    the bottom of the YouTube thumbnail. */}
-                <div className="absolute inset-x-0 top-0 z-10 p-6 sm:p-8">
-                  <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
+                {/* Caption — bottom-left, over the dark half of the poster. */}
+                <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-9">
+                  <h3 className="font-display text-2xl font-bold text-white sm:text-3xl">
                     {VIDEO_TITLE}
                   </h3>
                   <p className="mt-1.5 flex items-center gap-2 text-sm text-steel-300">

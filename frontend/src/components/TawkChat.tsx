@@ -19,6 +19,7 @@ type TawkApi = {
   onChatMinimized?: () => void;
   onChatHidden?: () => void;
   onChatEnded?: () => void;
+  onChatMaximized?: () => void;
   customStyle?: unknown;
 };
 
@@ -29,13 +30,78 @@ declare global {
   }
 }
 
-/** Hide Tawk's own bubble + any proactive greeting balloon. Safe to spam. */
+/**
+ * Whether the visitor currently has the conversation open. While it is closed,
+ * every piece of Tawk chrome is hidden; while it is open, Tawk owns the corner.
+ */
+let chatOpen = false;
+let sweepScheduled = false;
+
+/**
+ * Every top-level element Tawk has appended to <body>.
+ *
+ * Found by walking up from Tawk's own iframes rather than by class name: Tawk
+ * ships several containers (launcher, chat window, and the "attention grabber"
+ * balloon) and renames their classes between widget versions, so matching on
+ * the iframe origin is the only stable handle.
+ */
+function tawkRoots(): HTMLElement[] {
+  const roots = new Set<HTMLElement>();
+  const frames = document.querySelectorAll<HTMLIFrameElement>(
+    'iframe[src*="tawk.to"], iframe[title*="chat widget" i]'
+  );
+  frames.forEach((f) => {
+    let el: HTMLElement = f;
+    while (el.parentElement && el.parentElement !== document.body) {
+      el = el.parentElement;
+    }
+    if (el.parentElement === document.body) roots.add(el);
+  });
+  return [...roots];
+}
+
+/**
+ * Hide (or restore) Tawk's own UI.
+ *
+ * `Tawk_API.hideWidget()` is the documented way to remove the launcher, but it
+ * does NOT remove the attention grabber — the "👋 We Are Here!" balloon with the
+ * unread badge that the property has configured. That is rendered in its own
+ * container, so it kept reappearing beside our launcher on every page load. We
+ * therefore hide the containers directly while the chat is closed, and hand the
+ * corner straight back the moment the visitor opens it.
+ */
+function applyTawkChrome() {
+  const hide = !chatOpen;
+  for (const root of tawkRoots()) {
+    if (hide) {
+      root.dataset.neoTawkHidden = "1";
+      root.style.setProperty("display", "none", "important");
+    } else if (root.dataset.neoTawkHidden) {
+      delete root.dataset.neoTawkHidden;
+      root.style.removeProperty("display");
+    }
+  }
+}
+
+/** Coalesce repeated calls into one pass per frame. */
+function scheduleTawkSweep() {
+  if (sweepScheduled) return;
+  sweepScheduled = true;
+  requestAnimationFrame(() => {
+    sweepScheduled = false;
+    applyTawkChrome();
+  });
+}
+
+/** Hide Tawk's own bubble, greeting and attention grabber. Safe to spam. */
 function hideStockWidget() {
+  chatOpen = false;
   try {
     window.Tawk_API?.hideWidget?.();
   } catch {
-    /* the widget may not be mounted yet — callers retry */
+    /* the widget may not be mounted yet — the DOM sweep below covers it */
   }
+  applyTawkChrome();
 }
 
 /** True once Tawk is loaded and can be opened from our own launcher. */
@@ -57,10 +123,16 @@ export function openTawkChat(): boolean {
   const api = window.Tawk_API;
   if (typeof api?.maximize !== "function") return false;
   try {
+    // Un-hide FIRST: a display:none container has no layout, and Tawk won't
+    // open a window it can't measure.
+    chatOpen = true;
+    applyTawkChrome();
     api.showWidget?.();
     api.maximize();
     return true;
   } catch {
+    chatOpen = false;
+    applyTawkChrome();
     return false;
   }
 }
@@ -83,6 +155,7 @@ export function openTawkChat(): boolean {
  */
 export function TawkChat() {
   useEffect(() => {
+    const cleanup: Array<() => void> = [];
     // Guard against a double-inject (StrictMode dev double-mount / HMR).
     if (document.getElementById("tawk-script")) return;
 
@@ -94,14 +167,6 @@ export function TawkChat() {
     // announce readiness so our own launcher can appear.
     api.onLoad = () => {
       hideStockWidget();
-      // A proactive/greeting balloon can be injected a beat AFTER onLoad, so
-      // sweep a few more times before giving up. Cheap, and it guarantees the
-      // "👋 Hi! How can we help?" bubble never gets a frame on screen.
-      let tries = 0;
-      const sweep = window.setInterval(() => {
-        hideStockWidget();
-        if (++tries >= 12) window.clearInterval(sweep);
-      }, 500);
       window.dispatchEvent(new Event(TAWK_READY_EVENT));
     };
     // Whenever the visitor closes the conversation, go back to hidden so the
@@ -109,6 +174,28 @@ export function TawkChat() {
     api.onChatMinimized = hideStockWidget;
     api.onChatHidden = hideStockWidget;
     api.onChatEnded = hideStockWidget;
+    // Tawk maximising on its own (a proactive invite the visitor accepted, an
+    // agent starting the chat) must not be immediately swept away.
+    api.onChatMaximized = () => {
+      chatOpen = true;
+      applyTawkChrome();
+    };
+
+    // Tawk injects its containers asynchronously and re-injects the attention
+    // grabber on its own schedule, so a one-shot hide is not enough: watch
+    // <body> and re-apply on every mutation while the chat is closed.
+    const observer = new MutationObserver(scheduleTawkSweep);
+    observer.observe(document.body, { childList: true, subtree: false });
+    cleanup.push(() => observer.disconnect());
+
+    // Belt and braces for the first few seconds, before the observer has
+    // anything to react to.
+    let tries = 0;
+    const initial = window.setInterval(() => {
+      if (!chatOpen) hideStockWidget();
+      if (++tries >= 20) window.clearInterval(initial);
+    }, 400);
+    cleanup.push(() => window.clearInterval(initial));
 
     const s = document.createElement("script");
     s.id = "tawk-script";
@@ -117,6 +204,8 @@ export function TawkChat() {
     s.charset = "UTF-8";
     s.setAttribute("crossorigin", "*");
     document.body.appendChild(s);
+
+    return () => cleanup.forEach((fn) => fn());
   }, []);
 
   return null;

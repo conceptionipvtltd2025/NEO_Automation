@@ -32,7 +32,8 @@ export const TABLES: string[] = [
     name VARCHAR(128) NOT NULL,
     description TEXT,
     icon VARCHAR(64),
-    sort_order INT DEFAULT 0
+    sort_order INT DEFAULT 0,
+    show_on_home TINYINT(1) DEFAULT 0
   ) ENGINE=InnoDB`,
 
   `CREATE TABLE IF NOT EXISTS industries (
@@ -69,6 +70,7 @@ export const TABLES: string[] = [
     documents JSON,
     featured TINYINT(1) DEFAULT 0,
     special TINYINT(1) DEFAULT 0,
+    home_order INT DEFAULT NULL,
     badge VARCHAR(96),
     visible TINYINT(1) DEFAULT 1,
     KEY idx_products_slug (slug),
@@ -113,6 +115,13 @@ const ALTERS: string[] = [
   // admin uploads for a single product (brand-level `resources` is separate).
   `ALTER TABLE products ADD COLUMN documents JSON`,
   `ALTER TABLE brands ADD COLUMN sort_order INT DEFAULT 0`,
+  // Manual ordering for the two home page product sections ("Our Catalogue"
+  // and "Signature Engineering"). NULL means "unranked" and sorts last, so an
+  // admin only numbers the handful of products they want pinned to the top.
+  `ALTER TABLE products ADD COLUMN home_order INT DEFAULT NULL`,
+  // Category-level home page tag: pin a whole solution family to the landing
+  // page grid instead of flagging its products one at a time.
+  `ALTER TABLE categories ADD COLUMN show_on_home TINYINT(1) DEFAULT 0`,
 ];
 
 export async function migrate() {

@@ -9,6 +9,12 @@ export type Category = {
    * order. Absent on locally-seeded data, where the array order *is* the order.
    */
   sortOrder?: number;
+  /**
+   * Show this whole family in the home page "Our Catalogue" grid — every
+   * visible product in it becomes a candidate, without tagging each one.
+   * Individually `featured` products are layered on top of this.
+   */
+  showOnHome?: boolean;
 };
 
 // The client-approved catalogue: twelve solution families, in this exact

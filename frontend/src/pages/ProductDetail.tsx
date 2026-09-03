@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { safeImg, onImgError } from "@/lib/image";
 import {
-  Star,
   ShieldCheck,
   Truck,
   Headphones,
@@ -153,9 +152,6 @@ export default function ProductDetail() {
               <div className="flex items-center gap-3">
                 <span className="font-display text-sm font-bold uppercase tracking-wider text-neo-400">
                   {product.brand}
-                </span>
-                <span className="flex items-center gap-1 text-sm text-amber-400">
-                  <Star className="h-4 w-4 fill-amber-400" /> {product.rating}
                 </span>
               </div>
               <h1 className="mt-3 font-display text-3xl font-bold leading-tight text-white sm:text-4xl">

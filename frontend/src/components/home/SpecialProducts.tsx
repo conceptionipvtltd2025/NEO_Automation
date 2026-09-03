@@ -1,8 +1,9 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Cpu, Gauge, Sparkles, Loader2 } from "lucide-react";
-import { specialProducts } from "@/data/products";
+import { useCatalog } from "@/store/useCatalog";
+import { homeSpecial } from "@/lib/homeProducts";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { formatINR } from "@/lib/utils";
@@ -14,7 +15,19 @@ const Showpiece3D = lazy(() =>
   }))
 );
 
+/** How many flagship rows sit beside the showpiece. */
+const LIMIT = 4;
+
 export function SpecialProducts() {
+  // Live catalogue — the admin's "Special / Flagship" flag and home ordering
+  // drive this rail directly.
+  const products = useCatalog((s) => s.products);
+  const picks = useMemo(() => homeSpecial(products, LIMIT), [products]);
+
+  // Nothing to show at all (an emptied catalogue): drop the section rather
+  // than parading the 3D showpiece next to a blank column.
+  if (picks.length === 0) return null;
+
   return (
     <section id="special-products" className="relative overflow-hidden py-16">
       <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-60" />
@@ -68,7 +81,7 @@ export function SpecialProducts() {
 
           {/* Product list */}
           <div className="flex min-w-0 flex-col gap-4">
-            {specialProducts.map((prod, i) => (
+            {picks.map((prod, i) => (
               <motion.div
                 key={prod.id}
                 className="min-w-0"
@@ -82,7 +95,7 @@ export function SpecialProducts() {
                   className="group flex min-w-0 items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:gap-5"
                 >
                   <span className="font-display text-2xl font-bold text-white/15">
-                    0{i + 1}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-ink-800">
                     <img

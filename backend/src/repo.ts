@@ -44,6 +44,8 @@ export function mapCategory(r: any) {
     description: r.description ?? "",
     icon: r.icon ?? "Tags",
     sortOrder: Number(r.sort_order ?? 0),
+    // Pins the whole family to the home page "Our Catalogue" grid.
+    showOnHome: bool(r.show_on_home),
   };
 }
 
@@ -85,6 +87,8 @@ export function mapProduct(r: any) {
     documents: parseJson<{ label: string; url: string; size?: number }[]>(r.documents, []),
     featured: bool(r.featured),
     special: bool(r.special),
+    // NULL = unranked; the frontend sorts those last.
+    homeOrder: r.home_order === null || r.home_order === undefined ? undefined : Number(r.home_order),
     badge: r.badge ?? undefined,
     visible: bool(r.visible),
   };
@@ -155,11 +159,18 @@ export async function listCategories() {
 
 export async function upsertCategory(c: any) {
   await query(
-    `INSERT INTO categories (id, name, description, icon, sort_order)
-     VALUES (?,?,?,?,?)
+    `INSERT INTO categories (id, name, description, icon, sort_order, show_on_home)
+     VALUES (?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description),
-       icon=VALUES(icon), sort_order=VALUES(sort_order)`,
-    [c.id, c.name, c.description ?? null, c.icon ?? "Tags", Number(c.sortOrder ?? 0)]
+       icon=VALUES(icon), sort_order=VALUES(sort_order), show_on_home=VALUES(show_on_home)`,
+    [
+      c.id,
+      c.name,
+      c.description ?? null,
+      c.icon ?? "Tags",
+      Number(c.sortOrder ?? 0),
+      c.showOnHome ? 1 : 0,
+    ]
   );
   const rows = await query(`SELECT * FROM categories WHERE id=?`, [c.id]);
   return mapCategory(rows[0]);
@@ -218,7 +229,10 @@ export async function deleteIndustry(id: string) {
 /* ───────────────────────── products ───────────────────────── */
 
 export async function listProducts() {
-  const rows = await query(`SELECT * FROM products ORDER BY name`);
+  // Ranked products first (home_order ascending), then everything else by name.
+  const rows = await query(
+    `SELECT * FROM products ORDER BY (home_order IS NULL), home_order, name`
+  );
   return rows.map(mapProduct);
 }
 
@@ -231,14 +245,15 @@ export async function upsertProduct(p: any) {
   await query(
     `INSERT INTO products
        (id, slug, name, brand_id, brand, category_id, line, industries, price, rating,
-        short_desc, description, features, specs, images, documents, featured, special, badge, visible)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        short_desc, description, features, specs, images, documents, featured, special, home_order, badge, visible)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        slug=VALUES(slug), name=VALUES(name), brand_id=VALUES(brand_id), brand=VALUES(brand),
        category_id=VALUES(category_id), line=VALUES(line), industries=VALUES(industries), price=VALUES(price),
        rating=VALUES(rating), short_desc=VALUES(short_desc), description=VALUES(description),
        features=VALUES(features), specs=VALUES(specs), images=VALUES(images),
-       documents=VALUES(documents), featured=VALUES(featured), special=VALUES(special), badge=VALUES(badge), visible=VALUES(visible)`,
+       documents=VALUES(documents), featured=VALUES(featured), special=VALUES(special),
+       home_order=VALUES(home_order), badge=VALUES(badge), visible=VALUES(visible)`,
     [
       p.id,
       p.slug,
@@ -266,6 +281,10 @@ export async function upsertProduct(p: any) {
       ),
       p.featured ? 1 : 0,
       p.special ? 1 : 0,
+      // Blank / non-numeric input means "unranked", not position zero.
+      Number.isFinite(Number(p.homeOrder)) && p.homeOrder !== null && p.homeOrder !== ""
+        ? Number(p.homeOrder)
+        : null,
       p.badge ?? null,
       p.visible === false ? 0 : 1,
     ]

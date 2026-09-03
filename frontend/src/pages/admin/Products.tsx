@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2, Eye, EyeOff, Star, FileText } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff, FileText, LayoutGrid, Sparkles } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
 import type { Product, ProductDocument } from "@/data/products";
 import { Modal } from "@/components/ui/Modal";
@@ -17,6 +17,10 @@ import {
 } from "./Categories";
 import { slugify, cn } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
+
+// Mirrors LIMIT in components/home/SpecialProducts.tsx — shown in the form so
+// an admin knows how many of their flagged products actually make the page.
+const SPECIAL_LIMIT = 4;
 
 // Brand/category defaults are filled from the live lists in openNew() — a
 // hard-coded id here would break as soon as an admin renames or removes one.
@@ -138,6 +142,7 @@ export default function AdminProducts() {
             <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-steel-500">
               <th className="px-5 py-4 font-medium">Product</th>
               <th className="px-5 py-4 font-medium">Brand</th>
+              <th className="px-5 py-4 font-medium">Home page</th>
               <th className="px-5 py-4 font-medium">Status</th>
               <th className="px-5 py-4 text-right font-medium">Actions</th>
             </tr>
@@ -150,21 +155,41 @@ export default function AdminProducts() {
                     <img src={safeImg(p.images[0])} onError={onImgError} alt="" className="h-11 w-11 rounded-lg object-cover" />
                     <div>
                       <p className="font-medium text-white">{p.name}</p>
-                      <p className="flex items-center gap-2 text-xs text-steel-500">
-                        <span className="flex items-center gap-1">
-                          <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> {p.rating}
-                        </span>
-                        {/* At-a-glance marker for which products carry literature. */}
-                        {(p.documents?.length ?? 0) > 0 && (
-                          <span className="flex items-center gap-1 text-neo-400">
-                            <FileText className="h-3 w-3" /> {p.documents!.length} PDF
-                          </span>
-                        )}
-                      </p>
+                      {/* At-a-glance marker for which products carry literature. */}
+                      {(p.documents?.length ?? 0) > 0 && (
+                        <p className="flex items-center gap-1 text-xs text-neo-400">
+                          <FileText className="h-3 w-3" /> {p.documents!.length} PDF
+                        </p>
+                      )}
                     </div>
                   </div>
                 </td>
                 <td className="px-5 py-4 text-steel-300">{p.brand}</td>
+                {/* Which landing-page sections this product is pinned to, and
+                    its manual position — the flags are otherwise invisible
+                    until you open the editor. */}
+                <td className="px-5 py-4">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {p.featured && (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-neo-600/30 bg-neo-600/10 px-2 py-0.5 text-[11px] font-medium text-neo-300" title="Shown in the Our Catalogue grid">
+                        <LayoutGrid className="h-3 w-3" /> Catalogue
+                      </span>
+                    )}
+                    {p.special && (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] font-medium text-amber-300" title="Shown in Signature Engineering">
+                        <Sparkles className="h-3 w-3" /> Signature
+                      </span>
+                    )}
+                    {!p.featured && !p.special && (
+                      <span className="text-xs text-steel-500">—</span>
+                    )}
+                    {typeof p.homeOrder === "number" && (
+                      <span className="text-[11px] text-steel-500" title="Display order">
+                        #{p.homeOrder}
+                      </span>
+                    )}
+                  </div>
+                </td>
                 <td className="px-5 py-4">
                   <button
                     onClick={() => toggleProduct(p.id)}
@@ -193,7 +218,7 @@ export default function AdminProducts() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-5 py-12 text-center text-steel-500">
+                <td colSpan={5} className="px-5 py-12 text-center text-steel-500">
                   No products found.
                 </td>
               </tr>
@@ -296,11 +321,60 @@ export default function AdminProducts() {
 
             <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4">
               <ToggleChip label="Visible" checked={editing.visible !== false} onChange={(v) => setEditing({ ...editing, visible: v })} />
-              <ToggleChip label="Featured" checked={!!editing.featured} onChange={(v) => setEditing({ ...editing, featured: v })} />
-              <ToggleChip label="Special / Flagship" checked={!!editing.special} onChange={(v) => setEditing({ ...editing, special: v })} />
-              <div className="ml-auto flex items-center gap-2">
-                <span className="text-xs text-steel-400">Rating</span>
-                <input type="number" step="0.1" min="0" max="5" value={editing.rating} onChange={(e) => setEditing({ ...editing, rating: Number(e.target.value) })} className="w-16 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1.5 text-sm text-white outline-none" />
+              <span className="text-xs text-steel-400">
+                Hidden products disappear from the whole site, home page included.
+              </span>
+            </div>
+
+            {/* Home page placement — these two flags decide which products the
+                landing page shows, so they get their own labelled block rather
+                than sitting anonymously beside "Visible". */}
+            <div className="space-y-4 rounded-xl border border-neo-600/25 bg-neo-600/[0.06] p-4">
+              <div>
+                <p className="text-sm font-medium text-white">Home page placement</p>
+                <p className="mt-0.5 text-xs text-steel-400">
+                  Choose where this product appears on the landing page. Hidden products never
+                  show, whatever is ticked here.
+                </p>
+              </div>
+
+              <PlacementRow
+                icon={LayoutGrid}
+                title="Our Catalogue grid"
+                hint="The 8-card grid under “Precision tools for every process”."
+                checked={!!editing.featured}
+                onChange={(v) => setEditing({ ...editing, featured: v })}
+              />
+              <PlacementRow
+                icon={Sparkles}
+                title="Signature Engineering"
+                hint={`The flagship list beside the 3D showpiece — top ${SPECIAL_LIMIT} shown.`}
+                checked={!!editing.special}
+                onChange={(v) => setEditing({ ...editing, special: v })}
+              />
+
+              <div className="flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
+                <span className="text-sm text-white">Display order</span>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder="—"
+                  value={editing.homeOrder ?? ""}
+                  onChange={(e) => {
+                    const n = Number(e.target.value);
+                    setEditing({
+                      ...editing,
+                      // Blank (or nonsense) means unranked, which sorts last —
+                      // not position zero, which would jump it to the front.
+                      homeOrder: e.target.value === "" || !Number.isFinite(n) ? undefined : n,
+                    });
+                  }}
+                  className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1.5 text-sm text-white outline-none"
+                />
+                <span className="text-xs text-steel-400">
+                  Lower numbers come first. Leave blank to sort after the numbered ones.
+                </span>
               </div>
             </div>
 
@@ -320,6 +394,58 @@ export default function AdminProducts() {
         message="This product will be permanently removed from the catalogue."
       />
     </div>
+  );
+}
+
+/**
+ * One home-page destination: an icon, a name, a line of explanation and the
+ * switch. A single button so the whole row is one hit target (a <label> around
+ * ToggleChip would fire the toggle twice).
+ */
+function PlacementRow({
+  icon: Icon,
+  title,
+  hint,
+  checked,
+  onChange,
+}: {
+  icon: React.ElementType;
+  title: string;
+  hint: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      aria-pressed={checked}
+      className={cn(
+        "flex w-full items-start gap-3 rounded-lg border p-3 text-left transition",
+        checked
+          ? "border-neo-600/45 bg-neo-600/10"
+          : "border-white/10 bg-white/[0.02] hover:border-white/20"
+      )}
+    >
+      <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", checked ? "text-neo-400" : "text-steel-500")} />
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-medium text-white">{title}</span>
+        <span className="block text-xs text-steel-400">{hint}</span>
+      </span>
+      <span
+        className={cn(
+          "relative mt-0.5 h-5 w-9 shrink-0 rounded-full transition",
+          checked ? "bg-neo-600" : "bg-white/10"
+        )}
+      >
+        <span
+          className={cn(
+            "absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all",
+            checked ? "left-[18px]" : "left-0.5"
+          )}
+        />
+      </span>
+    </button>
   );
 }
 

@@ -173,6 +173,30 @@ export async function syncCatalogue({ dryRun = false, keepRetired = false }: Opt
         : "")
   );
 
+  /* 4d ─ backfill products.home_order ------------------------------------- */
+  // Same story as `line`: home_order is new, so every existing row is NULL and
+  // the home page sections fall back to alphabetical. Seed the order the client
+  // approved — but only where the row is still unranked, so a position an admin
+  // has already set in the panel is never overwritten.
+  const seedHomeOrder = new Map(
+    seedProducts
+      .filter((p: any) => typeof p.homeOrder === "number")
+      .map((p: any) => [p.id, p.homeOrder as number])
+  );
+  const unranked: any[] = await query(
+    `SELECT id FROM products WHERE home_order IS NULL`
+  );
+  let ordersSet = 0;
+  for (const row of unranked) {
+    const seedOrder = seedHomeOrder.get(row.id);
+    if (seedOrder === undefined) continue;
+    if (!dryRun) {
+      await query(`UPDATE products SET home_order=? WHERE id=?`, [seedOrder, row.id]);
+    }
+    ordersSet++;
+  }
+  console.log(`${plan} set home page order on ${ordersSet} rows`);
+
   /* 4c ─ tag products into industries introduced by this revision --------- */
   let addedTags = 0;
   if (ADDED_INDUSTRIES.length) {

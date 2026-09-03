@@ -7,6 +7,7 @@ import {
   Tags,
   ChevronLeft,
   ChevronRight,
+  Home,
 } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
 import type { Category } from "@/data/categories";
@@ -52,6 +53,7 @@ export default function AdminCategories() {
             <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-steel-500">
               <th className="px-5 py-4 font-medium">Name</th>
               <th className="px-5 py-4 font-medium">Description</th>
+              <th className="px-5 py-4 font-medium">Home page</th>
               <th className="px-5 py-4 text-right font-medium">Actions</th>
             </tr>
           </thead>
@@ -67,6 +69,23 @@ export default function AdminCategories() {
                   </div>
                 </td>
                 <td className="max-w-md px-5 py-4 text-steel-400">{c.description}</td>
+                {/* One-click home page tag — the same switch as in the editor,
+                    so pinning a family doesn't need the modal at all. */}
+                <td className="px-5 py-4">
+                  <button
+                    onClick={() => upsertCategory({ ...c, showOnHome: !c.showOnHome })}
+                    title={c.showOnHome ? "Shown in the home page catalogue" : "Not on the home page"}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition",
+                      c.showOnHome
+                        ? "border-neo-600/40 bg-neo-600/15 text-neo-300"
+                        : "border-white/10 bg-white/[0.04] text-steel-400 hover:text-white"
+                    )}
+                  >
+                    <Home className="h-3 w-3" />
+                    {c.showOnHome ? "On home" : "Off"}
+                  </button>
+                </td>
                 <td className="px-5 py-4">
                   <div className="flex justify-end gap-2">
                     <IconBtn onClick={() => setEditing(c)} title="Edit">
@@ -81,7 +100,7 @@ export default function AdminCategories() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-5 py-12 text-center text-steel-500">
+                <td colSpan={4} className="px-5 py-12 text-center text-steel-500">
                   No categories found.
                 </td>
               </tr>
@@ -117,6 +136,49 @@ export default function AdminCategories() {
                 placeholder="Short description"
               />
             </Field>
+            {/* Category-level home page tag: pins the whole family to the
+                landing page grid, so an admin doesn't have to tick every
+                product in it one by one. */}
+            <button
+              type="button"
+              onClick={() => setEditing({ ...editing, showOnHome: !editing.showOnHome })}
+              aria-pressed={!!editing.showOnHome}
+              className={cn(
+                "flex w-full items-start gap-3 rounded-xl border p-4 text-left transition",
+                editing.showOnHome
+                  ? "border-neo-600/45 bg-neo-600/10"
+                  : "border-white/10 bg-white/[0.02] hover:border-white/20"
+              )}
+            >
+              <Home
+                className={cn(
+                  "mt-0.5 h-4 w-4 shrink-0",
+                  editing.showOnHome ? "text-neo-400" : "text-steel-500"
+                )}
+              />
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-medium text-white">Show on home page</span>
+                <span className="block text-xs text-steel-400">
+                  Adds this category as a tab in the “Our Catalogue” section and puts its
+                  products in the grid. Individual products can still be pinned on their own
+                  from Products → Home page placement.
+                </span>
+              </span>
+              <span
+                className={cn(
+                  "relative mt-0.5 h-5 w-9 shrink-0 rounded-full transition",
+                  editing.showOnHome ? "bg-neo-600" : "bg-white/10"
+                )}
+              >
+                <span
+                  className={cn(
+                    "absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all",
+                    editing.showOnHome ? "left-[18px]" : "left-0.5"
+                  )}
+                />
+              </span>
+            </button>
+
             <div className="flex gap-3 pt-2">
               <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[14.5px]">
                 Cancel

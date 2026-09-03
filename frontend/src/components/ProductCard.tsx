@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Star } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/data/products";
 import { safeImg, onImgError } from "@/lib/image";
 
@@ -31,9 +31,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               {product.badge}
             </span>
           )}
-          <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-ink-950/70 px-2.5 py-1 text-[13px] font-medium text-amber-400 backdrop-blur-md">
-            <Star className="h-3.5 w-3.5 fill-amber-400" /> {product.rating}
-          </span>
           <span className="absolute bottom-3 left-3 text-xs font-medium uppercase tracking-wider text-steel-300">
             {product.brand}
           </span>

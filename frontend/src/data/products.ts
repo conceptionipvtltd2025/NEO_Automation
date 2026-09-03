@@ -29,8 +29,21 @@ export type Product = {
   images: string[];
   /** PDF literature shown in the Downloads tab on the product page. */
   documents?: ProductDocument[];
+  /**
+   * Show this product in the home page "Our Catalogue" grid. Set from the
+   * admin panel (Products -> Home page placement).
+   */
   featured?: boolean;
+  /**
+   * Show this product in the home page "Signature Engineering" list — the
+   * hand-picked flagship rail beside the 3D showpiece.
+   */
   special?: boolean;
+  /**
+   * Position within the home page sections (ascending). Products without one
+   * sort last, so an admin only has to number the few they care about.
+   */
+  homeOrder?: number;
   badge?: string;
   visible?: boolean;
 };
@@ -83,6 +96,7 @@ export const products: Product[] = [
     images: [TOOL_A, TOOL_D],
     featured: true,
     special: true,
+    homeOrder: 1,
     badge: "High Torque",
     visible: true,
   },
@@ -147,6 +161,7 @@ export const products: Product[] = [
     images: [TOOL_A, TOOL_B],
     featured: true,
     special: true,
+    homeOrder: 6,
     badge: "SWF Ready",
     visible: true,
   },
@@ -327,6 +342,7 @@ export const products: Product[] = [
     images: [TOOL_C, TOOL_D],
     featured: true,
     special: true,
+    homeOrder: 5,
     badge: "Smart Line",
     visible: true,
   },
@@ -569,6 +585,7 @@ export const products: Product[] = [
     images: [TOOL_E, TOOL_F],
     featured: true,
     special: true,
+    homeOrder: 2,
     badge: "Best Seller",
     visible: true,
   },
@@ -750,6 +767,7 @@ export const products: Product[] = [
     images: [TOOL_G, TOOL_B],
     featured: true,
     special: true,
+    homeOrder: 3,
     badge: "Ergonomic",
     visible: true,
   },
@@ -993,6 +1011,7 @@ export const products: Product[] = [
     images: [TOOL_H, TOOL_B],
     featured: true,
     special: true,
+    homeOrder: 4,
     badge: "Energy Saving",
     visible: true,
   },
@@ -1331,5 +1350,11 @@ export const products: Product[] = [
 export const getProduct = (slug: string) =>
   products.find((pr) => pr.slug === slug);
 
+/**
+ * Home page selections. These operate on the *seed* array only — every live
+ * surface reads the catalogue from `useCatalog` (which is DB-backed) and uses
+ * the shared helpers in `lib/homeProducts.ts` instead, so an admin's flags
+ * actually take effect. Kept for offline/seed use and for tests.
+ */
 export const featuredProducts = products.filter((pr) => pr.featured);
 export const specialProducts = products.filter((pr) => pr.special);

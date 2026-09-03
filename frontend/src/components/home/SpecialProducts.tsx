@@ -6,7 +6,6 @@ import { useCatalog } from "@/store/useCatalog";
 import { homeSpecial } from "@/lib/homeProducts";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { formatINR } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
 
 const Showpiece3D = lazy(() =>
@@ -119,9 +118,6 @@ export function SpecialProducts() {
                     <h3 className="mt-1 truncate font-display text-base font-semibold text-white">
                       {prod.name}
                     </h3>
-                    <p className="text-sm text-steel-400">
-                      {formatINR(prod.price)}
-                    </p>
                   </div>
                   <ArrowUpRight className="h-5 w-5 shrink-0 text-steel-500 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-neo-500" />
                 </Link>

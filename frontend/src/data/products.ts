@@ -20,7 +20,6 @@ export type Product = {
   /** Product line within the brand — see `lines` in data/brands.ts. */
   line?: string;
   industries: string[];
-  price: number;
   rating: number;
   shortDesc: string;
   description: string;
@@ -76,7 +75,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "electric-assembly-tools",
     industries: ["ev-assembly", "automotive", "heavy-equipment", "industrial-assembly"],
-    price: 545000,
     rating: 4.9,
     shortDesc: "High-torque angle nutrunner for the most demanding line joints.",
     description:
@@ -109,7 +107,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "electric-assembly-tools",
     industries: ["automotive", "industrial-assembly", "railway"],
-    price: 468000,
     rating: 4.8,
     shortDesc: "The line workhorse — measured tightening for critical joints.",
     description:
@@ -139,7 +136,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "electric-assembly-tools",
     industries: ["automotive", "aerospace", "electronics"],
-    price: 489000,
     rating: 4.9,
     shortDesc:
       "Smart tightening tool with full torque & angle traceability.",
@@ -174,7 +170,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "electric-assembly-tools",
     industries: ["ev-assembly", "electronics", "home-appliances", "semiconductor"],
-    price: 312000,
     rating: 4.8,
     shortDesc: "Low-torque electric screwdriver with measured, ESD-safe control.",
     description:
@@ -203,7 +198,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "cordless-assembly-tools",
     industries: ["ev-assembly", "industrial-assembly", "automotive", "heavy-equipment"],
-    price: 215000,
     rating: 4.7,
     shortDesc: "Versatile battery nutrunner for medium-torque assembly.",
     description:
@@ -233,7 +227,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "cordless-assembly-tools",
     industries: ["ev-assembly", "automotive", "railway", "heavy-equipment"],
-    price: 585000,
     rating: 4.8,
     shortDesc: "Cable-free angle nutrunner with full transducer traceability.",
     description:
@@ -263,7 +256,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "pneumatic-assembly-tools",
     industries: ["home-appliances", "industrial-assembly", "electronics"],
-    price: 42000,
     rating: 4.6,
     shortDesc: "Light, fast air screwdriver for high-cycle assembly.",
     description:
@@ -292,7 +284,6 @@ export const products: Product[] = [
     categoryId: "process-software",
     line: "torque-software",
     industries: ["ev-assembly", "automotive", "industrial-assembly", "aerospace"],
-    price: 0,
     rating: 4.8,
     shortDesc: "Collects, stores and analyses every tightening result in the plant.",
     description:
@@ -322,7 +313,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "torque-controllers",
     industries: ["ev-assembly", "automotive", "industrial-assembly"],
-    price: 612000,
     rating: 4.8,
     shortDesc: "Modular tightening controller orchestrating multi-tool stations.",
     description:
@@ -355,7 +345,6 @@ export const products: Product[] = [
     categoryId: "process-software",
     line: "error-proofing",
     industries: ["ev-assembly", "automotive", "home-appliances", "industrial-assembly"],
-    price: 385000,
     rating: 4.7,
     shortDesc: "Socket trays, position detection and guidance that stop the defect.",
     description:
@@ -384,7 +373,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "quality-assurance",
     industries: ["ev-assembly", "automotive", "aerospace", "energy"],
-    price: 725000,
     rating: 4.9,
     shortDesc: "Smart audit wrench that measures, judges and records residual torque.",
     description:
@@ -415,7 +403,6 @@ export const products: Product[] = [
     categoryId: "sockets-fixtures-spm",
     line: "fixtured-solutions",
     industries: ["automotive", "industrial-assembly", "heavy-equipment"],
-    price: 890000,
     rating: 4.8,
     shortDesc: "Compact spindle for multi-point, simultaneous tightening.",
     description:
@@ -444,7 +431,6 @@ export const products: Product[] = [
     categoryId: "sockets-fixtures-spm",
     line: "torque-reaction-arms",
     industries: ["automotive", "heavy-equipment", "industrial-assembly"],
-    price: 265000,
     rating: 4.7,
     shortDesc: "Takes reaction force off the operator and into the structure.",
     description:
@@ -473,7 +459,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "bolt-tensioning",
     industries: ["energy", "heavy-equipment", "industrial-assembly"],
-    price: 1650000,
     rating: 4.8,
     shortDesc: "Sets clamp load directly by stretching the stud — no friction guesswork.",
     description:
@@ -503,7 +488,6 @@ export const products: Product[] = [
     categoryId: "assembly-tightening",
     line: "wrenches",
     industries: ["energy", "heavy-equipment", "railway"],
-    price: 980000,
     rating: 4.7,
     shortDesc: "Controlled high torque in confined access — square drive & low clearance.",
     description:
@@ -532,7 +516,6 @@ export const products: Product[] = [
     categoryId: "material-removal",
     line: "pro-tools",
     industries: ["metal-fabrication", "heavy-equipment", "industrial-assembly"],
-    price: 38900,
     rating: 4.6,
     shortDesc: "Industrial air grinder built for full-shift production duty.",
     description:
@@ -564,7 +547,6 @@ export const products: Product[] = [
     categoryId: "riveting-systems",
     line: "pop-rivet-tools",
     industries: ["ev-assembly", "automotive", "aerospace", "industrial-assembly"],
-    price: 78500,
     rating: 4.7,
     shortDesc: "Battery-powered blind rivet setting tool with process monitoring.",
     description:
@@ -598,7 +580,6 @@ export const products: Product[] = [
     categoryId: "riveting-systems",
     line: "pop-rivet-tools",
     industries: ["automotive", "railway", "heavy-equipment"],
-    price: 96500,
     rating: 4.8,
     shortDesc: "Air-hydraulic riveter for structural rivets up to 6.4 mm.",
     description:
@@ -628,7 +609,6 @@ export const products: Product[] = [
     categoryId: "riveting-systems",
     line: "nut-insert-tools",
     industries: ["automotive", "industrial-assembly", "home-appliances"],
-    price: 89900,
     rating: 4.6,
     shortDesc: "High-speed blind rivet-nut tool for threaded fastening.",
     description:
@@ -657,7 +637,6 @@ export const products: Product[] = [
     categoryId: "riveting-systems",
     line: "nut-insert-tools",
     industries: ["automotive", "industrial-assembly", "metal-fabrication"],
-    price: 112000,
     rating: 4.7,
     shortDesc: "Air-hydraulic nut setter for continuous line production.",
     description:
@@ -686,7 +665,6 @@ export const products: Product[] = [
     categoryId: "riveting-systems",
     line: "gav-automatic-tools",
     industries: ["automotive", "home-appliances", "industrial-assembly"],
-    price: 1980000,
     rating: 4.8,
     shortDesc: "Feeds rivets to the tool nose — the operator never handles a fastener.",
     description:
@@ -716,7 +694,6 @@ export const products: Product[] = [
     categoryId: "riveting-systems",
     line: "manual-tools",
     industries: ["metal-fabrication", "industrial-assembly", "railway"],
-    price: 18500,
     rating: 4.5,
     shortDesc: "Hand and lever riveting tools for field work and low volumes.",
     description:
@@ -747,7 +724,6 @@ export const products: Product[] = [
     categoryId: "aluminium-crane-system",
     line: "eepos-one",
     industries: ["automotive", "industrial-assembly", "aerospace"],
-    price: 1450000,
     rating: 4.8,
     shortDesc: "Lightweight modular crane for ergonomic, flexible material handling.",
     description:
@@ -780,7 +756,6 @@ export const products: Product[] = [
     categoryId: "aluminium-crane-system",
     line: "eepos-nano",
     industries: ["electronics", "home-appliances", "industrial-assembly"],
-    price: 690000,
     rating: 4.7,
     shortDesc: "Compact jib crane sized for a single bench or cell.",
     description:
@@ -809,7 +784,6 @@ export const products: Product[] = [
     categoryId: "aluminium-crane-system",
     line: "eepos-base",
     industries: ["industrial-assembly", "metal-fabrication", "automotive"],
-    price: 845000,
     rating: 4.6,
     shortDesc: "Standardised entry crane with an integrated air, power & data column.",
     description:
@@ -840,7 +814,6 @@ export const products: Product[] = [
     categoryId: "air-line-accessories",
     line: "esafe-quick-couplings",
     industries: ["industrial-assembly", "metal-fabrication", "automotive"],
-    price: 12500,
     rating: 4.8,
     shortDesc: "Two-step safety couplings that vent before they release.",
     description:
@@ -871,7 +844,6 @@ export const products: Product[] = [
     categoryId: "air-line-accessories",
     line: "hoses-reels",
     industries: ["metal-fabrication", "industrial-assembly", "heavy-equipment"],
-    price: 34500,
     rating: 4.7,
     shortDesc: "Slow-retraction air reel with guiding mechanism, 5–23 m.",
     description:
@@ -900,7 +872,6 @@ export const products: Product[] = [
     categoryId: "air-line-accessories",
     line: "air-fluid-guns",
     industries: ["metal-fabrication", "industrial-assembly", "home-appliances"],
-    price: 6800,
     rating: 4.6,
     shortDesc: "OSHA-compliant blow gun with variable flow, rated to 16 bar.",
     description:
@@ -931,7 +902,6 @@ export const products: Product[] = [
     categoryId: "air-line-accessories",
     line: "push-in-fittings",
     industries: ["industrial-assembly", "automotive", "semiconductor"],
-    price: 7200,
     rating: 4.7,
     shortDesc: "Tool-free brass & technopolymer fittings that stay leak-tight.",
     description:
@@ -960,7 +930,6 @@ export const products: Product[] = [
     categoryId: "air-line-accessories",
     line: "tubing-hose",
     industries: ["industrial-assembly", "electronics", "automotive"],
-    price: 4900,
     rating: 4.6,
     shortDesc: "PA, PU and PE tube calibrated to the fitting range.",
     description:
@@ -991,7 +960,6 @@ export const products: Product[] = [
     categoryId: "compressed-air-piping",
     line: "compressed-air-piping",
     industries: ["industrial-assembly", "automotive", "metal-fabrication"],
-    price: 0,
     rating: 4.9,
     shortDesc: "Clean-bore aluminium piping — leak-free, low pressure drop, reconfigurable.",
     description:
@@ -1026,7 +994,6 @@ export const products: Product[] = [
     categoryId: "air-line-accessories",
     line: "speedfit-plumbing",
     industries: ["industrial-assembly", "home-appliances"],
-    price: 8900,
     rating: 4.8,
     shortDesc: "Tool-free push-fit fittings for hot & cold water services.",
     description:
@@ -1056,7 +1023,6 @@ export const products: Product[] = [
     categoryId: "air-line-accessories",
     line: "jg-pneumatics",
     industries: ["industrial-assembly", "automotive"],
-    price: 6500,
     rating: 4.6,
     shortDesc: "Compact push-in fittings for compressed-air automation.",
     description:
@@ -1087,7 +1053,6 @@ export const products: Product[] = [
     categoryId: "hand-tools-storage",
     line: "trolleys-benches-storage",
     industries: ["industrial-assembly", "automotive", "metal-fabrication"],
-    price: 168000,
     rating: 4.8,
     shortDesc: "Mobile workshop with full-extension drawers and foam inlays.",
     description:
@@ -1117,7 +1082,6 @@ export const products: Product[] = [
     categoryId: "hand-tools-storage",
     line: "torque-technology",
     industries: ["automotive", "aerospace", "energy"],
-    price: 62000,
     rating: 4.8,
     shortDesc: "Digital wrench with target display, memory and audit export.",
     description:
@@ -1146,7 +1110,6 @@ export const products: Product[] = [
     categoryId: "hand-tools-storage",
     line: "industrial-hand-tools",
     industries: ["ev-assembly", "electronics", "energy", "automotive"],
-    price: 48500,
     rating: 4.7,
     shortDesc: "1000 V individually tested tools for live-side working.",
     description:
@@ -1177,7 +1140,6 @@ export const products: Product[] = [
     categoryId: "hand-tools-storage",
     line: "gedore-storage",
     industries: ["industrial-assembly", "automotive", "railway"],
-    price: 124000,
     rating: 4.7,
     shortDesc: "7-drawer workshop trolley with full tool complement.",
     description:
@@ -1206,7 +1168,6 @@ export const products: Product[] = [
     categoryId: "hand-tools-storage",
     line: "gedore-torque",
     industries: ["aerospace", "automotive", "energy"],
-    price: 38500,
     rating: 4.9,
     shortDesc: "Precision click-type torque wrench, calibration certified.",
     description:
@@ -1235,7 +1196,6 @@ export const products: Product[] = [
     categoryId: "hand-tools-storage",
     line: "gedore-vde",
     industries: ["ev-assembly", "energy", "electronics", "railway"],
-    price: 32500,
     rating: 4.7,
     shortDesc: "German-forged 1000 V tools for electrical maintenance.",
     description:
@@ -1266,7 +1226,6 @@ export const products: Product[] = [
     categoryId: "material-removal",
     line: "cutting-discs",
     industries: ["metal-fabrication", "automotive", "energy"],
-    price: 4200,
     rating: 4.6,
     shortDesc: "Ultra-thin high-performance cutting disc for steel & stainless.",
     description:
@@ -1296,7 +1255,6 @@ export const products: Product[] = [
     categoryId: "material-removal",
     line: "grinding-finishing",
     industries: ["metal-fabrication", "aerospace", "heavy-equipment"],
-    price: 5600,
     rating: 4.7,
     shortDesc: "Zirconia flap disc for aggressive grinding and finishing.",
     description:
@@ -1325,7 +1283,6 @@ export const products: Product[] = [
     categoryId: "material-removal",
     line: "burrs-files-brushes",
     industries: ["metal-fabrication", "aerospace", "heavy-equipment"],
-    price: 14800,
     rating: 4.7,
     shortDesc: "Carbide burrs and files for the edges a disc cannot reach.",
     description:

@@ -52,20 +52,20 @@ const capabilities: Capability[] = [
 
 export function Capabilities() {
   return (
-    <section id="capabilities" className="container-px py-16">
+    <section id="capabilities" className="container-px py-10 sm:py-16">
       <SectionHeading
         eyebrow="What We Do"
         title="End-to-end engineering, not just a supplier"
         subtitle="From the first specification to lifelong line support, Neo Automation covers every step of your tooling and automation journey."
       />
 
-      <StaggerGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <StaggerGroup className="mt-8 grid grid-cols-2 gap-3 sm:mt-14 sm:gap-5 lg:grid-cols-3">
         {capabilities.map((c) => (
           <StaggerItem key={c.title}>
             <motion.div
               whileHover={{ y: -6 }}
               transition={{ type: "spring", stiffness: 300, damping: 22 }}
-              className="shine-sweep group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-colors duration-300 hover:border-white/20"
+              className="shine-sweep group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-colors duration-300 hover:border-white/20 sm:p-6"
               style={{ ["--accent" as string]: c.accent }}
             >
               {/* corner glow on hover */}
@@ -90,10 +90,10 @@ export function Capabilities() {
               >
                 <c.icon className="h-6 w-6" />
               </span>
-              <h3 className="mt-5 font-display text-lg font-semibold text-white">
+              <h3 className="mt-3.5 font-display text-[15px] font-semibold text-white sm:mt-5 sm:text-lg">
                 {c.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-steel-400">
+              <p className="mt-1.5 line-clamp-5 text-[12.5px] leading-relaxed text-steel-400 sm:mt-2 sm:line-clamp-none sm:text-sm">
                 {c.text}
               </p>
             </motion.div>

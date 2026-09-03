@@ -49,7 +49,7 @@ export function IndustriesShowcase() {
   if (!current) return null;
 
   return (
-    <section id="industries" className="relative py-16">
+    <section id="industries" className="relative py-10 sm:py-16">
       <div className="container-px">
         <SectionHeading
           eyebrow="Industries We Power"
@@ -65,7 +65,7 @@ export function IndustriesShowcase() {
         {/* items-start (not the default stretch) is what lets the visual panel
             position:sticky — a stretched grid item is already as tall as the
             row, so it has nothing to stick within. */}
-        <div className="mt-14 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+        <div className="mt-8 grid gap-6 sm:mt-14 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           {/* Selector list */}
           <motion.div
             className="flex flex-col gap-2"

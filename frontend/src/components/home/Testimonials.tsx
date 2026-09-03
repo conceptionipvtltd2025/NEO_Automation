@@ -39,7 +39,7 @@ const testimonials: Testimonial[] = [
 
 export function Testimonials() {
   return (
-    <section className="container-px py-16">
+    <section className="container-px py-10 sm:py-16">
       <SectionHeading
         align="center"
         eyebrow="Trusted on the Floor"
@@ -47,7 +47,7 @@ export function Testimonials() {
         subtitle="Quality, aerospace and EV manufacturers rely on Neo Automation to keep their most critical lines precise and productive."
       />
 
-      <StaggerGroup className="mt-14 grid gap-5 md:grid-cols-3">
+      <StaggerGroup className="mt-8 sm:mt-14 grid gap-5 md:grid-cols-3">
         {testimonials.map((t) => (
           <StaggerItem key={t.name} className="h-full">
             <figure

@@ -29,7 +29,7 @@ export function SpecialProducts() {
   if (picks.length === 0) return null;
 
   return (
-    <section id="special-products" className="relative overflow-hidden py-16">
+    <section id="special-products" className="relative overflow-hidden py-10 sm:py-16">
       <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-60" />
       <div className="container-px relative">
         <SectionHeading
@@ -39,10 +39,10 @@ export function SpecialProducts() {
           subtitle="Hand-picked flagship tools that define precision — smart, connected and engineered for the assembly lines of tomorrow."
         />
 
-        <div className="mt-16 grid items-center gap-10 lg:grid-cols-2">
+        <div className="mt-8 grid items-center gap-6 sm:mt-16 sm:gap-10 lg:grid-cols-2">
           {/* 3D showpiece */}
           <Reveal>
-            <div className="gradient-border relative aspect-square w-full overflow-hidden">
+            <div className="gradient-border relative aspect-[4/3] w-full overflow-hidden sm:aspect-square">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(237,28,36,0.12),transparent_60%)]" />
               <Suspense
                 fallback={
@@ -92,7 +92,7 @@ export function SpecialProducts() {
               >
                 <Link
                   to={`/products/${prod.slug}`}
-                  className="group flex min-w-0 items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:gap-5"
+                  className="group flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-3 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:gap-5 sm:p-4"
                 >
                   <span className="font-display text-2xl font-bold text-white/15">
                     {String(i + 1).padStart(2, "0")}

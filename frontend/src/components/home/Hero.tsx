@@ -67,7 +67,7 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      className="force-dark relative flex min-h-[100svh] items-center overflow-hidden pb-24 pt-36"
+      className="force-dark relative flex min-h-[100svh] items-center overflow-hidden pb-14 pt-28 sm:pb-24 sm:pt-36"
     >
       {/* Background media — static (no scroll-driven scale) so the GPU never
           re-rasterizes the decoded video frame while scrolling = no lag. */}
@@ -132,7 +132,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
-            className="mt-6 max-w-xl text-base leading-relaxed text-steel-300 sm:text-lg"
+            className="mt-4 max-w-xl text-[15px] leading-relaxed text-steel-300 sm:mt-6 sm:text-lg"
           >
             Delivering innovative solutions that improve{" "}
             <span className="font-medium text-neo-500">Productivity, Quality, Safety</span>,
@@ -143,7 +143,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.62 }}
-            className="mt-9 flex flex-wrap items-center gap-3"
+            className="mt-6 flex flex-wrap items-center gap-3 sm:mt-9"
           >
             <Magnetic>
               <Link to="/products" className="btn-primary">
@@ -161,7 +161,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="mt-12 grid max-w-2xl grid-cols-2 items-start gap-x-6 gap-y-6 sm:grid-cols-4"
+            className="mt-8 grid max-w-2xl grid-cols-2 items-start gap-x-4 gap-y-4 sm:mt-12 sm:grid-cols-4 sm:gap-x-6 sm:gap-y-6"
           >
             {site.stats.map((s) => (
               <div key={s.label}>
@@ -186,7 +186,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1 }}
-            className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-4"
+            className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 sm:mt-10 sm:gap-y-4"
           >
             <span className="flex items-center gap-3">
               <span className="bg-gradient-to-r from-white to-steel-400 bg-clip-text text-[13px] font-semibold uppercase tracking-[0.3em] text-transparent">

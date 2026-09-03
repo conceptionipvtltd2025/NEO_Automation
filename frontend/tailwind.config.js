@@ -9,6 +9,10 @@ export default {
       screens: { "2xl": "1400px" },
     },
     extend: {
+      // `xs` covers the 320-379px phones (iPhone SE 1st gen, Galaxy Fold cover
+      // screen) where the default `sm:640px` step is far too coarse: several
+      // lockups and stat rows need one intermediate stage before 640.
+      screens: { xs: "380px" },
       colors: {
         // Core surface palette — driven by CSS variables so a single
         // `.light` class on <html> flips the whole site (see index.css).

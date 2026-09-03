@@ -27,27 +27,27 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-900/90 via-transparent to-transparent" />
           {product.badge && (
-            <span className="absolute left-3 top-3 rounded-full border border-neo-600/40 bg-neo-600/15 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-neo-300 backdrop-blur-md">
+            <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-full border border-neo-600/40 bg-neo-600/15 px-2 py-0.5 text-[9.5px] font-semibold uppercase tracking-normal text-neo-300 backdrop-blur-md sm:left-3 sm:top-3 sm:max-w-[calc(100%-1.5rem)] sm:px-3 sm:py-1 sm:text-[12px] sm:tracking-wider">
               {product.badge}
             </span>
           )}
-          <span className="absolute bottom-3 left-3 text-xs font-medium uppercase tracking-wider text-steel-300">
+          <span className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] truncate text-[10px] font-medium uppercase tracking-wider text-steel-300 sm:bottom-3 sm:left-3 sm:text-xs">
             {product.brand}
           </span>
         </div>
 
-        <div className="flex flex-1 flex-col p-5">
-          <h3 className="line-clamp-2 min-h-[3rem] font-display text-base font-semibold leading-snug text-white transition-colors group-hover:text-neo-300">
+        <div className="flex flex-1 flex-col p-3 sm:p-5">
+          <h3 className="line-clamp-2 font-display text-[13.5px] font-semibold leading-snug text-white transition-colors group-hover:text-neo-300 sm:min-h-[3rem] sm:text-base">
             {product.name}
           </h3>
-          <p className="mt-2 line-clamp-2 flex-1 text-sm text-steel-400">
+          <p className="mt-1.5 hidden line-clamp-2 flex-1 text-sm text-steel-400 sm:mt-2 sm:block">
             {product.shortDesc}
           </p>
-          <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-            <span className="text-[13px] font-medium uppercase tracking-wider text-steel-500">
+          <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-2.5 sm:pt-4">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-steel-500 sm:text-[13px]">
               View details
             </span>
-            <span className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-steel-300 transition-all duration-300 group-hover:border-neo-600 group-hover:bg-neo-600 group-hover:text-pure">
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white/10 text-steel-300 transition-all duration-300 group-hover:border-neo-600 group-hover:bg-neo-600 group-hover:text-pure sm:h-9 sm:w-9">
               <ArrowUpRight className="h-4 w-4" />
             </span>
           </div>

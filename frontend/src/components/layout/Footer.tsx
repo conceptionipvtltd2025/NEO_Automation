@@ -80,7 +80,7 @@ export function Footer() {
                 <li key={n.href}>
                   <Link
                     to={n.href}
-                    className="group inline-flex items-center gap-1 text-sm text-steel-300 transition hover:text-white"
+                    className="group inline-flex min-h-[44px] items-center gap-1 py-1 text-sm text-steel-300 transition hover:text-white sm:min-h-0 sm:py-0.5"
                   >
                     {n.label}
                     <ArrowUpRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
@@ -90,7 +90,7 @@ export function Footer() {
               <li>
                 <Link
                   to="/sustainability"
-                  className="group inline-flex items-center gap-1 text-sm text-steel-300 transition hover:text-white"
+                  className="group inline-flex min-h-[44px] items-center gap-1 py-1 text-sm text-steel-300 transition hover:text-white sm:min-h-0 sm:py-0.5"
                 >
                   Sustainability &amp; Safety
                   <ArrowUpRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
@@ -108,7 +108,7 @@ export function Footer() {
                 <li key={c.id}>
                   <Link
                     to={`/products?category=${c.id}`}
-                    className="text-sm text-steel-300 transition hover:text-white"
+                    className="inline-flex min-h-[44px] items-center py-1 text-sm text-steel-300 transition hover:text-white sm:min-h-0 sm:py-0.5"
                   >
                     {c.name}
                   </Link>

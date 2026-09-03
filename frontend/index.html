@@ -19,6 +19,26 @@
         } catch (e) {}
       })();
     </script>
+    <!--
+      Suppress Tawk.to's own launcher + "We Are Here!" attention grabber before
+      first paint.
+
+      Tawk appends a <div> with a RANDOM id (no class, no title) whose iframes
+      are all src="about:blank", and it renders that ~10s after load. Hiding it
+      from JS can only ever react after it is already on screen, which is the
+      flash of the removed widget users were seeing on every reload. This rule
+      is part of the document, so the widget is never painted at all.
+
+      Our own launcher lives inside #root and is unaffected. The
+      `html.neo-chat-open` gate (set by components/TawkChat.tsx) hands the
+      corner back to Tawk for the duration of an open conversation.
+    -->
+    <style>
+      html:not(.neo-chat-open) body > div[id]:not(#root):has(> iframe),
+      html:not(.neo-chat-open) body > div[data-neo-tawk-hidden="1"] {
+        display: none !important;
+      }
+    </style>
     <meta
       name="description"
       content="Neo Automation Pvt. Ltd. — Premium automation solutions, industrial tools & authorised distributor of Atlas Copco, GESIPA, eepos, GEDORE, PFERD & John Guest."

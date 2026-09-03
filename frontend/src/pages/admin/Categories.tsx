@@ -47,7 +47,8 @@ export default function AdminCategories() {
         addLabel="Add category"
       />
 
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-ink-900">
+      {/* Desktop table; the card list below replaces it under lg. */}
+      <div className="hidden overflow-hidden rounded-2xl border border-white/10 bg-ink-900 lg:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-steel-500">
@@ -107,6 +108,52 @@ export default function AdminCategories() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile / tablet card list */}
+      <div className="space-y-3 lg:hidden">
+        {paged.map((c) => (
+          <div key={c.id} className="rounded-2xl border border-white/10 bg-ink-900 p-3.5">
+            <div className="flex items-start gap-3">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-neo-600/15 text-neo-400">
+                <Tags className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-white">{c.name}</p>
+                {c.description && (
+                  <p className="mt-1 line-clamp-2 text-xs text-steel-400">{c.description}</p>
+                )}
+              </div>
+              <div className="flex shrink-0 gap-1.5">
+                <IconBtn onClick={() => setEditing(c)} title="Edit">
+                  <Pencil className="h-4 w-4" />
+                </IconBtn>
+                <IconBtn onClick={() => setDeleteId(c.id)} title="Delete" danger>
+                  <Trash2 className="h-4 w-4" />
+                </IconBtn>
+              </div>
+            </div>
+            <div className="mt-3 border-t border-white/[0.06] pt-3">
+              <button
+                onClick={() => upsertCategory({ ...c, showOnHome: !c.showOnHome })}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition",
+                  c.showOnHome
+                    ? "border-neo-600/40 bg-neo-600/15 text-neo-300"
+                    : "border-white/10 bg-white/[0.04] text-steel-400"
+                )}
+              >
+                <Home className="h-3 w-3" />
+                {c.showOnHome ? "On home" : "Off"}
+              </button>
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <p className="rounded-2xl border border-white/10 bg-ink-900 px-5 py-12 text-center text-steel-500">
+            No categories found.
+          </p>
+        )}
       </div>
 
       <AdminPagination {...pager} />
@@ -332,22 +379,22 @@ export function AdminToolbar({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">{title}</h1>
+        <h1 className="font-display text-xl font-bold text-white sm:text-2xl">{title}</h1>
         <p className="mt-1 text-sm text-steel-400">{subtitle}</p>
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="relative min-w-0 flex-1 sm:flex-none">
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-steel-500" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search…"
-            className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm text-white outline-none transition focus:border-neo-600/50 sm:w-56"
+            className="w-full min-w-0 rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm text-white outline-none transition focus:border-neo-600/50 sm:w-56"
           />
         </div>
         {children}
         {onAdd && (
-          <button onClick={onAdd} className="btn-primary text-[14.5px]">
+          <button onClick={onAdd} className="btn-primary shrink-0 whitespace-nowrap px-4 text-[13.5px] sm:px-7 sm:text-[14.5px]">
             <Plus className="h-4 w-4" /> {addLabel}
           </button>
         )}

@@ -44,7 +44,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
@@ -54,37 +54,37 @@ export default function Dashboard() {
           >
             <Link
               to={s.to}
-              className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-ink-900 p-5 transition hover:border-white/20"
+              className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-ink-900 p-3.5 transition hover:border-white/20 sm:p-5"
             >
               <div className="flex items-start justify-between">
-                <span className={cn("grid h-11 w-11 place-items-center rounded-xl", s.color)}>
+                <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11", s.color)}>
                   <s.icon className="h-5 w-5" />
                 </span>
                 {s.badge ? (
-                  <span className="rounded-full bg-neo-600 px-2 py-0.5 text-[13px] font-bold text-pure">
+                  <span className="shrink-0 whitespace-nowrap rounded-full bg-neo-600 px-1.5 py-0.5 text-[10px] font-bold text-pure sm:px-2 sm:text-[13px]">
                     {s.badge} new
                   </span>
                 ) : (
                   <ArrowUpRight className="h-4 w-4 text-steel-600 transition group-hover:text-white" />
                 )}
               </div>
-              <p className="mt-4 font-display text-3xl font-bold text-white">
+              <p className="mt-3 font-display text-2xl font-bold text-white sm:mt-4 sm:text-3xl">
                 {s.value}
               </p>
-              <p className="mt-1 text-sm text-steel-400">{s.label}</p>
+              <p className="mt-0.5 text-[12px] text-steel-400 sm:mt-1 sm:text-sm">{s.label}</p>
             </Link>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]">
         {/* Recent inquiries */}
-        <div className="rounded-2xl border border-white/10 bg-ink-900 p-6">
-          <div className="flex items-center justify-between">
+        <div className="min-w-0 rounded-2xl border border-white/10 bg-ink-900 p-4 sm:p-6">
+          <div className="flex items-center justify-between gap-3">
             <h2 className="font-display text-lg font-semibold text-white">
               Recent enquiries
             </h2>
-            <Link to={`${ADMIN_BASE}/inquiries`} className="text-sm text-neo-400 hover:text-neo-300">
+            <Link to={`${ADMIN_BASE}/inquiries`} className="shrink-0 whitespace-nowrap text-sm text-neo-400 hover:text-neo-300">
               View all →
             </Link>
           </div>
@@ -92,7 +92,7 @@ export default function Dashboard() {
             {inquiries.slice(0, 5).map((inq) => (
               <div
                 key={inq.id}
-                className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4"
+                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3 sm:gap-4 sm:p-4"
               >
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-neo-600/15 font-display text-sm font-bold text-neo-300">
                   {inq.name.charAt(0)}
@@ -120,15 +120,15 @@ export default function Dashboard() {
         </div>
 
         {/* Quick stats */}
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-neo-600/15 to-transparent p-6">
+        <div className="min-w-0 space-y-4">
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-neo-600/15 to-transparent p-4 sm:p-6">
             <TrendingUp className="h-7 w-7 text-neo-400" />
             <p className="mt-4 font-display text-3xl font-bold text-white">
               {Math.round((inquiries.filter((i) => i.status === "responded" || i.status === "closed").length / Math.max(inquiries.length, 1)) * 100)}%
             </p>
             <p className="mt-1 text-sm text-steel-300">Enquiries handled</p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-ink-900 p-6">
+          <div className="rounded-2xl border border-white/10 bg-ink-900 p-4 sm:p-6">
             <Clock className="h-7 w-7 text-volt-400" />
             <p className="mt-4 font-display text-3xl font-bold text-white">{newCount}</p>
             <p className="mt-1 text-sm text-steel-300">Awaiting response</p>

@@ -46,7 +46,7 @@ const steps: Step[] = [
 
 export function Process() {
   return (
-    <section id="process" className="relative overflow-hidden py-16">
+    <section id="process" className="relative overflow-hidden py-10 sm:py-16">
       <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-40" />
       <div className="container-px relative">
         <SectionHeading
@@ -63,7 +63,7 @@ export function Process() {
             <div className="h-full w-full bg-[linear-gradient(90deg,transparent,rgb(var(--neo)/0.6),rgb(var(--iris)/0.6),rgb(var(--volt)/0.6),rgb(var(--aurora)/0.6),transparent)] bg-[length:200%_100%] animate-gradient-pan" />
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
             {steps.map((s, i) => (
               <motion.div
                 key={s.step}
@@ -72,12 +72,12 @@ export function Process() {
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 style={{ ["--accent" as string]: s.accent }}
-                className="group card-rich shine-sweep flex flex-col items-center p-7 text-center"
+                className="group card-rich shine-sweep flex flex-col items-center p-4 text-center sm:p-7"
               >
                 {/* giant ghosted step numeral — depth + hierarchy */}
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute -right-1 -top-3 select-none font-display text-7xl font-bold leading-none text-white/[0.04] transition-colors duration-500 group-hover:text-white/[0.07]"
+                  className="pointer-events-none absolute -right-1 -top-3 select-none font-display text-5xl font-bold leading-none text-white/[0.04] transition-colors duration-500 group-hover:text-white/[0.07] sm:text-7xl"
                 >
                   {s.step}
                 </span>
@@ -91,7 +91,7 @@ export function Process() {
 
                 {/* icon tile */}
                 <div
-                  className="relative grid h-16 w-16 place-items-center rounded-2xl border bg-ink-900/80 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-1.5 group-hover:scale-105"
+                  className="relative grid h-12 w-12 place-items-center rounded-2xl border bg-ink-900/80 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-1.5 group-hover:scale-105 sm:h-16 sm:w-16"
                   style={{
                     borderColor: "rgb(var(--accent) / 0.35)",
                     color: "rgb(var(--accent))",
@@ -99,7 +99,7 @@ export function Process() {
                       "inset 0 1px 0 rgb(255 255 255 / 0.08), 0 8px 24px -10px rgb(var(--accent) / 0.5)",
                   }}
                 >
-                  <s.icon className="h-7 w-7 transition-transform duration-500 group-hover:rotate-6" />
+                  <s.icon className="h-5 w-5 transition-transform duration-500 group-hover:rotate-6 sm:h-7 sm:w-7" />
                   {/* step badge */}
                   <span
                     className="absolute -right-2.5 -top-2.5 grid h-7 w-7 place-items-center rounded-full font-display text-[13px] font-bold text-white shadow-lg transition-transform duration-500 group-hover:scale-110"
@@ -112,21 +112,21 @@ export function Process() {
                   </span>
                 </div>
 
-                <h3 className="mt-6 font-display text-lg font-semibold text-white">
+                <h3 className="mt-3.5 font-display text-[14px] font-semibold leading-snug text-white sm:mt-6 sm:text-lg">
                   {s.title}
                 </h3>
 
                 {/* short accent underline that grows on hover */}
                 <span
                   aria-hidden
-                  className="mt-3 h-0.5 w-8 origin-center rounded-full transition-all duration-500 group-hover:w-14"
+                  className="mt-2 h-0.5 w-8 origin-center rounded-full transition-all duration-500 group-hover:w-14 sm:mt-3"
                   style={{
                     background:
                       "linear-gradient(90deg, transparent, rgb(var(--accent)), transparent)",
                   }}
                 />
 
-                <p className="mt-3 text-sm leading-relaxed text-steel-400">
+                <p className="mt-2 line-clamp-4 text-[12px] leading-relaxed text-steel-400 sm:mt-3 sm:line-clamp-none sm:text-sm">
                   {s.text}
                 </p>
               </motion.div>

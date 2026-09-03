@@ -10,6 +10,35 @@ const TAWK_SRC =
 /** Fired on window once Tawk has loaded and its default launcher is hidden. */
 export const TAWK_READY_EVENT = "neo:tawk-ready";
 
+/**
+ * Pre-emptive CSS hide, installed BEFORE Tawk's script is injected.
+ *
+ * The JS sweep can only react after Tawk has appended its container AND its
+ * iframes, which is ~10s after load on a cold cache — long enough for the
+ * launcher and the "We Are Here!" grabber to be plainly visible, which is
+ * exactly the flash being reported. A stylesheet costs nothing and applies at
+ * first paint, so the widget is never rendered in the first place.
+ *
+ * Scoped to `body > div[id]:not(#root)` with Tawk's signature z-index so it
+ * cannot touch our own fixed UI (FloatingWidgets lives inside #root). It is
+ * removed for the duration of an open chat via the `html.neo-chat-open` gate.
+ */
+const TAWK_SUPPRESS_STYLE_ID = "neo-tawk-suppress";
+
+function installTawkSuppressor() {
+  if (document.getElementById(TAWK_SUPPRESS_STYLE_ID)) return;
+  const style = document.createElement("style");
+  style.id = TAWK_SUPPRESS_STYLE_ID;
+  style.textContent = `
+html:not(.neo-chat-open) body > div[id]:not(#root):has(> iframe) {
+  display: none !important;
+}
+html:not(.neo-chat-open) body > div[data-neo-tawk-hidden="1"] {
+  display: none !important;
+}`;
+  document.head.appendChild(style);
+}
+
 type TawkApi = {
   hideWidget?: () => void;
   showWidget?: () => void;
@@ -40,23 +69,34 @@ let sweepScheduled = false;
 /**
  * Every top-level element Tawk has appended to <body>.
  *
- * Found by walking up from Tawk's own iframes rather than by class name: Tawk
- * ships several containers (launcher, chat window, and the "attention grabber"
- * balloon) and renames their classes between widget versions, so matching on
- * the iframe origin is the only stable handle.
+ * Tawk gives us NOTHING stable to match on: its container is a <div> with a
+ * random per-load id (e.g. "fa07nojd7h9g1788444180639"), no class and no title,
+ * and every child iframe is `src="about:blank"` (the content is written in via
+ * the DOM). So the old selector — iframe[src*="tawk.to"] — matched zero nodes
+ * and this whole module silently did nothing: the launcher and the
+ * "👋 We Are Here!" attention grabber both flashed on screen for ~10s until
+ * Tawk's own script happened to collapse them.
+ *
+ * The one reliable signature is the stacking context Tawk parks itself in:
+ * a direct child of <body> that is not our #root, carrying Tawk's signature
+ * z-index of 2000000000 and containing at least one iframe. We keep the
+ * z-index check loose (>= 1e9) in case they retune it.
  */
 function tawkRoots(): HTMLElement[] {
   const roots = new Set<HTMLElement>();
-  const frames = document.querySelectorAll<HTMLIFrameElement>(
-    'iframe[src*="tawk.to"], iframe[title*="chat widget" i]'
-  );
-  frames.forEach((f) => {
-    let el: HTMLElement = f;
-    while (el.parentElement && el.parentElement !== document.body) {
-      el = el.parentElement;
+  for (const el of Array.from(document.body.children)) {
+    if (!(el instanceof HTMLElement)) continue;
+    if (el.id === "root" || el.tagName === "SCRIPT" || el.tagName === "STYLE") continue;
+    // Tawk's own hidden marker survives our display:none, so keep matching a
+    // container we have already claimed even once its iframes are torn down.
+    if (el.dataset.neoTawkHidden === "1") {
+      roots.add(el);
+      continue;
     }
-    if (el.parentElement === document.body) roots.add(el);
-  });
+    if (!el.querySelector("iframe")) continue;
+    const z = Number.parseInt(window.getComputedStyle(el).zIndex, 10);
+    if (Number.isFinite(z) && z >= 1_000_000_000) roots.add(el);
+  }
   return [...roots];
 }
 
@@ -72,21 +112,37 @@ function tawkRoots(): HTMLElement[] {
  */
 function applyTawkChrome() {
   const hide = !chatOpen;
+  // Gate the stylesheet in index.html: while the chat is open Tawk owns the corner.
+  document.documentElement.classList.toggle("neo-chat-open", chatOpen);
   for (const root of tawkRoots()) {
     if (hide) {
       root.dataset.neoTawkHidden = "1";
+      // Tawk writes `style="display: block !important"` on its own container.
+      // An inline !important declaration outranks every stylesheet, so the CSS
+      // in index.html cannot win on its own and we must beat it in the same
+      // inline block: setProperty(...,"important") replaces that declaration.
       root.style.setProperty("display", "none", "important");
+      // Belt and braces: Tawk sizes the launcher via these too, so a future
+      // widget that drops the display rule still can't paint.
+      root.style.setProperty("visibility", "hidden", "important");
+      root.style.setProperty("pointer-events", "none", "important");
     } else if (root.dataset.neoTawkHidden) {
       delete root.dataset.neoTawkHidden;
       root.style.removeProperty("display");
+      root.style.removeProperty("visibility");
+      root.style.removeProperty("pointer-events");
     }
   }
 }
 
 /** Coalesce repeated calls into one pass per frame. */
 function scheduleTawkSweep() {
+  // Hide synchronously: waiting for the next animation frame is exactly long
+  // enough for Tawk's launcher to be composited once, which is the flash.
+  applyTawkChrome();
   if (sweepScheduled) return;
   sweepScheduled = true;
+  // …and once more after layout settles, for containers added mid-frame.
   requestAnimationFrame(() => {
     sweepScheduled = false;
     applyTawkChrome();
@@ -156,8 +212,8 @@ export function openTawkChat(): boolean {
 export function TawkChat() {
   useEffect(() => {
     const cleanup: Array<() => void> = [];
-    // Guard against a double-inject (StrictMode dev double-mount / HMR).
-    if (document.getElementById("tawk-script")) return;
+
+    installTawkSuppressor();
 
     const api: TawkApi = window.Tawk_API || {};
     window.Tawk_API = api;
@@ -184,26 +240,47 @@ export function TawkChat() {
     // Tawk injects its containers asynchronously and re-injects the attention
     // grabber on its own schedule, so a one-shot hide is not enough: watch
     // <body> and re-apply on every mutation while the chat is closed.
+    // subtree:true matters — Tawk appends the container EMPTY and injects the
+    // iframes a moment later, so a childList-only watch on <body> fires before
+    // the node is recognisable and then never again.
+    // Watch childList AND the `style` attribute: Tawk appends the container
+    // empty, fills it a moment later, and then writes
+    // `display: block !important` onto it — each of which must re-trigger the
+    // sweep or the widget paints in the gap between ticks.
     const observer = new MutationObserver(scheduleTawkSweep);
-    observer.observe(document.body, { childList: true, subtree: false });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style"],
+    });
     cleanup.push(() => observer.disconnect());
 
     // Belt and braces for the first few seconds, before the observer has
     // anything to react to.
+    // Tawk's container lands ~10-11s after load on a cold cache, so this net
+    // has to outlive that; the old 20 x 400ms = 8s window expired first.
     let tries = 0;
     const initial = window.setInterval(() => {
       if (!chatOpen) hideStockWidget();
-      if (++tries >= 20) window.clearInterval(initial);
+      if (++tries >= 75) window.clearInterval(initial);
     }, 400);
     cleanup.push(() => window.clearInterval(initial));
 
-    const s = document.createElement("script");
-    s.id = "tawk-script";
-    s.async = true;
-    s.src = TAWK_SRC;
-    s.charset = "UTF-8";
-    s.setAttribute("crossorigin", "*");
-    document.body.appendChild(s);
+    // Inject once, but ONLY the injection is guarded. The observer and the
+    // sweep above must be installed on EVERY mount: in StrictMode the effect
+    // runs, is cleaned up, then runs again — an early `return` on this guard
+     // left the second pass with no observer at all, so nothing was ever
+    // hidden and Tawk's launcher painted freely. That was the flash.
+    if (!document.getElementById("tawk-script")) {
+      const s = document.createElement("script");
+      s.id = "tawk-script";
+      s.async = true;
+      s.src = TAWK_SRC;
+      s.charset = "UTF-8";
+      s.setAttribute("crossorigin", "*");
+      document.body.appendChild(s);
+    }
 
     return () => cleanup.forEach((fn) => fn());
   }, []);

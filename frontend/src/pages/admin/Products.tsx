@@ -136,7 +136,10 @@ export default function AdminProducts() {
         addLabel="Add product"
       />
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-ink-900">
+      {/* Desktop table. Below lg it is replaced by the card list underneath:
+          the 5-column layout needs 720px, and side-scrolling a table hid the
+          Status and Actions columns entirely on a phone. */}
+      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 bg-ink-900 lg:block">
         <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-steel-500">
@@ -225,6 +228,66 @@ export default function AdminProducts() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile / tablet card list — every action from the table stays reachable. */}
+      <div className="space-y-3 lg:hidden">
+        {paged.map((p) => (
+          <div key={p.id} className="rounded-2xl border border-white/10 bg-ink-900 p-3.5">
+            <div className="flex items-start gap-3">
+              <img src={safeImg(p.images[0])} onError={onImgError} alt="" className="h-14 w-14 shrink-0 rounded-lg object-cover" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium leading-snug text-white">{p.name}</p>
+                <p className="mt-0.5 text-xs text-steel-400">{p.brand}</p>
+                {(p.documents?.length ?? 0) > 0 && (
+                  <p className="mt-1 flex items-center gap-1 text-xs text-neo-400">
+                    <FileText className="h-3 w-3" /> {p.documents!.length} PDF
+                  </p>
+                )}
+              </div>
+              <div className="flex shrink-0 gap-1.5">
+                <IconBtn onClick={() => openEdit(p)} title="Edit">
+                  <Pencil className="h-4 w-4" />
+                </IconBtn>
+                <IconBtn onClick={() => setDeleteId(p.id)} title="Delete" danger>
+                  <Trash2 className="h-4 w-4" />
+                </IconBtn>
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-white/[0.06] pt-3">
+              <button
+                onClick={() => toggleProduct(p.id)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition",
+                  p.visible !== false
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                    : "border-white/10 bg-white/[0.04] text-steel-400"
+                )}
+              >
+                {p.visible !== false ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                {p.visible !== false ? "Visible" : "Hidden"}
+              </button>
+              {p.featured && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-neo-600/30 bg-neo-600/10 px-2 py-0.5 text-[11px] font-medium text-neo-300">
+                  <LayoutGrid className="h-3 w-3" /> Catalogue
+                </span>
+              )}
+              {p.special && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] font-medium text-amber-300">
+                  <Sparkles className="h-3 w-3" /> Signature
+                </span>
+              )}
+              {typeof p.homeOrder === "number" && (
+                <span className="text-[11px] text-steel-500">#{p.homeOrder}</span>
+              )}
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <p className="rounded-2xl border border-white/10 bg-ink-900 px-5 py-12 text-center text-steel-500">
+            No products found.
+          </p>
+        )}
       </div>
 
       <AdminPagination {...pager} />

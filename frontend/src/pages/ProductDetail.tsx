@@ -173,7 +173,7 @@ export default function ProductDetail() {
                 </Link>
               </div>
 
-              <div className="mt-7 grid grid-cols-3 gap-3">
+              <div className="mt-7 grid grid-cols-3 gap-2 xs:gap-3">
                 {trust.map((t) => (
                   <div
                     key={t.label}
@@ -271,7 +271,9 @@ export default function ProductDetail() {
                     <div
                       key={s.label}
                       className={cn(
-                        "grid grid-cols-2 gap-4 px-5 py-4 text-sm",
+                        // Stacked on phones: a forced 2-column split left long
+                        // spec values wrapping in a ~120px sliver.
+                        "grid grid-cols-1 gap-1 px-4 py-3.5 text-sm sm:grid-cols-2 sm:gap-4 sm:px-5 sm:py-4",
                         i % 2 === 0 ? "bg-white/[0.02]" : "bg-transparent"
                       )}
                     >

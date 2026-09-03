@@ -92,14 +92,14 @@ export function Navbar() {
                 // space-between pushed the nav off-centre and let the three
                 // groups touch at 1280px. auto | 1fr | auto centres the nav on
                 // the BAR and keeps a real gutter either side at every width.
-                "mt-3 grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-2xl border px-4 py-3 transition-all duration-500 sm:px-5 xl:gap-8",
+                "mt-3 grid grid-cols-[minmax(0,auto)_1fr_auto] items-center gap-2 rounded-2xl border px-3 py-3 transition-all duration-500 sm:gap-4 sm:px-5 xl:gap-8",
                 scrolled || activeMega || searchOpen
                   ? "border-white/10 bg-ink-900/80 shadow-card backdrop-blur-xl"
                   : "border-transparent bg-transparent",
                 overDarkHero && !activeMega && !searchOpen && "force-dark"
               )}
             >
-              <Link to="/" className="shrink-0" onClick={closeMega}>
+              <Link to="/" className="min-w-0" onClick={closeMega}>
                 <Logo />
               </Link>
 
@@ -161,7 +161,7 @@ export function Navbar() {
               </nav>
 
               <div
-                className="flex items-center justify-end gap-2 xl:gap-2.5"
+                className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 xl:gap-2.5"
                 onMouseEnter={closeMega}
               >
                 {/* Hairline between the navigation and the action cluster —

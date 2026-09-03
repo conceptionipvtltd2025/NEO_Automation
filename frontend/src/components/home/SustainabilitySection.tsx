@@ -43,10 +43,10 @@ const standards = [
 
 export function SustainabilitySection() {
   return (
-    <section className="relative overflow-hidden py-16">
+    <section className="relative overflow-hidden py-10 sm:py-16">
       <SectionGlow color="79,217,180" />
       <div className="container-px">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div className="grid gap-7 sm:gap-12 lg:grid-cols-2 lg:items-center">
           {/* Copy */}
           <div>
             <SectionHeading
@@ -77,7 +77,7 @@ export function SustainabilitySection() {
           </div>
 
           {/* Pillars */}
-          <StaggerGroup className="grid gap-5 sm:grid-cols-2">
+          <StaggerGroup className="grid grid-cols-2 gap-3 sm:gap-5">
             {pillars.map((p) => (
               <StaggerItem key={p.title}>
                 <div className="card-rich group h-full p-6">
@@ -86,10 +86,10 @@ export function SustainabilitySection() {
                   >
                     <p.icon className="h-5 w-5" />
                   </span>
-                  <h3 className="mt-4 font-display text-base font-semibold text-white">
+                  <h3 className="mt-3 font-display text-[14px] font-semibold text-white sm:mt-4 sm:text-base">
                     {p.title}
                   </h3>
-                  <p className="mt-2 text-[14.5px] leading-relaxed text-steel-400">
+                  <p className="mt-1.5 text-[12.5px] leading-relaxed text-steel-400 sm:mt-2 sm:text-[14.5px]">
                     {p.text}
                   </p>
                 </div>

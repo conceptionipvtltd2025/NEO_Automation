@@ -9,7 +9,7 @@ export function CTABand() {
   return (
     <section className="container-px py-12">
       <Reveal>
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-ink-900 px-8 py-16 text-center sm:px-12 sm:py-20">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-ink-900 px-5 py-10 text-center sm:px-12 sm:py-20">
           <GridBackground className="opacity-50" />
           <Aurora />
           <div className="relative z-10 mx-auto max-w-2xl">

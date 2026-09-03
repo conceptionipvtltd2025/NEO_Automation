@@ -29,7 +29,7 @@ export function VideoSection() {
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section id="video" className="relative py-16">
+    <section id="video" className="relative py-10 sm:py-16">
       <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-40" />
       <div className="container-px relative">
         <SectionHeading

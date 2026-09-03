@@ -5,7 +5,7 @@ export function LogoMark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "logo-mark h-[3.75rem] w-[3.75rem] shrink-0 lg:h-[4.15rem] lg:w-[4.15rem] xl:h-[4.75rem] xl:w-[4.75rem]",
+        "logo-mark h-11 w-11 shrink-0 sm:h-[3.75rem] sm:w-[3.75rem] lg:h-[4.15rem] lg:w-[4.15rem] xl:h-[4.75rem] xl:w-[4.75rem]",
         className
       )}
     >
@@ -36,7 +36,7 @@ export function Logo({
     <span
       className={cn(
         "logo-lockup group flex min-w-0 items-center",
-        compact ? "gap-2.5" : "gap-3.5 xl:gap-4",
+        compact ? "gap-2.5" : "gap-2 sm:gap-3.5 xl:gap-4",
         className
       )}
     >
@@ -46,17 +46,21 @@ export function Logo({
           <span
             className={cn(
               "font-display font-bold leading-none tracking-tight text-white",
-              compact ? "text-[1.35rem]" : "text-[1.95rem] lg:text-[2.15rem] xl:text-[2.4rem]"
+              compact ? "text-[1.35rem]" : "text-[1.5rem] sm:text-[1.95rem] lg:text-[2.15rem] xl:text-[2.4rem]"
             )}
           >
             N<span className="text-neo-500">E</span><span>O</span>
           </span>
           <span
             className={cn(
-              "truncate font-semibold uppercase text-steel-400 transition-colors duration-300 group-hover:text-steel-300",
+              "font-semibold uppercase text-steel-400 transition-colors duration-300 group-hover:text-steel-300",
               compact
-                ? "mt-1 text-[11px] tracking-[0.24em]"
-                : "mt-1.5 text-[11.5px] tracking-[0.32em] lg:text-[12.5px] xl:mt-2 xl:text-[13px] xl:tracking-[0.3em]"
+                ? "truncate mt-1 text-[11px] tracking-[0.24em]"
+                // On a 320px phone the tracked-out wordmark cannot fit beside the
+                // mark and the action buttons, and `truncate` rendered it as
+                // "AUTOM…" — a broken-looking brand. Hide it below `xs` and show
+                // the full word from 380px up, where it fits intact.
+                : "hidden whitespace-nowrap xs:block mt-1 text-[9.5px] tracking-[0.2em] sm:mt-1.5 sm:text-[11.5px] sm:tracking-[0.32em] lg:text-[12.5px] xl:mt-2 xl:text-[13px] xl:tracking-[0.3em]"
             )}
           >
             Automation

@@ -34,7 +34,7 @@ export function Brands() {
   const brands = useCatalog((s) => s.brands);
 
   return (
-    <section id="brands" className="relative py-16">
+    <section id="brands" className="relative py-10 sm:py-16">
       <div className="container-px">
         <SectionHeading
           eyebrow="Authorised Distribution"
@@ -44,8 +44,8 @@ export function Brands() {
       </div>
 
       {/* Marquee strip */}
-      <Reveal className="mt-12">
-        <div className="relative border-y border-white/10 bg-white/[0.015] py-8">
+      <Reveal className="mt-7 sm:mt-12">
+        <div className="relative border-y border-white/10 bg-white/[0.015] py-5 sm:py-8">
           <Marquee speed={26}>
             {brands.map((b) => (
               <div
@@ -68,20 +68,26 @@ export function Brands() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: false, margin: "-60px" }}
-          className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-8 grid grid-cols-2 gap-3 sm:mt-14 sm:gap-5 lg:grid-cols-3"
         >
           {brands.map((b) => (
             <motion.div key={b.id} variants={gridCard}>
               <SpotlightCard
-                className="flex h-full flex-col p-6"
+                className="flex h-full flex-col p-3.5 sm:p-6"
                 spotColor={`${b.color}26`}
               >
                 {/* Logo on its own line: the plate is a fixed size for every
                     brand, so cramming a category pill alongside it squeezed the
                     taller logos. The pill sits under it, where it can breathe. */}
-                <BrandLogoPlate brand={b} size="md" />
+                <BrandLogoPlate
+                  brand={b}
+                  size="md"
+                  // `md` is a fixed 164px plate; in the 2-up phone grid the
+                  // column is ~165px total, so it is scaled down there.
+                  className="h-14 w-full max-w-[124px] p-2.5 sm:h-20 sm:w-[164px] sm:max-w-none sm:p-3.5"
+                />
 
-                <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-steel-200">
+                <span className="mt-3 inline-flex w-fit max-w-full items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-steel-200 sm:mt-4 sm:gap-2 sm:px-3 sm:py-1 sm:text-[12px]">
                   {/* Brand colour as a dot rather than the label colour — the
                       navy brands (Legris, GEDORE) are unreadable as text on a
                       dark card. */}
@@ -93,7 +99,7 @@ export function Brands() {
                   {b.category}
                 </span>
 
-                <p className="mt-4 text-sm leading-relaxed text-steel-400">
+                <p className="mt-3 line-clamp-3 text-[12.5px] leading-relaxed text-steel-400 sm:mt-4 sm:line-clamp-none sm:text-sm">
                   {b.blurb}
                 </p>
 
@@ -101,13 +107,13 @@ export function Brands() {
                     lines up regardless of blurb length. */}
                 <Link
                   to={`/brands/${b.id}`}
-                  className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-medium text-white/80 transition hover:text-white"
+                  className="mt-auto inline-flex items-center gap-1 pt-3 text-[12px] font-medium text-white/80 transition hover:text-white sm:pt-5 sm:text-sm"
                 >
-                  View {b.name} range
+                  <span className="truncate">View {b.name} range</span>
                   <ArrowUpRight className="h-4 w-4 text-neo-500" />
                 </Link>
                 <motion.div
-                  className="mt-5 h-px w-full origin-left"
+                  className="mt-3 h-px w-full origin-left sm:mt-5"
                   style={{
                     background: `linear-gradient(90deg, ${b.color}, transparent)`,
                   }}

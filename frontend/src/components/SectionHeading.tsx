@@ -21,7 +21,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex flex-col gap-5",
+        "flex flex-col gap-3.5 sm:gap-5",
         centered && "items-center text-center",
         !centered && action && "md:flex-row md:items-end md:justify-between",
         className
@@ -39,12 +39,12 @@ export function SectionHeading({
             </span>
           </Reveal>
         )}
-        <h2 className="mt-5 font-display text-[clamp(1.9rem,4vw,3.1rem)] font-bold leading-[1.05] tracking-tight text-gradient">
+        <h2 className="mt-3.5 font-display text-[clamp(1.55rem,5.2vw,3.1rem)] font-bold leading-[1.08] tracking-tight text-gradient sm:mt-5">
           <WordsReveal text={title} />
         </h2>
         {subtitle && (
           <Reveal delay={0.1}>
-            <p className="mt-4 text-base leading-relaxed text-steel-400">
+            <p className="mt-2.5 text-[14px] leading-relaxed text-steel-400 sm:mt-4 sm:text-base">
               {subtitle}
             </p>
           </Reveal>

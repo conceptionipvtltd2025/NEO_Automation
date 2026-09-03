@@ -57,7 +57,7 @@ export function ProductsSection() {
   }, [active, products, categories, catIds]);
 
   return (
-    <section id="products" className="relative py-16">
+    <section id="products" className="relative py-10 sm:py-16">
       <div className="container-px">
         <SectionHeading
           eyebrow="Our Catalogue"
@@ -72,7 +72,7 @@ export function ProductsSection() {
 
         {/* Category pills — a clean swipeable bar on mobile (edge-to-edge,
             scrollbar hidden), wrapping normally from sm up. */}
-        <div className="mt-10 -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+        <div className="mt-7 -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
           {tabs.map((t) => {
             const isActive = active === t.id;
             return (
@@ -97,7 +97,7 @@ export function ProductsSection() {
           })}
         </div>
 
-        <motion.div layout className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div layout className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           <AnimatePresence mode="popLayout">
             {visible.map((p, i) => (
               <motion.div

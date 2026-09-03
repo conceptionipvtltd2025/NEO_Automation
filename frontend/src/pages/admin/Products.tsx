@@ -32,7 +32,7 @@ const blank: Product = {
   brand: "",
   categoryId: "",
   industries: [],
-  price: 0,
+  //price: 0,
   rating: 4.5,
   shortDesc: "",
   description: "",

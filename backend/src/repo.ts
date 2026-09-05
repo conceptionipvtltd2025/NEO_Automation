@@ -46,6 +46,8 @@ export function mapCategory(r: any) {
     sortOrder: Number(r.sort_order ?? 0),
     // Pins the whole family to the home page "Our Catalogue" grid.
     showOnHome: bool(r.show_on_home),
+    homeOrder:
+      r.home_order === null || r.home_order === undefined ? undefined : Number(r.home_order),
   };
 }
 
@@ -159,10 +161,11 @@ export async function listCategories() {
 
 export async function upsertCategory(c: any) {
   await query(
-    `INSERT INTO categories (id, name, description, icon, sort_order, show_on_home)
-     VALUES (?,?,?,?,?,?)
+    `INSERT INTO categories (id, name, description, icon, sort_order, show_on_home, home_order)
+     VALUES (?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description),
-       icon=VALUES(icon), sort_order=VALUES(sort_order), show_on_home=VALUES(show_on_home)`,
+       icon=VALUES(icon), sort_order=VALUES(sort_order), show_on_home=VALUES(show_on_home),
+       home_order=VALUES(home_order)`,
     [
       c.id,
       c.name,
@@ -170,6 +173,11 @@ export async function upsertCategory(c: any) {
       c.icon ?? "Tags",
       Number(c.sortOrder ?? 0),
       c.showOnHome ? 1 : 0,
+      // Blank / non-numeric means unranked, which sorts last — not position 0,
+      // which would jump the family to the front.
+      Number.isFinite(Number(c.homeOrder)) && c.homeOrder !== null && c.homeOrder !== ""
+        ? Number(c.homeOrder)
+        : null,
     ]
   );
   const rows = await query(`SELECT * FROM categories WHERE id=?`, [c.id]);

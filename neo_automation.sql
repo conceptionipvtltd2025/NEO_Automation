@@ -61,22 +61,23 @@ CREATE TABLE categories (
     description TEXT,
     icon VARCHAR(64),
     sort_order INT DEFAULT 0,
-    show_on_home TINYINT(1) DEFAULT 0
+    show_on_home TINYINT(1) DEFAULT 0,
+    home_order INT DEFAULT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 12 row(s)
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('agv-amr', 'AGV / AMR Solutions', 'Automated guided vehicles and autonomous mobile robots for tugging, line-side feed and intralogistics.', 'Bot', 12, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('air-line-accessories', 'Air Line Accessories', 'Quick couplings, hoses, reels, FRL units and safety air guns that keep every pneumatic tool at rated power.', 'Wind', 5, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('air-motors', 'Air Motors', 'Compact, stall-proof pneumatic motors for continuous duty in hazardous, wet and high-temperature areas.', 'Fan', 6, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('aluminium-crane-system', 'Aluminum Crane System', 'Modular aluminium rail, jib and gantry systems for low-effort, ergonomic lifting at the workstation.', 'MoveVertical', 9, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('assembly-tightening', 'Assembly & Tightening', 'Electric, cordless and pneumatic nutrunners with controllers, software and full torque-angle traceability.', 'Wrench', 1, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('compressed-air-piping', 'Compressed Air Piping System', 'Corrosion-free aluminium piping for compressed air, vacuum and inert gases — leak-free and reconfigurable.', 'Pipette', 10, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('dispensing-gluing', 'Dispensing & Gluing System', 'Metered dispensing of adhesives, sealants and greases with repeatable bead control and shot monitoring.', 'Droplets', 3, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('hand-tools-storage', 'Hand Tools & Storage System', 'Premium and insulated hand tools, torque wrenches, tool trolleys, workbenches and shadow-board storage.', 'Hammer', 11, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('material-removal', 'Material Removal Tools', 'Grinders, sanders, drills and high-performance abrasives for cutting, deburring, weld prep and finishing.', 'Disc3', 4, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('process-software', 'Process Improvement Software Solutions', 'Torque software, station guidance and production-data platforms that turn tightening results into insight.', 'MonitorCog', 7, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('riveting-systems', 'Riveting System', 'Blind rivet and rivet-nut setting tools — battery, pneumatic and hydro-pneumatic — for structural joining.', 'Hammer', 2, 0);
-INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`) VALUES ('sockets-fixtures-spm', 'Sockets, Fixtures & SPM Solutions', 'Custom sockets, multi-spindle heads, reaction fixtures and special purpose machines built to your joint.', 'Cog', 8, 0);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('agv-amr', 'AGV / AMR Solutions', 'Automated guided vehicles and autonomous mobile robots for tugging, line-side feed and intralogistics.', 'Bot', 12, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('air-line-accessories', 'Air Line Accessories', 'Quick couplings, hoses, reels, FRL units and safety air guns that keep every pneumatic tool at rated power.', 'Wind', 5, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('air-motors', 'Air Motors', 'Compact, stall-proof pneumatic motors for continuous duty in hazardous, wet and high-temperature areas.', 'Fan', 6, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('aluminium-crane-system', 'Aluminum Crane System', 'Modular aluminium rail, jib and gantry systems for low-effort, ergonomic lifting at the workstation.', 'MoveVertical', 9, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('assembly-tightening', 'Assembly & Tightening', 'Electric, cordless and pneumatic nutrunners with controllers, software and full torque-angle traceability.', 'Wrench', 1, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('compressed-air-piping', 'Compressed Air Piping System', 'Corrosion-free aluminium piping for compressed air, vacuum and inert gases — leak-free and reconfigurable.', 'Pipette', 10, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('dispensing-gluing', 'Dispensing & Gluing System', 'Metered dispensing of adhesives, sealants and greases with repeatable bead control and shot monitoring.', 'Droplets', 3, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('hand-tools-storage', 'Hand Tools & Storage System', 'Premium and insulated hand tools, torque wrenches, tool trolleys, workbenches and shadow-board storage.', 'Hammer', 11, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('material-removal', 'Material Removal Tools', 'Grinders, sanders, drills and high-performance abrasives for cutting, deburring, weld prep and finishing.', 'Disc3', 4, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('process-software', 'Process Improvement Software Solutions', 'Torque software, station guidance and production-data platforms that turn tightening results into insight.', 'MonitorCog', 7, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('riveting-systems', 'Riveting System', 'Blind rivet and rivet-nut setting tools — battery, pneumatic and hydro-pneumatic — for structural joining.', 'Hammer', 2, 0, NULL);
+INSERT INTO `categories` (`id`, `name`, `description`, `icon`, `sort_order`, `show_on_home`, `home_order`) VALUES ('sockets-fixtures-spm', 'Sockets, Fixtures & SPM Solutions', 'Custom sockets, multi-spindle heads, reaction fixtures and special purpose machines built to your joint.', 'Cog', 8, 0, NULL);
 
 -- ---------------------------------------------------------------
 -- Table structure & data for `industries`

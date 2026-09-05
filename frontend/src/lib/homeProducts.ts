@@ -22,6 +22,15 @@ import type { Category } from "@/data/categories";
  * the few they care about. Hidden products never appear, whatever is ticked.
  */
 
+/**
+ * How many items each home section renders. These live here, beside the
+ * selection logic, because three places need them in step: the section itself,
+ * the admin "Home Page" manager (which dims anything past the cut), and the
+ * product form's hint. They drifted apart once already.
+ */
+export const HOME_GRID_LIMIT = 8;
+export const HOME_SIGNATURE_LIMIT = 6;
+
 /** Ascending `homeOrder`, unranked last, name as the final tie-break. */
 export function byHomeOrder(a: Product, b: Product): number {
   const ao = a.homeOrder;
@@ -45,9 +54,39 @@ export const isHomeProduct = (p: Product, catIds: Set<string>): boolean =>
   !!p.featured || catIds.has(p.categoryId);
 
 /**
- * "Our Catalogue" grid. Product-tagged first, then category-tagged, then — only
- * if the two together still don't fill the grid — the rest of the catalogue, so
- * a half-configured site never renders a ragged row.
+ * The effective home-grid rank of a product: its own `homeOrder` if it carries
+ * one, otherwise the `homeOrder` of the category that put it on the page.
+ *
+ * This is what lets a single hand-picked product sit at position 1 with a whole
+ * family following at 2. The two sources previously rendered as separate
+ * blocks — every individually-tagged product, then every category-tagged one —
+ * so a category could never be interleaved between tagged products, whatever
+ * numbers were set.
+ */
+function homeRank(p: Product, cats: Map<string, number>): number | undefined {
+  if (typeof p.homeOrder === "number" && Number.isFinite(p.homeOrder)) return p.homeOrder;
+  return cats.get(p.categoryId);
+}
+
+/** Categories pinned to the home page, mapped to their rank (unranked omitted). */
+function rankedCategories(categories: Category[]): Map<string, number> {
+  const m = new Map<string, number>();
+  for (const c of categories) {
+    if (c.showOnHome && typeof c.homeOrder === "number" && Number.isFinite(c.homeOrder)) {
+      m.set(c.id, c.homeOrder);
+    }
+  }
+  return m;
+}
+
+/**
+ * "Our Catalogue" grid.
+ *
+ * Everything opted in — by its own `featured` flag or by its category's
+ * `showOnHome` — competes on ONE ordering scale, so product and category ranks
+ * interleave. Ties break in favour of the individually-tagged product (a
+ * deliberate pick outranks a bulk one), then by name. Anything unranked follows,
+ * and the rest of the catalogue backfills so the grid is never ragged.
  */
 export function homeFeatured(
   products: Product[],
@@ -56,13 +95,21 @@ export function homeFeatured(
 ): Product[] {
   const live = visibleProducts(products);
   const catIds = homeCategoryIds(categories);
+  const catRanks = rankedCategories(categories);
 
-  const tagged = live.filter((p) => p.featured).sort(byHomeOrder);
-  const byCategory = live
-    .filter((p) => !p.featured && catIds.has(p.categoryId))
-    .sort(byHomeOrder);
+  const picked = live
+    .filter((p) => isHomeProduct(p, catIds))
+    .sort((a, b) => {
+      const ra = homeRank(a, catRanks);
+      const rb = homeRank(b, catRanks);
+      if (ra !== undefined && rb !== undefined && ra !== rb) return ra - rb;
+      // Ranked always beats unranked.
+      if ((ra !== undefined) !== (rb !== undefined)) return ra !== undefined ? -1 : 1;
+      // Same rank: the hand-picked product leads its category's products.
+      if (!!a.featured !== !!b.featured) return a.featured ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
 
-  const picked = [...tagged, ...byCategory];
   if (picked.length >= limit) return picked.slice(0, limit);
 
   const chosen = new Set(picked.map((p) => p.id));

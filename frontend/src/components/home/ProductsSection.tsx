@@ -9,12 +9,13 @@ import {
   byHomeOrder,
   homeCategoryIds,
   isHomeProduct,
+  HOME_GRID_LIMIT,
 } from "@/lib/homeProducts";
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { cn } from "@/lib/utils";
 
-const LIMIT = 8;
+const LIMIT = HOME_GRID_LIMIT;
 
 export function ProductsSection() {
   const [cat, setCat] = useState<string>("all");

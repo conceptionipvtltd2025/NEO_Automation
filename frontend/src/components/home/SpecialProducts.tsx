@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Cpu, Gauge, Sparkles, Loader2 } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
-import { homeSpecial } from "@/lib/homeProducts";
+import { homeSpecial, HOME_SIGNATURE_LIMIT } from "@/lib/homeProducts";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { safeImg, onImgError } from "@/lib/image";
@@ -14,8 +14,8 @@ const Showpiece3D = lazy(() =>
   }))
 );
 
-/** How many flagship rows sit beside the showpiece. */
-const LIMIT = 4;
+/** How many flagship rows sit beside the showpiece — shared with the admin. */
+const LIMIT = HOME_SIGNATURE_LIMIT;
 
 export function SpecialProducts() {
   // Live catalogue — the admin's "Special / Flagship" flag and home ordering
@@ -38,7 +38,11 @@ export function SpecialProducts() {
           subtitle="Hand-picked flagship tools that define precision — smart, connected and engineered for the assembly lines of tomorrow."
         />
 
-        <div className="mt-8 grid items-center gap-6 sm:mt-16 sm:gap-10 lg:grid-cols-2">
+        {/* items-stretch, not items-center: the showpiece is a fixed square and
+            the list grows with the row count, so centring left the square
+            floating with a gap above and below while the list overhung both
+            ends. The rows below are sized to fill that same height. */}
+        <div className="mt-8 grid items-stretch gap-6 sm:mt-16 sm:gap-10 lg:grid-cols-2">
           {/* 3D showpiece */}
           <Reveal>
             <div className="gradient-border relative aspect-[4/3] w-full overflow-hidden sm:aspect-square">
@@ -79,7 +83,7 @@ export function SpecialProducts() {
           </Reveal>
 
           {/* Product list */}
-          <div className="flex min-w-0 flex-col gap-4">
+          <div className="flex min-w-0 flex-col justify-between gap-3">
             {picks.map((prod, i) => (
               <motion.div
                 key={prod.id}
@@ -91,12 +95,12 @@ export function SpecialProducts() {
               >
                 <Link
                   to={`/products/${prod.slug}`}
-                  className="group flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-3 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:gap-5 sm:p-4"
+                  className="group flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-3 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:gap-4"
                 >
-                  <span className="font-display text-2xl font-bold text-white/15">
+                  <span className="font-display text-xl font-bold text-white/15">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-ink-800">
+                  <div className="relative h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-ink-800 sm:h-16 sm:w-20">
                     <img
                       src={safeImg(prod.images[0])}
                       onError={onImgError}

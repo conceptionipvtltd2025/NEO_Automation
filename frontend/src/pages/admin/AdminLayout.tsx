@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
+  Home,
   Package,
   Tags,
   Boxes,
@@ -26,6 +27,7 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { to: ADMIN_BASE, label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: `${ADMIN_BASE}/home`, label: "Home Page", icon: Home },
   { to: `${ADMIN_BASE}/products`, label: "Products", icon: Package },
   { to: `${ADMIN_BASE}/categories`, label: "Categories", icon: Tags },
   { to: `${ADMIN_BASE}/brands`, label: "Brands", icon: Boxes },

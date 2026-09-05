@@ -15,6 +15,14 @@ export type Category = {
    * Individually `featured` products are layered on top of this.
    */
   showOnHome?: boolean;
+  /**
+   * Position of this family's products within the home page "Our Catalogue"
+   * grid, on the SAME scale as a product's own `homeOrder`. That shared scale
+   * is the point: it lets one hand-picked product sit at 1 and a whole family
+   * follow at 2, which separate per-source lists could never express.
+   * Unset sorts after everything numbered.
+   */
+  homeOrder?: number;
 };
 
 // The client-approved catalogue: twelve solution families, in this exact

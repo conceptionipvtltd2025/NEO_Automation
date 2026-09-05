@@ -33,7 +33,8 @@ export const TABLES: string[] = [
     description TEXT,
     icon VARCHAR(64),
     sort_order INT DEFAULT 0,
-    show_on_home TINYINT(1) DEFAULT 0
+    show_on_home TINYINT(1) DEFAULT 0,
+    home_order INT DEFAULT NULL
   ) ENGINE=InnoDB`,
 
   `CREATE TABLE IF NOT EXISTS industries (
@@ -122,6 +123,10 @@ const ALTERS: string[] = [
   // Category-level home page tag: pin a whole solution family to the landing
   // page grid instead of flagging its products one at a time.
   `ALTER TABLE categories ADD COLUMN show_on_home TINYINT(1) DEFAULT 0`,
+  // Where this family's products sit in the home grid, on the same numbering
+  // scale as products.home_order — so a product and a whole category can be
+  // interleaved (product at 1, category at 2, …).
+  `ALTER TABLE categories ADD COLUMN home_order INT DEFAULT NULL`,
 ];
 
 export async function migrate() {

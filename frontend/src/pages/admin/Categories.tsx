@@ -226,6 +226,39 @@ export default function AdminCategories() {
               </span>
             </button>
 
+            {/* Display order for the whole family — the SAME numbering scale as
+                a product's own order, so an admin can put one hand-picked
+                product at 1 and this entire family at 2. */}
+            {editing.showOnHome && (
+              <Field label="Home page display order">
+                <div className="flex flex-wrap items-center gap-3">
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="—"
+                    value={editing.homeOrder ?? ""}
+                    onChange={(e) => {
+                      const n = Number(e.target.value);
+                      setEditing({
+                        ...editing,
+                        // Blank means unranked, which sorts last — not position
+                        // zero, which would jump the family to the front.
+                        homeOrder:
+                          e.target.value === "" || !Number.isFinite(n) ? undefined : n,
+                      });
+                    }}
+                    className="admin-input w-24"
+                  />
+                  <span className="flex-1 text-xs text-steel-400">
+                    Shares one scale with each product's own order, so a single product at 1
+                    can be followed by this whole family at 2. Blank sorts after everything
+                    numbered.
+                  </span>
+                </div>
+              </Field>
+            )}
+
             <div className="flex gap-3 pt-2">
               <button type="button" onClick={() => setEditing(null)} className="btn-ghost flex-1 justify-center text-[14.5px]">
                 Cancel

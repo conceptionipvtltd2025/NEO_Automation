@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pencil, Trash2, Eye, EyeOff, FileText, LayoutGrid, Sparkles } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
+import { HOME_SIGNATURE_LIMIT } from "@/lib/homeProducts";
 import type { Product, ProductDocument } from "@/data/products";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
@@ -18,9 +19,8 @@ import {
 import { slugify, cn } from "@/lib/utils";
 import { safeImg, onImgError } from "@/lib/image";
 
-// Mirrors LIMIT in components/home/SpecialProducts.tsx — shown in the form so
-// an admin knows how many of their flagged products actually make the page.
-const SPECIAL_LIMIT = 4;
+// Shown in the form so an admin knows how many flagged products reach the page.
+const SPECIAL_LIMIT = HOME_SIGNATURE_LIMIT;
 
 // Brand/category defaults are filled from the live lists in openNew() — a
 // hard-coded id here would break as soon as an admin renames or removes one.

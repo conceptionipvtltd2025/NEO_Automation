@@ -118,6 +118,36 @@ export function homeFeatured(
 }
 
 /**
+ * Products shown on ONE category tab of the home grid.
+ *
+ * Ranked by `categoryOrder` — a per-tab position, independent of the "All" tab's
+ * `homeOrder`. A product can headline its own family without being top-8 across
+ * the whole catalogue, and one number could not express both.
+ *
+ * Anything the admin has explicitly ranked leads, in order. The rest of the
+ * category then backfills alphabetically, so a tab is never short even when
+ * only two or three products have been arranged.
+ */
+export function homeCategoryProducts(
+  products: Product[],
+  categoryId: string,
+  limit = HOME_GRID_LIMIT
+): Product[] {
+  const inCat = visibleProducts(products).filter((p) => p.categoryId === categoryId);
+
+  const ranked = inCat
+    .filter((p) => typeof p.categoryOrder === "number" && Number.isFinite(p.categoryOrder))
+    .sort((a, b) => a.categoryOrder! - b.categoryOrder! || a.name.localeCompare(b.name));
+
+  const chosen = new Set(ranked.map((p) => p.id));
+  const rest = inCat
+    .filter((p) => !chosen.has(p.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return [...ranked, ...rest].slice(0, limit);
+}
+
+/**
  * "Signature Engineering" rail — the hand-picked flagship list beside the 3D
  * showpiece. Deliberately product-only: a whole category of flagships would
  * defeat the point of the section.

@@ -72,6 +72,7 @@ export const TABLES: string[] = [
     featured TINYINT(1) DEFAULT 0,
     special TINYINT(1) DEFAULT 0,
     home_order INT DEFAULT NULL,
+    category_order INT DEFAULT NULL,
     badge VARCHAR(96),
     visible TINYINT(1) DEFAULT 1,
     KEY idx_products_slug (slug),
@@ -120,6 +121,9 @@ const ALTERS: string[] = [
   // and "Signature Engineering"). NULL means "unranked" and sorts last, so an
   // admin only numbers the handful of products they want pinned to the top.
   `ALTER TABLE products ADD COLUMN home_order INT DEFAULT NULL`,
+  // Position within the product's own category tab on the home page — separate
+  // from home_order, which ranks it in the "All" tab.
+  `ALTER TABLE products ADD COLUMN category_order INT DEFAULT NULL`,
   // Category-level home page tag: pin a whole solution family to the landing
   // page grid instead of flagging its products one at a time.
   `ALTER TABLE categories ADD COLUMN show_on_home TINYINT(1) DEFAULT 0`,

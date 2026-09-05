@@ -91,6 +91,10 @@ export function mapProduct(r: any) {
     special: bool(r.special),
     // NULL = unranked; the frontend sorts those last.
     homeOrder: r.home_order === null || r.home_order === undefined ? undefined : Number(r.home_order),
+    categoryOrder:
+      r.category_order === null || r.category_order === undefined
+        ? undefined
+        : Number(r.category_order),
     badge: r.badge ?? undefined,
     visible: bool(r.visible),
   };
@@ -253,15 +257,17 @@ export async function upsertProduct(p: any) {
   await query(
     `INSERT INTO products
        (id, slug, name, brand_id, brand, category_id, line, industries, price, rating,
-        short_desc, description, features, specs, images, documents, featured, special, home_order, badge, visible)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        short_desc, description, features, specs, images, documents, featured, special, home_order,
+        category_order, badge, visible)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        slug=VALUES(slug), name=VALUES(name), brand_id=VALUES(brand_id), brand=VALUES(brand),
        category_id=VALUES(category_id), line=VALUES(line), industries=VALUES(industries), price=VALUES(price),
        rating=VALUES(rating), short_desc=VALUES(short_desc), description=VALUES(description),
        features=VALUES(features), specs=VALUES(specs), images=VALUES(images),
        documents=VALUES(documents), featured=VALUES(featured), special=VALUES(special),
-       home_order=VALUES(home_order), badge=VALUES(badge), visible=VALUES(visible)`,
+       home_order=VALUES(home_order), category_order=VALUES(category_order),
+       badge=VALUES(badge), visible=VALUES(visible)`,
     [
       p.id,
       p.slug,
@@ -292,6 +298,11 @@ export async function upsertProduct(p: any) {
       // Blank / non-numeric input means "unranked", not position zero.
       Number.isFinite(Number(p.homeOrder)) && p.homeOrder !== null && p.homeOrder !== ""
         ? Number(p.homeOrder)
+        : null,
+      Number.isFinite(Number(p.categoryOrder)) &&
+      p.categoryOrder !== null &&
+      p.categoryOrder !== ""
+        ? Number(p.categoryOrder)
         : null,
       p.badge ?? null,
       p.visible === false ? 0 : 1,

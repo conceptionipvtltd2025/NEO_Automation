@@ -20,6 +20,7 @@ import { Modal } from "@/components/ui/Modal";
 import {
   homeFeatured,
   homeSpecial,
+  homeCategoryProducts,
   HOME_GRID_LIMIT,
   HOME_SIGNATURE_LIMIT,
 } from "@/lib/homeProducts";
@@ -51,6 +52,11 @@ type Entry =
 export default function AdminHomePage() {
   const { products, categories, upsertProduct, upsertCategory } = useCatalog();
   const [picker, setPicker] = useState<null | "product" | "category" | "signature">(null);
+  // Filter for the pinned list itself. With 40+ products the list of things
+  // already on the home page gets long enough to need narrowing too.
+  const [q, setQ] = useState("");
+  const [filterCat, setFilterCat] = useState("all");
+
 
   /* ── what is currently pinned, in the order the site renders it ──────── */
 
@@ -99,6 +105,64 @@ export default function AdminHomePage() {
         }),
     [products]
   );
+
+  /**
+   * Chips for the pinned list, built from what is actually pinned — so they
+   * appear and disappear on their own as categories/products are added.
+   */
+  const entryChips = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const e of entries) {
+      const id = e.kind === "product" ? e.product.categoryId : e.category.id;
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+    return categories
+      .filter((c) => (counts.get(c.id) ?? 0) > 0)
+      .map((c) => ({ id: c.id, name: c.name, count: counts.get(c.id)! }));
+  }, [entries, categories]);
+
+  const activeFilter = entryChips.some((c) => c.id === filterCat) ? filterCat : "all";
+
+  /**
+   * Index of the first entry that does NOT make the home page.
+   *
+   * A row is not one product: a pinned category stands for all of its products,
+   * so the eighth *product* can fall in the middle of a category row. Walking
+   * the entries and accumulating their real product counts is the only way to
+   * say honestly where the grid stops.
+   */
+  const cutIndex = useMemo(() => {
+    let used = 0;
+    for (let i = 0; i < entries.length; i++) {
+      if (used >= GRID_LIMIT) return i;
+      const e = entries[i];
+      used += e.kind === "product" ? 1 : e.count;
+    }
+    return entries.length;
+  }, [entries]);
+
+  /**
+   * The rows to draw. Filtering only hides rows — the position number and the
+   * arrows still act on the FULL list, so reordering inside a filtered view
+   * can't silently scramble the entries that are hidden.
+   */
+  const shownEntries = useMemo(() => {
+    const needle = q.toLowerCase();
+    return entries
+      .map((e, index) => ({ e, index }))
+      .filter(({ e }) => {
+        const cid = e.kind === "product" ? e.product.categoryId : e.category.id;
+        if (activeFilter !== "all" && cid !== activeFilter) return false;
+        if (!needle) return true;
+        const name = e.kind === "product" ? e.product.name : e.category.name;
+        const extra = e.kind === "product" ? e.product.brand : "";
+        return (
+          name.toLowerCase().includes(needle) || extra.toLowerCase().includes(needle)
+        );
+      });
+  }, [entries, q, activeFilter]);
+
+  const filtering = q.trim() !== "" || activeFilter !== "all";
 
   /* ── previews: exactly what the visitor will see ─────────────────────── */
 
@@ -165,7 +229,7 @@ export default function AdminHomePage() {
       <Panel
         icon={LayoutGrid}
         title="Our Catalogue"
-        hint={`The card grid under “Precision tools for every process”. Shows the first ${GRID_LIMIT} products.`}
+        hint={`The card grid under “Precision tools for every process”. The All tab shows the first ${GRID_LIMIT}, and each category tab shows up to ${GRID_LIMIT} of its own products.`}
         action={
           <div className="flex flex-wrap gap-2">
             <AddButton icon={Package} label="Add product" onClick={() => setPicker("product")} />
@@ -173,16 +237,69 @@ export default function AdminHomePage() {
           </div>
         }
       >
+        {/* Filter the pinned list. Chips are derived from what is pinned, so
+            adding a category or product surfaces one automatically. */}
+        {entries.length > 4 && (
+          <div className="mb-4 space-y-2.5">
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-steel-500" />
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search what's on the home page…"
+                className="admin-input pl-10"
+              />
+            </div>
+            {entryChips.length > 1 && (
+              <div className="flex flex-wrap gap-1.5">
+                <FilterChip
+                  label="All"
+                  count={entries.length}
+                  active={activeFilter === "all"}
+                  onClick={() => setFilterCat("all")}
+                />
+                {entryChips.map((c) => (
+                  <FilterChip
+                    key={c.id}
+                    label={c.name}
+                    count={c.count}
+                    active={activeFilter === c.id}
+                    onClick={() => setFilterCat(c.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {entries.length === 0 ? (
           <Empty text="Nothing pinned yet — the grid is filling itself from the catalogue. Add a product or a whole category to take control of it." />
+        ) : shownEntries.length === 0 ? (
+          <Empty text="Nothing on the home page matches that filter." />
         ) : (
           <ol className="space-y-2">
-            {entries.map((e, i) => (
+            {shownEntries.map(({ e, index: i }, n) => {
+              // A category row stands for many products, so a simple row index
+              // can't say what makes the cut — count the products each entry
+              // actually contributes, in order, and find where 8 is reached.
+              const beyond = i >= cutIndex;
+              const prevBeyond = n > 0 && shownEntries[n - 1].index >= cutIndex;
+              return (
               <li
                 key={e.id}
-                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3"
+                className={cn(
+                  "flex items-center gap-3 rounded-xl border p-3",
+                  beyond
+                    ? "border-white/5 bg-white/[0.01] opacity-50"
+                    : "border-white/10 bg-white/[0.02]",
+                  // Divider marking exactly where the home page stops.
+                  beyond && !prevBeyond && "mt-5 border-t-2 border-t-amber-400/30"
+                )}
               >
-                <span className="w-6 shrink-0 text-center font-display text-sm font-bold text-steel-500">
+                <span
+                  className="w-6 shrink-0 text-center font-display text-sm font-bold text-steel-500"
+                  title={`Position ${i + 1} on the home page`}
+                >
                   {i + 1}
                 </span>
 
@@ -215,6 +332,13 @@ export default function AdminHomePage() {
                       </p>
                       <p className="truncate text-xs text-neo-400">
                         whole category · {e.count} product{e.count === 1 ? "" : "s"}
+                        {/* Each tab renders at most GRID_LIMIT, same as All, so
+                            say so rather than letting the surplus vanish. */}
+                        {e.count > GRID_LIMIT && (
+                          <span className="text-steel-500">
+                            {" "}· first {GRID_LIMIT} shown on its tab
+                          </span>
+                        )}
                       </p>
                     </div>
                   </>
@@ -226,10 +350,30 @@ export default function AdminHomePage() {
                   first={i === 0}
                   last={i === entries.length - 1}
                   onRemove={() => removeEntry(e)}
+                  // Reordering across a filtered view would move a row past
+                  // neighbours the admin cannot see, so it is disabled while a
+                  // filter is on — the filter is for finding, not arranging.
+                  disabled={filtering}
                 />
               </li>
-            ))}
+              );
+            })}
           </ol>
+        )}
+
+        {cutIndex < entries.length && !filtering && (
+          <p className="mt-3 flex items-center gap-1.5 text-[12px] text-amber-300/80">
+            <span className="inline-block h-2 w-4 rounded-sm border-t-2 border-amber-400/50" />
+            Everything below the line is beyond the {GRID_LIMIT} the grid shows — still
+            saved, just not on the home page until you move it up.
+          </p>
+        )}
+
+        {filtering && (
+          <p className="mt-3 text-[12px] text-steel-500">
+            Reordering is paused while a filter is on — clear it to use the arrows, so a
+            row is never moved past neighbours you can't see.
+          </p>
         )}
 
         <Preview
@@ -244,6 +388,13 @@ export default function AdminHomePage() {
           }
         />
       </Panel>
+
+      {/* ── Category tabs ─────────────────────────────────────────────── */}
+      <CategoryTabsPanel
+        products={products}
+        categories={categories}
+        upsertProduct={upsertProduct}
+      />
 
       {/* ── Signature Engineering ─────────────────────────────────────── */}
       <Panel
@@ -265,7 +416,8 @@ export default function AdminHomePage() {
                   "flex items-center gap-3 rounded-xl border p-3",
                   i < SIGNATURE_LIMIT
                     ? "border-white/10 bg-white/[0.02]"
-                    : "border-white/5 bg-white/[0.01] opacity-50"
+                    : "border-white/5 bg-white/[0.01] opacity-50",
+                  i === SIGNATURE_LIMIT && "mt-5 border-t-2 border-t-amber-400/30"
                 )}
               >
                 <span className="w-6 shrink-0 text-center font-display text-sm font-bold text-steel-500">
@@ -294,6 +446,14 @@ export default function AdminHomePage() {
               </li>
             ))}
           </ol>
+        )}
+
+        {signature.length > SIGNATURE_LIMIT && (
+          <p className="mt-3 flex items-center gap-1.5 text-[12px] text-amber-300/80">
+            <span className="inline-block h-2 w-4 rounded-sm border-t-2 border-amber-400/50" />
+            Everything below the line is beyond the {SIGNATURE_LIMIT} this section shows —
+            still saved, just not on the home page until you move it up.
+          </p>
         )}
 
         <Preview items={signaturePreview} limit={SIGNATURE_LIMIT} />
@@ -404,19 +564,22 @@ function Reorder({
   first,
   last,
   onRemove,
+  disabled = false,
 }: {
   onUp: () => void;
   onDown: () => void;
   first: boolean;
   last: boolean;
   onRemove: () => void;
+  /** Arrows off while a filter hides neighbours (see the call site). */
+  disabled?: boolean;
 }) {
   return (
     <div className="flex shrink-0 items-center gap-1">
       <button
         type="button"
         onClick={onUp}
-        disabled={first}
+        disabled={first || disabled}
         aria-label="Move up"
         className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-400 transition hover:border-white/25 hover:text-white disabled:pointer-events-none disabled:opacity-25"
       >
@@ -425,7 +588,7 @@ function Reorder({
       <button
         type="button"
         onClick={onDown}
-        disabled={last}
+        disabled={last || disabled}
         aria-label="Move down"
         className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-400 transition hover:border-white/25 hover:text-white disabled:pointer-events-none disabled:opacity-25"
       >
@@ -480,6 +643,38 @@ function Preview({
   );
 }
 
+/** A filter pill with a count, used by the picker and the pinned list. */
+function FilterChip({
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+        active
+          ? "border-neo-600/50 bg-neo-600/15 text-white"
+          : "border-white/10 text-steel-400 hover:border-white/20 hover:text-white"
+      )}
+    >
+      {label}
+      <span className="rounded-full bg-white/[0.08] px-1.5 text-[11px] tabular-nums">
+        {count}
+      </span>
+    </button>
+  );
+}
+
 /** Search-and-pick dialog for adding a product or a whole category. */
 function PickerModal({
   mode,
@@ -497,7 +692,31 @@ function PickerModal({
   onPickCategory: (c: Category) => void;
 }) {
   const [q, setQ] = useState("");
+  const [cat, setCat] = useState("all");
   const isCategory = mode === "category";
+
+  /** Products not already on this section — the pool worth choosing from. */
+  const pool = useMemo(
+    () => products.filter((p) => !(mode === "signature" ? p.special : p.featured)),
+    [products, mode]
+  );
+
+  /**
+   * Category chips for the picker, each with the count still available. Built
+   * from the live catalogue, so a newly-added category shows up here with no
+   * code change — and one with nothing left to add is simply not offered.
+   */
+  const chips = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const p of pool) counts.set(p.categoryId, (counts.get(p.categoryId) ?? 0) + 1);
+    return categories
+      .filter((c) => (counts.get(c.id) ?? 0) > 0)
+      .map((c) => ({ id: c.id, name: c.name, count: counts.get(c.id)! }));
+  }, [pool, categories]);
+
+  // A chosen category can stop existing (nothing left to add in it, or it was
+  // deleted) — fall back to All rather than showing an empty list.
+  const activeCat = chips.some((c) => c.id === cat) ? cat : "all";
 
   const list = useMemo(() => {
     const needle = q.toLowerCase();
@@ -506,14 +725,13 @@ function PickerModal({
         (c) => !c.showOnHome && c.name.toLowerCase().includes(needle)
       );
     }
-    return products.filter((p) => {
-      // Already on this section? Then it isn't something to add.
-      if (mode === "signature" ? p.special : p.featured) return false;
+    return pool.filter((p) => {
+      if (activeCat !== "all" && p.categoryId !== activeCat) return false;
       return (
         p.name.toLowerCase().includes(needle) || p.brand.toLowerCase().includes(needle)
       );
     });
-  }, [q, mode, isCategory, products, categories]);
+  }, [q, activeCat, isCategory, pool, categories]);
 
   return (
     <Modal
@@ -533,10 +751,36 @@ function PickerModal({
         />
       </div>
 
+      {/* Category filter — with 40+ products a flat searchable list means
+          scrolling or knowing the name in advance. Chips come from the live
+          catalogue, so a new category appears here on its own; each shows how
+          many products it still has left to add. */}
+      {!isCategory && chips.length > 1 && (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          <FilterChip
+            label="All"
+            count={pool.length}
+            active={activeCat === "all"}
+            onClick={() => setCat("all")}
+          />
+          {chips.map((c) => (
+            <FilterChip
+              key={c.id}
+              label={c.name}
+              count={c.count}
+              active={activeCat === c.id}
+              onClick={() => setCat(c.id)}
+            />
+          ))}
+        </div>
+      )}
+
       <div className="mt-3 max-h-[22rem] space-y-1.5 overflow-y-auto">
         {list.length === 0 && (
           <p className="py-8 text-center text-sm text-steel-500">
-            {q ? "Nothing matches that." : "Everything is already on the home page."}
+            {q || activeCat !== "all"
+              ? "Nothing matches that filter."
+              : "Everything is already on the home page."}
           </p>
         )}
 
@@ -599,5 +843,194 @@ function PickerModal({
             ))}
       </div>
     </Modal>
+  );
+}
+
+/**
+ * Arrange the products inside each CATEGORY TAB of the home grid.
+ *
+ * Kept as its own panel, separate from "Our Catalogue" above: the two answer
+ * different questions — that one is "what is pinned to the home page", this one
+ * is "what does each tab show". Folding them into a single tab strip was tried
+ * and read as more confusing, not less.
+ *
+ * It writes `categoryOrder`, a per-tab rank, NOT the `homeOrder` the All tab
+ * uses. A product can headline its own family without being top-8 across the
+ * whole catalogue, and one number could not express both orderings.
+ *
+ * There is no "remove" here: a tab always fills from its own category, so a
+ * product is either in the visible set or below the line — never absent.
+ */
+function CategoryTabsPanel({
+  products,
+  categories,
+  upsertProduct,
+}: {
+  products: Product[];
+  categories: Category[];
+  upsertProduct: (p: Product) => void;
+}) {
+  const [tab, setTab] = useState<string>("");
+
+  /** Only categories a visitor can actually reach a tab for. */
+  const tabs = useMemo(() => {
+    const live = products.filter((p) => p.visible !== false);
+    return categories
+      .filter((c) => live.some((p) => p.categoryId === c.id))
+      .map((c) => ({
+        id: c.id,
+        name: c.name,
+        count: live.filter((p) => p.categoryId === c.id).length,
+      }));
+  }, [products, categories]);
+
+  // A category can vanish (deleted, or its last product hidden) while selected.
+  const active = tabs.some((t) => t.id === tab) ? tab : tabs[0]?.id ?? "";
+
+  /** Exactly what this tab renders on the site, in order. */
+  const shown = useMemo(
+    () => (active ? homeCategoryProducts(products, active, HOME_GRID_LIMIT) : []),
+    [products, active]
+  );
+
+  /** Everything else in the category — the pool that could be promoted in. */
+  const overflow = useMemo(() => {
+    if (!active) return [];
+    const ids = new Set(shown.map((p) => p.id));
+    return products.filter(
+      (p) => p.categoryId === active && p.visible !== false && !ids.has(p.id)
+    );
+  }, [products, active, shown]);
+
+  /** Renumber the visible list 1..n so the admin never types a rank. */
+  const commit = (list: Product[]) =>
+    list.forEach((p, i) => {
+      if (p.categoryOrder !== i + 1) upsertProduct({ ...p, categoryOrder: i + 1 });
+    });
+
+  const move = (index: number, dir: -1 | 1) => {
+    const to = index + dir;
+    if (to < 0 || to >= shown.length) return;
+    const next = [...shown];
+    [next[index], next[to]] = [next[to], next[index]];
+    commit(next);
+  };
+
+  /**
+   * Swap an overflow product into the tab.
+   *
+   * Appending it would rank it 9th and the very next render would slice it back
+   * out — it has to take the last visible slot, displacing whatever held it.
+   * The displaced product keeps a rank just past the cut, so it sits at the top
+   * of the overflow rather than falling to the bottom alphabetically.
+   */
+  const promote = (p: Product) => {
+    const next = [...shown.slice(0, HOME_GRID_LIMIT - 1), p];
+    commit(next);
+    const displaced = shown[HOME_GRID_LIMIT - 1];
+    if (displaced && displaced.id !== p.id) {
+      upsertProduct({ ...displaced, categoryOrder: HOME_GRID_LIMIT + 1 });
+    }
+  };
+
+  if (tabs.length === 0) return null;
+
+  return (
+    <Panel
+      icon={Tags}
+      title="Category tabs"
+      hint={`What each tab of the catalogue section shows, and in what order. Each tab holds up to ${HOME_GRID_LIMIT} products, arranged separately from the All tab.`}
+    >
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        {tabs.map((t) => (
+          <FilterChip
+            key={t.id}
+            label={t.name}
+            count={t.count}
+            active={active === t.id}
+            onClick={() => setTab(t.id)}
+          />
+        ))}
+      </div>
+
+      <ol className="space-y-2">
+        {shown.map((p, i) => (
+          <li
+            key={p.id}
+            className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3"
+          >
+            <span className="w-6 shrink-0 text-center font-display text-sm font-bold text-steel-500">
+              {i + 1}
+            </span>
+            <img
+              src={safeImg(p.images[0])}
+              onError={onImgError}
+              alt=""
+              className="h-10 w-10 shrink-0 rounded-lg object-cover"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-white">{p.name}</p>
+              <p className="truncate text-xs text-steel-500">{p.brand}</p>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={() => move(i, -1)}
+                disabled={i === 0}
+                aria-label="Move up"
+                className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-400 transition hover:border-white/25 hover:text-white disabled:pointer-events-none disabled:opacity-25"
+              >
+                <ChevronUp className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => move(i, 1)}
+                disabled={i === shown.length - 1}
+                aria-label="Move down"
+                className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-400 transition hover:border-white/25 hover:text-white disabled:pointer-events-none disabled:opacity-25"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      {overflow.length > 0 && (
+        <div className="mt-5 border-t-2 border-amber-400/30 pt-4">
+          <p className="mb-3 text-[12px] text-amber-300/80">
+            {overflow.length} more in this category, beyond the {HOME_GRID_LIMIT} the tab
+            shows. Add one to swap it into the list.
+          </p>
+          <div className="space-y-2">
+            {overflow.map((p) => (
+              <div
+                key={p.id}
+                className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.01] p-3 opacity-60"
+              >
+                <span className="w-6 shrink-0" />
+                <img
+                  src={safeImg(p.images[0])}
+                  onError={onImgError}
+                  alt=""
+                  className="h-10 w-10 shrink-0 rounded-lg object-cover"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-white">{p.name}</p>
+                  <p className="truncate text-xs text-steel-500">{p.brand}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => promote(p)}
+                  className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 px-3 text-[13px] font-medium text-steel-300 transition hover:border-neo-600/40 hover:text-white"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add to tab
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </Panel>
   );
 }

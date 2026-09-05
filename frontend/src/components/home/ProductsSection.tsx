@@ -6,9 +6,7 @@ import { useCatalog } from "@/store/useCatalog";
 import {
   homeFeatured,
   visibleProducts,
-  byHomeOrder,
-  homeCategoryIds,
-  isHomeProduct,
+  homeCategoryProducts,
   HOME_GRID_LIMIT,
 } from "@/lib/homeProducts";
 import { ProductCard } from "@/components/ProductCard";
@@ -23,8 +21,6 @@ export function ProductsSection() {
   // here without a rebuild.
   const products = useCatalog((s) => s.products);
   const categories = useCatalog((s) => s.categories);
-
-  const catIds = useMemo(() => homeCategoryIds(categories), [categories]);
 
   // Tabs follow the same tagging: a category pinned to the home page always
   // gets a tab, and so does any category that an individually-tagged product
@@ -48,14 +44,9 @@ export function ProductsSection() {
 
   const visible = useMemo(() => {
     if (active === "all") return homeFeatured(products, categories, LIMIT);
-    // Inside a category tab: if the family itself is pinned, show all of it;
-    // otherwise only the products tagged individually. Either way the tagged
-    // ones lead, and the rest of the category backfills so a tab is never empty.
-    const inCat = visibleProducts(products).filter((p) => p.categoryId === active);
-    const tagged = inCat.filter((p) => isHomeProduct(p, catIds)).sort(byHomeOrder);
-    const rest = inCat.filter((p) => !isHomeProduct(p, catIds)).sort(byHomeOrder);
-    return [...tagged, ...rest].slice(0, LIMIT);
-  }, [active, products, categories, catIds]);
+    // A category tab is arranged on its own — see homeCategoryProducts.
+    return homeCategoryProducts(products, active, LIMIT);
+  }, [active, products, categories]);
 
   return (
     <section id="products" className="relative py-10 sm:py-16">

@@ -43,6 +43,17 @@ export type Product = {
    * sort last, so an admin only has to number the few they care about.
    */
   homeOrder?: number;
+  /**
+   * Position within this product's own CATEGORY TAB on the home page.
+   *
+   * Separate from `homeOrder` on purpose: `homeOrder` places a product in the
+   * "All" tab, where it competes with every other pinned product and with whole
+   * pinned categories. A product can be a headline act inside Riveting without
+   * being top-8 across the whole catalogue, and those two orderings genuinely
+   * differ — one number could not express both. Unset sorts after everything
+   * numbered, so an admin only ranks the few they care about.
+   */
+  categoryOrder?: number;
   badge?: string;
   visible?: boolean;
 };

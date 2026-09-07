@@ -215,7 +215,13 @@ const BOSS_GEO = new THREE.CylinderGeometry(0.075, 0.075, 0.1, 22);
  * The workpiece. `state` colours it by where it is in the process, so you can
  * read the line's logic at a glance: raw → pressed → passed → rejected.
  */
-function Workpiece({ state }: { state: React.MutableRefObject<number> }) {
+function Workpiece({
+  state,
+  reset,
+}: {
+  state: React.MutableRefObject<number>;
+  reset: React.MutableRefObject<boolean>;
+}) {
   const body = useRef<Mesh>(null);
   const flange = useRef<Mesh>(null);
   const halo = useRef<Mesh>(null);
@@ -235,16 +241,26 @@ function Workpiece({ state }: { state: React.MutableRefObject<number> }) {
 
   useFrame(() => {
     target.copy(COLORS[(state.current as 0 | 1 | 2 | 3) ?? 0]);
+    // `reset` snaps instead of blending: the body arriving on the infeed is a
+    // NEW blank, so it must already be grey, not fading down from the last
+    // part's verdict colour.
+    const snap = reset.current;
+    if (snap) reset.current = false;
     for (const r of [body, flange]) {
       const m = r.current?.material as THREE.MeshStandardMaterial | undefined;
       if (!m) continue;
-      m.color.lerp(target, 0.09);
-      m.emissive.lerp(target, 0.09);
+      if (snap) {
+        m.color.copy(target);
+        m.emissive.copy(target);
+      } else {
+        m.color.lerp(target, 0.09);
+        m.emissive.lerp(target, 0.09);
+      }
     }
     // Ground halo picks up the same colour, so the part is legible even when a
     // machine partly occludes it.
     const hm = halo.current?.material as THREE.MeshBasicMaterial | undefined;
-    if (hm) hm.color.lerp(target, 0.09);
+    if (hm) snap ? hm.color.copy(target) : hm.color.lerp(target, 0.09);
   });
 
   return (
@@ -1023,6 +1039,21 @@ const X_PRESS = 0;
 const X_VISION = 1.45;
 const X_OUTFEED = 2.18;
 
+/** How far along each belt a part visibly travels, so parts are CONVEYED
+    rather than parked on a scrolling texture. */
+const INFEED_RUN = 0.72;
+const OUTFEED_RUN = 1.15;
+
+/** Verdict colours, shared by the workpiece and the departing outfeed part. */
+const PASS_COL = new THREE.Color("#3ddc84");
+const REJECT_COL = new THREE.Color("#ffb020");
+
+/** The outfeed carrier takes over at the gripper's release height (the payload
+    anchor, 0.72) and settles onto the belt top (-0.22), so the hand-off looks
+    like the gantry setting the part down rather than it appearing on the belt. */
+const OUTFEED_DROP_FROM = 0.72;
+const OUTFEED_Y = -0.22;
+
 /* Press stroke, solved against the real geometry rather than eyeballed.
 
    Tool tip at rest (world Y):
@@ -1148,6 +1179,8 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
   const partHolder = useRef<Group>(null);
   const visionNest = useRef<Group>(null);
   const infeedNest = useRef<Group>(null);
+  const outfeedNest = useRef<Group>(null);
+  const outfeedPart = useRef<Mesh>(null);
   const rejectFlap = useRef<Group>(null);
 
   const stage = useRef(0);
@@ -1156,6 +1189,7 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
   const scan = useRef(0);
   const verdict = useRef(0);
   const partState = useRef(0);
+  const resetColour = useRef(false);
   const fire = useRef(0);
   const t = useRef(0);
   const turn = useRef(0);
@@ -1249,21 +1283,76 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
     /* ── Hand-offs, aligned to the exact instant the jaws finish acting ──
        The part changes owner mid-grip, so the transfer happens while the jaws
        are closing on it / opening off it, never in open air. */
-    const gripPickDone = T.gripPick.a + (T.gripPick.b - T.gripPick.a) * 0.5;
-    const releaseDone = T.gripRelease.a + (T.gripRelease.b - T.gripRelease.a) * 0.5;
-    const pickPressedDone = T.gripPickPressed.a + (T.gripPickPressed.b - T.gripPickPressed.a) * 0.5;
-    const releaseVisionDone =
-      T.gripReleaseVision.a + (T.gripReleaseVision.b - T.gripReleaseVision.a) * 0.5;
+    const mid = (id: StepId) => T[id].a + (T[id].b - T[id].a) * 0.5;
+    const gripPickDone = mid("gripPick");
+    const releaseDone = mid("gripRelease");
+    const pickPressedDone = mid("gripPickPressed");
+    const releaseVisionDone = mid("gripReleaseVision");
+    const pickInspectedDone = mid("gripPickInspected");
 
-    const pickInspectedDone =
-      T.gripPickInspected.a + (T.gripPickInspected.b - T.gripPickInspected.a) * 0.5;
-
-    if (p < gripPickDone) attach(infeedNest.current); // waiting on the infeed belt
+    /* ── The WORK part: the one the gantry is handling this cycle ──
+       Between the outfeed drop-off and the next pick it belongs to no fixture,
+       so it rides the infeed belt in (see the conveyor travel below). That
+       stretch is what used to teleport: the part finished at the outfeed
+       (x≈2.2) and reappeared at the infeed (x≈-1.4) on the very next frame —
+       a 3.6-unit relocation, once per cycle, that no probe caught because it
+       happened exactly on the timeline wrap. */
+    if (p < gripPickDone) attach(infeedNest.current); // riding in on the belt
     else if (p < releaseDone) attach(payload.current); // carried to the press
     else if (p < pickPressedDone) attach(nest.current); // in the press nest
     else if (p < releaseVisionDone) attach(payload.current); // carried to vision
     else if (p < pickInspectedDone) attach(visionNest.current); // under the camera
     else attach(payload.current); // carried out to the outfeed
+
+    /* ── Hide the work part across the one transition that CANNOT be smooth ──
+       At the end of a cycle the part is on the gripper at the outfeed; at the
+       start of the next it must be at the head of the infeed belt. Those two
+       points are 4.4 units apart, so any single body has to jump between them
+       — measured at 31 u/s, when the fastest real axis here runs at 3 u/s.
+       That jump was the "directly placed" pop.
+
+       So the handover is staged instead: at `unload` the gantry's part becomes
+       the OUTFEED carrier (which then rides away and fades), and the work body
+       stays hidden until it has travelled far enough down the infeed to enter
+       the frame as a new blank. Nothing is ever seen teleporting. */
+    const handedOver = p >= T.unload.a;
+    const ridingIn = p < T.travelToInfeed.b * 0.42;
+    if (partHolder.current) partHolder.current.visible = !handedOver && !ridingIn;
+
+    /* ── Continuous conveyor travel ──
+       Before: the belt texture scrolled but parts sat perfectly still on it,
+       which read as "placed", not "conveyed".
+
+       Infeed: the incoming part slides along the belt toward the pick point,
+       arriving exactly as the gantry comes down for it — so the pick looks
+       like it catches a moving part at rest, not like a spawn. */
+    if (infeedNest.current) {
+      // Travels the belt over the whole approach window, easing to a stop at
+      // the pick point so the gantry meets a stationary part.
+      const k = ss(0, T.plungeInfeed.b, p);
+      infeedNest.current.position.x = X_INFEED - INFEED_RUN * (1 - k);
+    }
+
+    /* Outfeed: once the gantry lets go at the end of the cycle, the finished
+       part is handed to a belt-borne carrier that runs it off to the right and
+       fades out — so the cycle ENDS with the part leaving, and the next cycle
+       can start a fresh one at the infeed with nothing to teleport. */
+    if (outfeedNest.current && outfeedPart.current) {
+      const running = p >= T.unload.a;
+      const k = running ? ss(T.unload.a, CYCLE, p) : 0;
+      /* The carrier takes over EXACTLY where the gripper let go — same x, same
+         height — then lowers onto the belt and runs off. Spawning it at belt
+         height would have shown the part dropping through the air. */
+      const dropK = ss(0, 0.3, k); // settles onto the belt over the first 30%
+      outfeedNest.current.position.x = X_OUTFEED + OUTFEED_RUN * k;
+      outfeedNest.current.position.y = OUTFEED_DROP_FROM + (OUTFEED_Y - OUTFEED_DROP_FROM) * dropK;
+      outfeedNest.current.visible = running;
+      // Fade as it leaves the cell, so it exits rather than blinking out.
+      const om = outfeedPart.current.material as THREE.MeshStandardMaterial;
+      om.opacity = running ? 1 - ss(0.6, 1, k) : 0;
+      om.color.copy(verdict.current === 3 ? REJECT_COL : PASS_COL);
+      om.emissive.copy(om.color);
+    }
 
     /* ── Shuttle: indexes only in its own windows, i.e. only once the gantry
        has fully risen clear of the press and once the ram is back up ── */
@@ -1313,6 +1402,11 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
     } else if (During(p, "travelToInfeed")) {
       verdict.current = 0;
       partState.current = 0; // fresh raw part for the new cycle
+      /* Snap the colour instead of lerping it. The body riding the infeed is
+         conceptually a NEW casting — letting the finished green/amber part
+         fade to grey on the belt would read as one part changing its mind
+         rather than the next blank arriving. */
+      if (p < T.travelToInfeed.a + 0.12) resetColour.current = true;
     }
 
     /* Reject flap kicks only on a failed part, and only once it has actually
@@ -1388,6 +1482,24 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
           rather than materialising at the vision station. */}
       <group ref={infeedNest} position={[X_INFEED, -0.22, 0]} />
       <Conveyor pos={[X_OUTFEED, -0.28, 0]} length={1.1} speed={0.45} />
+      {/* The finished part leaving on the outfeed belt. A SECOND body, not the
+          one the gantry carries: it lets the cycle end with a part travelling
+          away while a fresh one rides in at the infeed, which is what removes
+          the once-per-cycle teleport. It fades as it exits the cell. */}
+      <group ref={outfeedNest} position={[X_OUTFEED, OUTFEED_DROP_FROM, 0]} visible={false}>
+        <mesh geometry={FLANGE_GEO} position={[0, 0.018, 0]} material={MAT.steel} />
+        <mesh ref={outfeedPart} geometry={PART_GEO} position={[0, 0.11, 0]}>
+          <meshStandardMaterial
+            color="#3ddc84"
+            emissive="#3ddc84"
+            emissiveIntensity={0.34}
+            metalness={0.55}
+            roughness={0.32}
+            transparent
+          />
+        </mesh>
+        <mesh geometry={BOSS_GEO} position={[0, 0.235, 0]} material={MAT.steel} />
+      </group>
 
       {/* Reject diverter at the end of the outfeed */}
       <group ref={rejectFlap} position={[X_OUTFEED + 0.5, -0.2, 0]}>
@@ -1404,7 +1516,7 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
 
       {/* The single part that travels the whole line */}
       <group ref={partHolder}>
-        <Workpiece state={partState} />
+        <Workpiece state={partState} reset={resetColour} />
       </group>
 
       {/* NOTE: the pneumatic balancer arm from the client's renders is modelled

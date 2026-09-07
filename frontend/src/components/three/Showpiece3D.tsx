@@ -202,9 +202,14 @@ function Lamp({
 
 /* ── The part being built ────────────────────────────────────────────────── */
 
-/** Shared workpiece geometry — one instance reused by every carried copy. */
-const PART_GEO = new THREE.CylinderGeometry(0.1, 0.11, 0.1, 26);
-const BOSS_GEO = new THREE.CylinderGeometry(0.045, 0.045, 0.045, 18);
+/* Shared workpiece geometry. Sized deliberately large relative to the tooling:
+   the product is what the whole animation is ABOUT, and at the panel's actual
+   render size a scale-accurate part was a couple of pixels — invisible. A
+   chunky flanged hub reads at a glance and still looks like something a press
+   would work on. */
+const PART_GEO = new THREE.CylinderGeometry(0.17, 0.19, 0.15, 30);
+const FLANGE_GEO = new THREE.CylinderGeometry(0.22, 0.22, 0.035, 30);
+const BOSS_GEO = new THREE.CylinderGeometry(0.075, 0.075, 0.1, 22);
 
 /**
  * The workpiece. `state` colours it by where it is in the process, so you can
@@ -212,14 +217,15 @@ const BOSS_GEO = new THREE.CylinderGeometry(0.045, 0.045, 0.045, 18);
  */
 function Workpiece({ state }: { state: React.MutableRefObject<number> }) {
   const body = useRef<Mesh>(null);
-  const boss = useRef<Mesh>(null);
+  const flange = useRef<Mesh>(null);
+  const halo = useRef<Mesh>(null);
 
   // Lerped rather than switched, so the part visibly "becomes" finished under
   // the press instead of popping to a new colour on one frame.
   const target = useMemo(() => new THREE.Color(), []);
   const COLORS = useMemo(
     () => ({
-      0: new THREE.Color("#8b93a3"), // raw casting — dull grey
+      0: new THREE.Color("#9aa3b0"), // raw casting — dull grey
       1: new THREE.Color("#ed1c24"), // pressed — brand red
       2: new THREE.Color("#3ddc84"), // vision PASS
       3: new THREE.Color("#ffb020"), // vision REJECT
@@ -228,25 +234,55 @@ function Workpiece({ state }: { state: React.MutableRefObject<number> }) {
   );
 
   useFrame(() => {
-    const m = body.current?.material as THREE.MeshStandardMaterial | undefined;
-    if (!m) return;
     target.copy(COLORS[(state.current as 0 | 1 | 2 | 3) ?? 0]);
-    m.color.lerp(target, 0.09);
-    m.emissive.lerp(target, 0.09);
+    for (const r of [body, flange]) {
+      const m = r.current?.material as THREE.MeshStandardMaterial | undefined;
+      if (!m) continue;
+      m.color.lerp(target, 0.09);
+      m.emissive.lerp(target, 0.09);
+    }
+    // Ground halo picks up the same colour, so the part is legible even when a
+    // machine partly occludes it.
+    const hm = halo.current?.material as THREE.MeshBasicMaterial | undefined;
+    if (hm) hm.color.lerp(target, 0.09);
   });
 
   return (
     <group>
-      <mesh ref={body} geometry={PART_GEO} position={[0, 0.05, 0]}>
+      {/* Base flange */}
+      <mesh ref={flange} geometry={FLANGE_GEO} position={[0, 0.018, 0]}>
         <meshStandardMaterial
-          color="#8b93a3"
-          emissive="#8b93a3"
-          emissiveIntensity={0.22}
-          metalness={0.6}
+          color="#9aa3b0"
+          emissive="#9aa3b0"
+          emissiveIntensity={0.3}
+          metalness={0.55}
           roughness={0.35}
         />
       </mesh>
-      <mesh ref={boss} geometry={BOSS_GEO} position={[0, 0.1225, 0]} material={MAT.steel} />
+      {/* Hub body */}
+      <mesh ref={body} geometry={PART_GEO} position={[0, 0.11, 0]}>
+        <meshStandardMaterial
+          color="#9aa3b0"
+          emissive="#9aa3b0"
+          emissiveIntensity={0.34}
+          metalness={0.55}
+          roughness={0.32}
+        />
+      </mesh>
+      {/* The boss the press drives — steel, so it reads as a separate insert */}
+      <mesh geometry={BOSS_GEO} position={[0, 0.235, 0]} material={MAT.steel} />
+      {/* Soft halo disc under the part: a cheap "this is the product" marker
+          that keeps it findable against a busy aluminium background. */}
+      <mesh ref={halo} position={[0, 0.004, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.33, 28]} />
+        <meshBasicMaterial
+          color="#9aa3b0"
+          transparent
+          opacity={0.16}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
     </group>
   );
 }
@@ -495,8 +531,10 @@ function Gantry({
 
   useFrame(() => {
     // Jaws close as gripRef → 1. Real motion, not a swap to a "holding" model.
+    // Closed span is sized to the hub they actually grip (radius 0.19), so the
+    // jaws land ON the part rather than passing through it.
     const g = gripRef.current;
-    const open = 0.075 - g * 0.037;
+    const open = 0.29 - g * 0.085;
     if (jawL.current) jawL.current.position.x = -open;
     if (jawR.current) jawR.current.position.x = open;
   });
@@ -524,13 +562,14 @@ function Gantry({
         {/* Vertical stroke */}
         <group ref={headRef}>
           <Box pos={[0, 1.14, 0.02]} size={[0.05, 0.5, 0.05]} material={MAT.steel} />
-          <Box pos={[0, 0.9, 0.02]} size={[0.22, 0.08, 0.16]} material={MAT.alu} />
-          {/* Gripper jaws */}
-          <mesh ref={jawL} position={[-0.075, 0.82, 0.02]} material={MAT.dark}>
-            <boxGeometry args={[0.035, 0.1, 0.1]} />
+          {/* Gripper body, wide enough to carry the jaw travel */}
+          <Box pos={[0, 0.93, 0.02]} size={[0.62, 0.09, 0.18]} material={MAT.alu} />
+          {/* Gripper jaws — sized to close onto the hub, not disappear into it */}
+          <mesh ref={jawL} position={[-0.29, 0.79, 0.02]} material={MAT.dark}>
+            <boxGeometry args={[0.05, 0.2, 0.16]} />
           </mesh>
-          <mesh ref={jawR} position={[0.075, 0.82, 0.02]} material={MAT.dark}>
-            <boxGeometry args={[0.035, 0.1, 0.1]} />
+          <mesh ref={jawR} position={[0.29, 0.79, 0.02]} material={MAT.dark}>
+            <boxGeometry args={[0.05, 0.2, 0.16]} />
           </mesh>
           {/* Whatever the gripper is holding hangs here */}
           <group ref={payloadRef} position={[0, 0.72, 0.02]} />
@@ -989,14 +1028,14 @@ const X_OUTFEED = 2.18;
    Tool tip at rest (world Y):
      PressColumn group (PRESS_Y) + punch centre (0.38) - half its height (0.08)
    Boss top (world Y):
-     ShuttleTable group (-0.14) + nest (0.065) + boss centre (0.1225)
-                                              + half its height (0.0225)
+     ShuttleTable group (-0.14) + nest (0.065) + boss centre (0.235)
+                                              + half its height (0.05)
 
    The ram must travel the gap between them — no further, or the punch drives
    through the part, the nest plate and the deck. A hair of overlap is kept so
    it reads as seated under load rather than hovering. */
 const TIP_REST = PRESS_Y + 0.38 - 0.16 / 2;
-const BOSS_TOP = -0.14 + 0.065 + 0.1225 + 0.045 / 2;
+const BOSS_TOP = -0.14 + 0.065 + 0.235 + 0.1 / 2;
 const SEAT = 0.014; // press-in depth once it makes contact
 const APPROACH = TIP_REST - BOSS_TOP; // free travel before contact
 const STROKE = APPROACH + SEAT; // total ram travel (positive number)
@@ -1053,11 +1092,23 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
   const count = useRef(0);
   const lastCycle = useRef(0);
 
-  /** Re-parent the part without it jumping: keep its world transform. */
+  /**
+   * Hand the part to a fixture. Uses `.add()`, NOT `.attach()`.
+   *
+   * `.attach()` preserves the object's WORLD transform — which is the opposite
+   * of what a hand-off needs. With it the part never actually moved into a
+   * nest: it stayed wherever it happened to be and only changed parent, so it
+   * sank below the work deck (y ≈ -0.7, inside the lower bay behind the
+   * cabinet) and drifted a little further every cycle. `.add()` re-parents and
+   * lets the parent's transform place it, so the part snaps into each
+   * fixture's local origin — the gripper, the press nest, the vision nest.
+   */
   const attach = (target: Group | null) => {
     const p = partHolder.current;
     if (!p || !target || p.parent === target) return;
-    target.attach(p); // three.js: preserves world matrix across the re-parent
+    target.add(p);
+    p.position.set(0, 0, 0);
+    p.rotation.set(0, 0, 0);
   };
 
   useFrame((_, delta) => {

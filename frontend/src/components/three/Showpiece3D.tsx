@@ -1110,7 +1110,14 @@ const SEQ = [
   { id: "gripPickInspected", d: 0.25 },
   { id: "riseVisionPick", d: 0.45 },
   { id: "travelToOutfeed", d: 1.0 },
-  { id: "unload", d: 0.4 },
+  /* Unloading is three motions, not one. Collapsing them into a single 0.4s
+     step made the part fall to the belt at 7.8 u/s — 4.4x faster than any
+     real axis here (a gantry plunge runs at 1.8 u/s) — so it read as dropping
+     rather than being set down. Now it lowers at gantry speed, the jaws let
+     go while it is resting on the belt, and only then does it convey away. */
+  { id: "lowerToOutfeed", d: 0.55 },
+  { id: "gripReleaseOutfeed", d: 0.25 },
+  { id: "conveyAway", d: 1.3 },
 ] as const;
 
 type StepId = (typeof SEQ)[number]["id"];
@@ -1157,6 +1164,8 @@ const PAYLOAD_REST = 0.72;
 const PLUNGE_PRESS = -0.14 + 0.065 - PAYLOAD_REST; // -0.795
 const PLUNGE_VISION = -0.22 + 0.055 - PAYLOAD_REST; // -0.885
 const PLUNGE_INFEED = -0.28 + 0.06 - PAYLOAD_REST; // -0.940
+/** Setting the finished part down on the outfeed belt (same height as infeed). */
+const PLUNGE_OUTFEED = OUTFEED_Y - PAYLOAD_REST; // -0.940
 
 /** Smoothstep — eases each axis move in and out like a real servo profile. */
 function ss(a: number, b: number, x: number) {
@@ -1270,14 +1279,18 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
     const y3 = hold("plungePressPick", "gripPickPressed", "risePressPick", PLUNGE_PRESS);
     const y4 = hold("plungeVisionPlace", "gripReleaseVision", "riseVisionPlace", PLUNGE_VISION);
     const y5 = hold("plungeVisionPick", "gripPickInspected", "riseVisionPick", PLUNGE_VISION);
-    gy = y1 ?? y2 ?? y3 ?? y4 ?? y5 ?? 0;
+    /* Setting down on the outfeed is the same lower-hold-rise as every other
+       station: the gantry lowers the part ONTO the belt at its normal speed,
+       holds while the jaws open, then withdraws as the belt takes it away. */
+    const y6 = hold("lowerToOutfeed", "gripReleaseOutfeed", "conveyAway", PLUNGE_OUTFEED);
+    gy = y1 ?? y2 ?? y3 ?? y4 ?? y5 ?? y6 ?? 0;
     if (head.current) head.current.position.y = gy;
 
     /* ── Gripper: closed from the moment it grips to the moment it releases ── */
     const carrying =
       Between(p, "gripPick", "gripRelease") ||
       Between(p, "gripPickPressed", "gripReleaseVision") ||
-      p >= T.gripPickInspected.a;
+      Between(p, "gripPickInspected", "gripReleaseOutfeed");
     grip.current += ((carrying ? 1 : 0) - grip.current) * 0.28;
 
     /* ── Hand-offs, aligned to the exact instant the jaws finish acting ──
@@ -1315,7 +1328,7 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
        the OUTFEED carrier (which then rides away and fades), and the work body
        stays hidden until it has travelled far enough down the infeed to enter
        the frame as a new blank. Nothing is ever seen teleporting. */
-    const handedOver = p >= T.unload.a;
+    const handedOver = p >= T.lowerToOutfeed.a;
     const ridingIn = p < T.travelToInfeed.b * 0.42;
     if (partHolder.current) partHolder.current.visible = !handedOver && !ridingIn;
 
@@ -1333,25 +1346,35 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
       infeedNest.current.position.x = X_INFEED - INFEED_RUN * (1 - k);
     }
 
-    /* Outfeed: once the gantry lets go at the end of the cycle, the finished
-       part is handed to a belt-borne carrier that runs it off to the right and
-       fades out — so the cycle ENDS with the part leaving, and the next cycle
-       can start a fresh one at the infeed with nothing to teleport. */
+    /* ── Outfeed, as three separate motions ──
+       The carrier takes over exactly where the gripper is holding the part —
+       same x, same height — then:
+         lowerToOutfeed      lowers it onto the belt at gantry speed (1.7 u/s)
+         gripReleaseOutfeed  jaws open while it RESTS on the belt, not mid-air
+         conveyAway          the belt carries it off and it fades out
+       Previously all three were one 0.4s step, which made the part fall at
+       7.8 u/s and let go of it before it had landed. */
     if (outfeedNest.current && outfeedPart.current) {
-      const running = p >= T.unload.a;
-      const k = running ? ss(T.unload.a, CYCLE, p) : 0;
-      /* The carrier takes over EXACTLY where the gripper let go — same x, same
-         height — then lowers onto the belt and runs off. Spawning it at belt
-         height would have shown the part dropping through the air. */
-      const dropK = ss(0, 0.3, k); // settles onto the belt over the first 30%
-      outfeedNest.current.position.x = X_OUTFEED + OUTFEED_RUN * k;
-      outfeedNest.current.position.y = OUTFEED_DROP_FROM + (OUTFEED_Y - OUTFEED_DROP_FROM) * dropK;
+      const running = p >= T.lowerToOutfeed.a;
       outfeedNest.current.visible = running;
-      // Fade as it leaves the cell, so it exits rather than blinking out.
-      const om = outfeedPart.current.material as THREE.MeshStandardMaterial;
-      om.opacity = running ? 1 - ss(0.6, 1, k) : 0;
-      om.color.copy(verdict.current === 3 ? REJECT_COL : PASS_COL);
-      om.emissive.copy(om.color);
+
+      if (running) {
+        // Height: descends over its own step, then stays put on the belt.
+        const dropK = at(p, "lowerToOutfeed");
+        outfeedNest.current.position.y =
+          OUTFEED_DROP_FROM + (OUTFEED_Y - OUTFEED_DROP_FROM) * dropK;
+
+        // Travel: nothing until the jaws have actually released it. A part
+        // cannot be conveyed while the gripper is still holding it.
+        const runK = at(p, "conveyAway");
+        outfeedNest.current.position.x = X_OUTFEED + OUTFEED_RUN * runK;
+
+        // Fade only over the last stretch, as it leaves the cell.
+        const om = outfeedPart.current.material as THREE.MeshStandardMaterial;
+        om.opacity = 1 - ss(0.62, 1, runK);
+        om.color.copy(verdict.current === 3 ? REJECT_COL : PASS_COL);
+        om.emissive.copy(om.color);
+      }
     }
 
     /* ── Shuttle: indexes only in its own windows, i.e. only once the gantry
@@ -1411,7 +1434,7 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
 
     /* Reject flap kicks only on a failed part, and only once it has actually
        arrived over the outfeed. */
-    const rejecting = verdict.current === 3 && p >= T.unload.a;
+    const rejecting = verdict.current === 3 && p >= T.gripReleaseOutfeed.a;
     if (rejectFlap.current) {
       rejectFlap.current.rotation.z +=
         ((rejecting ? -0.9 : 0) - rejectFlap.current.rotation.z) * 0.18;

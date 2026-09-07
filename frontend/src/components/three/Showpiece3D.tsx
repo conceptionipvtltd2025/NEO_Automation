@@ -1040,8 +1040,77 @@ const SEAT = 0.014; // press-in depth once it makes contact
 const APPROACH = TIP_REST - BOSS_TOP; // free travel before contact
 const STROKE = APPROACH + SEAT; // total ram travel (positive number)
 
-/** Full line cycle. Every timing below is a beat inside this window. */
-const CYCLE = 13.0;
+/* ── The cycle, as a declarative sequence ─────────────────────────────────
+   Previously every phase carried hand-typed start/end times, and they drifted
+   out of step with each other: the gantry began plunging before it had
+   finished travelling (so it moved diagonally), it reached into the press
+   0.1s BEFORE the shuttle had brought the part out, and the shuttle began
+   indexing in while the gripper was still down inside the press.
+
+   So the timeline is now DERIVED, not typed. Each step lists only its own
+   duration and what it does; start/end times are accumulated. A step cannot
+   overlap the one before it, which is exactly the interlock a real cell has —
+   you physically cannot index the table while the gripper is in the way.
+   Re-ordering or re-timing the line is now a matter of editing durations. */
+const SEQ = [
+  { id: "travelToInfeed", d: 1.2 },
+  { id: "plungeInfeed", d: 0.45 },
+  { id: "gripPick", d: 0.25 },
+  { id: "riseInfeed", d: 0.45 },
+  { id: "travelToPress", d: 1.2 },
+  { id: "plungePressPlace", d: 0.45 },
+  { id: "gripRelease", d: 0.25 },
+  { id: "risePressPlace", d: 0.45 },
+  { id: "shuttleIn", d: 0.7 },
+  { id: "ramApproach", d: 0.5 },
+  { id: "ramPress", d: 0.55 },
+  { id: "ramDwell", d: 0.45 },
+  { id: "ramRetract", d: 0.5 },
+  { id: "shuttleOut", d: 0.7 },
+  { id: "plungePressPick", d: 0.45 },
+  { id: "gripPickPressed", d: 0.25 },
+  { id: "risePressPick", d: 0.45 },
+  { id: "travelToVision", d: 1.2 },
+  { id: "plungeVisionPlace", d: 0.45 },
+  { id: "gripReleaseVision", d: 0.25 },
+  { id: "riseVisionPlace", d: 0.45 },
+  { id: "inspect", d: 1.1 },
+  { id: "plungeVisionPick", d: 0.45 },
+  { id: "gripPickInspected", d: 0.25 },
+  { id: "riseVisionPick", d: 0.45 },
+  { id: "travelToOutfeed", d: 1.0 },
+  { id: "unload", d: 0.4 },
+] as const;
+
+type StepId = (typeof SEQ)[number]["id"];
+
+/** Accumulated {start, end} for each step id, plus the total cycle length. */
+const T: Record<StepId, { a: number; b: number }> = (() => {
+  const out = {} as Record<StepId, { a: number; b: number }>;
+  let t = 0;
+  for (const s of SEQ) {
+    out[s.id] = { a: t, b: t + s.d };
+    t += s.d;
+  }
+  return out;
+})();
+
+/** Full line cycle — the sum of the sequence, never typed by hand. */
+const CYCLE = SEQ.reduce((n, s) => n + s.d, 0);
+
+/** Progress 0→1 through one named step (0 before it, 1 after it). */
+function at(p: number, id: StepId) {
+  const { a, b } = T[id];
+  return ss(a, b, p);
+}
+/** True while `p` is inside the half-open window of a step. */
+function During(p: number, id: StepId) {
+  return p >= T[id].a && p < T[id].b;
+}
+/** True from the START of one step to the START of another. */
+function Between(p: number, from: StepId, to: StepId) {
+  return p >= T[from].a && p < T[to].a;
+}
 
 /* Gantry plunge depths, solved per station rather than shared.
 
@@ -1078,6 +1147,7 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
   const payload = useRef<Group>(null);
   const partHolder = useRef<Group>(null);
   const visionNest = useRef<Group>(null);
+  const infeedNest = useRef<Group>(null);
   const rejectFlap = useRef<Group>(null);
 
   const stage = useRef(0);
@@ -1129,92 +1199,125 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
     /* ── 9.0–11.0 inspect, verdict ───────────────────────────────────────── */
     /* ──11.0–13.0 place on outfeed, reject flap if it failed ─────────────── */
 
-    // Gantry X
-    let gx: number;
-    if (p < 1.4) gx = lerpAt(X_VISION, X_INFEED, 0, 1.4, p);
-    else if (p < 2.0) gx = X_INFEED;
-    else if (p < 3.2) gx = lerpAt(X_INFEED, X_PRESS, 2.0, 3.2, p);
-    else if (p < 7.6) gx = X_PRESS;
-    else if (p < 8.9) gx = lerpAt(X_PRESS, X_VISION, 7.6, 8.9, p);
-    else if (p < 11.1) gx = X_VISION;
-    else gx = lerpAt(X_VISION, X_OUTFEED, 11.1, 12.3, p);
+    /* Every axis below reads its timing from SEQ via at()/During()/Between().
+       Because those windows are accumulated rather than typed, no two motions
+       can overlap — the gantry finishes travelling before it plunges, and the
+       shuttle cannot index while the gripper is still down in the press. */
+
+    /* ── Gantry X: only ever moves while NO other axis is engaged ── */
+    let gx = X_VISION;
+    if (During(p, "travelToInfeed")) gx = X_VISION + (X_INFEED - X_VISION) * at(p, "travelToInfeed");
+    else if (Between(p, "plungeInfeed", "travelToPress")) gx = X_INFEED;
+    else if (During(p, "travelToPress")) gx = X_INFEED + (X_PRESS - X_INFEED) * at(p, "travelToPress");
+    else if (Between(p, "plungePressPlace", "travelToVision")) gx = X_PRESS;
+    else if (During(p, "travelToVision")) gx = X_PRESS + (X_VISION - X_PRESS) * at(p, "travelToVision");
+    else if (Between(p, "plungeVisionPlace", "travelToOutfeed")) gx = X_VISION;
+    else if (During(p, "travelToOutfeed")) gx = X_VISION + (X_OUTFEED - X_VISION) * at(p, "travelToOutfeed");
+    else if (p >= T.travelToOutfeed.a) gx = X_OUTFEED;
     if (carriage.current) carriage.current.position.x = gx;
 
-    /* Gantry Y — one down-and-up dip per pick or place, each to the depth its
-       own station needs (see the PLUNGE_* constants above). */
-    const dip = (depth: number, downA: number, downB: number, upA: number, upB: number) =>
-      depth * (p < downB ? ss(downA, downB, p) : 1 - ss(upA, upB, p));
-
+    /* ── Gantry Y: down, hold while the gripper acts, up ──
+       Held at depth THROUGH the grip step, so the jaws open and close while
+       the head is actually at the part — not on the way past it. */
     let gy = 0;
-    if (p >= 1.3 && p < 2.05) gy = dip(PLUNGE_INFEED, 1.3, 1.65, 1.75, 2.05); // pick raw
-    else if (p >= 3.05 && p < 3.75) gy = dip(PLUNGE_PRESS, 3.05, 3.35, 3.5, 3.75); // place at press
-    else if (p >= 7.0 && p < 7.75) gy = dip(PLUNGE_PRESS, 7.0, 7.3, 7.5, 7.75); // pick pressed
-    else if (p >= 8.75 && p < 9.4) gy = dip(PLUNGE_VISION, 8.75, 9.0, 9.2, 9.4); // place at vision
-    else if (p >= 12.2) gy = PLUNGE_VISION * ss(12.2, 12.6, p); // pick for outfeed
+    const hold = (
+      down: StepId,
+      grip: StepId,
+      up: StepId,
+      depth: number
+    ) => {
+      if (During(p, down)) return depth * at(p, down);
+      if (During(p, grip)) return depth; // stationary at the part
+      if (During(p, up)) return depth * (1 - at(p, up));
+      return null;
+    };
+    const y1 = hold("plungeInfeed", "gripPick", "riseInfeed", PLUNGE_INFEED);
+    const y2 = hold("plungePressPlace", "gripRelease", "risePressPlace", PLUNGE_PRESS);
+    const y3 = hold("plungePressPick", "gripPickPressed", "risePressPick", PLUNGE_PRESS);
+    const y4 = hold("plungeVisionPlace", "gripReleaseVision", "riseVisionPlace", PLUNGE_VISION);
+    const y5 = hold("plungeVisionPick", "gripPickInspected", "riseVisionPick", PLUNGE_VISION);
+    gy = y1 ?? y2 ?? y3 ?? y4 ?? y5 ?? 0;
     if (head.current) head.current.position.y = gy;
 
-    // Gripper: closed while carrying
-    const carrying = (p >= 1.62 && p < 3.42) || (p >= 7.27 && p < 9.05) || p >= 12.45;
-    grip.current += ((carrying ? 1 : 0) - grip.current) * 0.22;
+    /* ── Gripper: closed from the moment it grips to the moment it releases ── */
+    const carrying =
+      Between(p, "gripPick", "gripRelease") ||
+      Between(p, "gripPickPressed", "gripReleaseVision") ||
+      p >= T.gripPickInspected.a;
+    grip.current += ((carrying ? 1 : 0) - grip.current) * 0.28;
 
-    /* Hand-offs. Re-parenting (not copying coordinates) is what makes the part
-       ride the gantry through both axes and then genuinely sit in a nest. */
-    if (p < 1.62) attach(visionNest.current); // waiting at vision/outfeed
-    else if (p < 3.42) attach(payload.current); // on the gantry → press
-    else if (p < 7.27) attach(nest.current); // in the press nest
-    else if (p < 9.05) attach(payload.current); // on the gantry → vision
-    else attach(visionNest.current); // at the vision station
+    /* ── Hand-offs, aligned to the exact instant the jaws finish acting ──
+       The part changes owner mid-grip, so the transfer happens while the jaws
+       are closing on it / opening off it, never in open air. */
+    const gripPickDone = T.gripPick.a + (T.gripPick.b - T.gripPick.a) * 0.5;
+    const releaseDone = T.gripRelease.a + (T.gripRelease.b - T.gripRelease.a) * 0.5;
+    const pickPressedDone = T.gripPickPressed.a + (T.gripPickPressed.b - T.gripPickPressed.a) * 0.5;
+    const releaseVisionDone =
+      T.gripReleaseVision.a + (T.gripReleaseVision.b - T.gripReleaseVision.a) * 0.5;
 
-    /* Shuttle: parked out front (z = +0.42) to load, back to centre to press. */
+    const pickInspectedDone =
+      T.gripPickInspected.a + (T.gripPickInspected.b - T.gripPickInspected.a) * 0.5;
+
+    if (p < gripPickDone) attach(infeedNest.current); // waiting on the infeed belt
+    else if (p < releaseDone) attach(payload.current); // carried to the press
+    else if (p < pickPressedDone) attach(nest.current); // in the press nest
+    else if (p < releaseVisionDone) attach(payload.current); // carried to vision
+    else if (p < pickInspectedDone) attach(visionNest.current); // under the camera
+    else attach(payload.current); // carried out to the outfeed
+
+    /* ── Shuttle: indexes only in its own windows, i.e. only once the gantry
+       has fully risen clear of the press and once the ram is back up ── */
     let z = 0.42;
-    if (p < 3.6) z = 0.42;
-    else if (p < 4.3) z = 0.42 * (1 - ss(3.6, 4.3, p)); // index in
-    else if (p < 6.5) z = 0; // under the tool
-    else if (p < 7.1) z = 0.42 * ss(6.5, 7.1, p); // index out
+    if (During(p, "shuttleIn")) z = 0.42 * (1 - at(p, "shuttleIn"));
+    else if (Between(p, "ramApproach", "shuttleOut")) z = 0;
+    else if (During(p, "shuttleOut")) z = 0.42 * at(p, "shuttleOut");
+    else if (p >= T.shuttleOut.b) z = 0.42;
     if (table.current) table.current.position.z = z;
 
-    /* Ram: fast approach down to contact, slow press into the boss, dwell at
-       force, fast retract. Travel comes from the solved constants above, so
-       the punch seats on the part instead of passing through it. */
+    /* ── Ram: approach → press → dwell → retract, all after the table is in ── */
     let y = 0;
     let force = 0;
-    if (p < 4.4) y = 0;
-    else if (p < 4.95) y = -APPROACH * ss(4.4, 4.95, p); // rapid approach
-    else if (p < 5.5) {
-      const k = ss(4.95, 5.5, p);
+    if (During(p, "ramApproach")) y = -APPROACH * at(p, "ramApproach");
+    else if (During(p, "ramPress")) {
+      const k = at(p, "ramPress");
       y = -APPROACH - SEAT * k;
       force = k;
-    } else if (p < 5.95) {
-      y = -STROKE; // dwell at full load
+    } else if (During(p, "ramDwell")) {
+      y = -STROKE;
       force = 1;
-    } else if (p < 6.45) {
-      y = -STROKE * (1 - ss(5.95, 6.45, p)); // retract
-      force = 1 - ss(5.95, 6.2, p);
+    } else if (During(p, "ramRetract")) {
+      const k = at(p, "ramRetract");
+      y = -STROKE * (1 - k);
+      force = 1 - Math.min(1, k * 2);
     }
     if (ram.current) ram.current.position.y = y;
     load.current = force;
 
-    // Spark burst at the instant peak force is reached, and the part is made.
-    if (p >= 5.48 && p < 5.48 + delta) {
+    /* Sparks + the part becoming finished fire at the exact end of the press
+       stroke, the moment peak force is reached. */
+    const madeAt = T.ramPress.b;
+    if (p >= madeAt && p < madeAt + delta) {
       fire.current = 1;
-      partState.current = 1; // raw → pressed
+      partState.current = 1; // raw -> pressed
     }
 
-    /* Vision: strobe the ring light while inspecting, then latch a verdict.
-       Deterministic (every 4th part fails) rather than random — a repeating
-       line should look like a real process, not a coin flip. */
-    scan.current = p >= 9.5 && p < 10.6 ? Math.min(1, (p - 9.5) * 3) : 0;
-    if (p >= 10.6) {
+    /* ── Vision: strobes only while the part is sitting in its nest and the
+       gantry has cleared, then latches a verdict at the end of the window ── */
+    scan.current = During(p, "inspect") ? Math.min(1, at(p, "inspect") * 3) : 0;
+    if (p >= T.inspect.b) {
+      // Deterministic (every 4th part fails) rather than random — a repeating
+      // line should look like a real process, not a coin flip.
       const fail = count.current % 4 === 3;
       verdict.current = fail ? 3 : 2;
       partState.current = fail ? 3 : 2;
-    } else if (p < 1.0) {
+    } else if (During(p, "travelToInfeed")) {
       verdict.current = 0;
       partState.current = 0; // fresh raw part for the new cycle
     }
 
-    // Reject flap kicks only on a failed part, as it reaches the outfeed.
-    const rejecting = verdict.current === 3 && p >= 12.4;
+    /* Reject flap kicks only on a failed part, and only once it has actually
+       arrived over the outfeed. */
+    const rejecting = verdict.current === 3 && p >= T.unload.a;
     if (rejectFlap.current) {
       rejectFlap.current.rotation.z +=
         ((rejecting ? -0.9 : 0) - rejectFlap.current.rotation.z) * 0.18;
@@ -1223,12 +1326,18 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
     /* Andon: red under load, green on a pass, amber otherwise. */
     stage.current = force > 0.05 ? 1 : verdict.current === 2 ? 2 : 0;
 
-    /* Live HMI text. */
+    /* Live HMI text, labelled from the same sequence the machines run on. */
     hud.current.count = count.current;
     hud.current.force = force;
     hud.current.verdict = verdict.current === 2 ? "PASS" : verdict.current === 3 ? "REJECT" : "";
     hud.current.label =
-      p < 3.4 ? "LOADING" : p < 7.1 ? "PRESSING" : p < 10.6 ? "INSPECT" : "UNLOAD";
+      p < T.shuttleIn.a
+        ? "LOADING"
+        : p < T.shuttleOut.b
+          ? "PRESSING"
+          : p < T.inspect.b
+            ? "INSPECT"
+            : "UNLOAD";
 
     /* Showcase sweep rather than a full turntable. A 360° spin puts the line
        edge-on for a third of every revolution, where the frames collapse to
@@ -1274,6 +1383,10 @@ function ProductionLine({ hud }: { hud: React.MutableRefObject<HudState> }) {
 
       {/* Conveyors: raw parts in, finished parts out */}
       <Conveyor pos={[X_INFEED, -0.28, 0]} length={1.5} speed={0.3} />
+      {/* Where a raw part waits at the head of the infeed for the gantry.
+          The cycle now STARTS here, so the part is seen arriving on the belt
+          rather than materialising at the vision station. */}
+      <group ref={infeedNest} position={[X_INFEED, -0.22, 0]} />
       <Conveyor pos={[X_OUTFEED, -0.28, 0]} length={1.1} speed={0.45} />
 
       {/* Reject diverter at the end of the outfeed */}

@@ -16,9 +16,12 @@ export default function IndustryDetail() {
   // Disabled industries are hidden from the public site — treat as not found.
   if (!industry || industry.visible === false) return <NotFound />;
 
-  const relatedProducts = products
-    .filter((p) => p.industries.includes(industry.id) && p.visible !== false)
-    .slice(0, 4);
+  // Every visible product an admin has tagged with this industry — the whole
+  // list, not a teaser. A product can serve several verticals, so it appears on
+  // each industry it is tagged for; that is the intended catalogue model.
+  const relatedProducts = products.filter(
+    (p) => p.industries.includes(industry.id) && p.visible !== false
+  );
 
   return (
     <>
@@ -129,9 +132,24 @@ export default function IndustryDetail() {
       {/* Related products */}
       {relatedProducts.length > 0 && (
         <section className="container-px pb-20">
-          <h2 className="font-display text-2xl font-bold text-white">
-            Recommended for {industry.name}
-          </h2>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="font-display text-2xl font-bold text-white">
+                Recommended for {industry.name}
+              </h2>
+              <p className="mt-2 text-sm text-steel-400">
+                {relatedProducts.length}{" "}
+                {relatedProducts.length === 1 ? "product" : "products"} for this
+                industry
+              </p>
+            </div>
+            <Link
+              to={`/products?industry=${industry.id}`}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-2.5 text-sm text-steel-200 transition hover:border-white/30 hover:text-white"
+            >
+              Browse in catalogue <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {relatedProducts.map((p, i) => (
               <ProductCard key={p.id} product={p} index={i} />

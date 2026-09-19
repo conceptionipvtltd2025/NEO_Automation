@@ -27,11 +27,26 @@ const SIZES = {
   xl: "h-36 w-[300px] p-7",
 } as const;
 
+/**
+ * Wordmark sizing for a brand with no logo file (the `<img>` 404s, or the
+ * record has no `logo` at all).
+ *
+ * These step UP from a small base rather than starting at the nominal size,
+ * because the plate is not always its nominal size: callers legitimately
+ * shrink it through `className` (the home Brands grid renders the `md` plate
+ * at `h-14 … p-2.5` in the 2-up phone column). The font must follow the plate
+ * that is actually rendered, not the one the `size` prop names, or the
+ * wordmark wraps to two lines and is clipped by the plate's `overflow-hidden`.
+ *
+ * Measured: "John Guest" at 17.44px/28.8px needs 61.6px in a 104px-wide,
+ * 56px-tall plate — 5.6px taller than the plate. The base steps here keep the
+ * two-line case inside the box at every width we ship.
+ */
 const FALLBACK_TEXT = {
-  sm: "text-[14.5px]",
-  md: "text-base",
-  lg: "text-2xl",
-  xl: "text-3xl",
+  sm: "text-[11px] xs:text-[14.5px]",
+  md: "text-[12px] xs:text-sm sm:text-base",
+  lg: "text-lg sm:text-2xl",
+  xl: "text-xl sm:text-3xl",
 } as const;
 
 export function BrandLogoPlate({
@@ -59,7 +74,11 @@ export function BrandLogoPlate({
         // colours (Atlas Copco #a5c532, GESIPA #2ed658) are unreadable on white.
         <span
           className={cn(
-            "border-b-2 pb-0.5 font-display font-bold tracking-tight text-[#12141a]",
+            // `max-w-full` + `leading-tight` keep a wrapped two-word wordmark
+            // ("John Guest") inside the plate instead of overflowing it: the
+            // plate is `overflow-hidden`, so any overflow is a hard clip
+            // through the glyphs rather than a scroll.
+            "max-w-full border-b-2 pb-0.5 text-center font-display font-bold leading-tight tracking-tight text-[#12141a]",
             FALLBACK_TEXT[size]
           )}
           style={{ borderColor: brand.color }}

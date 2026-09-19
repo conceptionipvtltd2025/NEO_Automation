@@ -95,12 +95,14 @@ export function SpecialProducts() {
               >
                 <Link
                   to={`/products/${prod.slug}`}
-                  className="group flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-3 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:gap-4"
+                  className="group flex min-w-0 items-center gap-2.5 rounded-2xl border border-white/10 bg-white/[0.02] p-3 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05] xs:gap-3 sm:gap-4"
                 >
-                  <span className="font-display text-xl font-bold text-white/15">
+                  {/* Decorative rank. Hidden below xs: at 320px it plus its gap
+                      ate 35px of a 280px row, squeezing the name into 111px. */}
+                  <span className="hidden font-display text-xl font-bold text-white/15 xs:inline">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <div className="relative h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-ink-800 sm:h-16 sm:w-20">
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-ink-800 xs:w-16 sm:h-16 sm:w-20">
                     <img
                       src={safeImg(prod.images[0])}
                       onError={onImgError}
@@ -119,7 +121,14 @@ export function SpecialProducts() {
                         </span>
                       )}
                     </div>
-                    <h3 className="mt-1 truncate font-display text-base font-semibold text-white">
+                    {/* line-clamp, not truncate: `truncate` forces nowrap, so
+                        every long flagship name lost 20–195px to an ellipsis —
+                        at 320px two thirds of "eepos one Modular Aluminium
+                        Crane" vanished, and the narrow lg:grid-cols-2 column
+                        still clipped it at 1024px. 3 lines below xs (the
+                        narrowest column still only fits ~2 words a line),
+                        2 from xs up, where every name fits. */}
+                    <h3 className="mt-1 line-clamp-3 font-display text-base font-semibold leading-snug text-white xs:line-clamp-2">
                       {prod.name}
                     </h3>
                   </div>

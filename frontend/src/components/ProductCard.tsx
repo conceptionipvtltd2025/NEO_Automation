@@ -27,7 +27,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-900/90 via-transparent to-transparent" />
           {product.badge && (
-            <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-full border border-neo-600/40 bg-neo-600/15 px-2 py-0.5 text-[9.5px] font-semibold uppercase tracking-normal text-neo-300 backdrop-blur-md sm:left-3 sm:top-3 sm:max-w-[calc(100%-1.5rem)] sm:px-3 sm:py-1 sm:text-[12px] sm:tracking-wider">
+            <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-full border border-neo-600/40 bg-neo-600/15 px-1.5 py-0.5 text-[10.5px] font-semibold uppercase leading-none tracking-normal text-neo-300 backdrop-blur-md sm:left-3 sm:top-3 sm:max-w-[calc(100%-1.5rem)] sm:px-3 sm:py-1 sm:text-[12px] sm:tracking-wider">
               {product.badge}
             </span>
           )}
@@ -37,14 +37,14 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
 
         <div className="flex flex-1 flex-col p-3 sm:p-5">
-          <h3 className="line-clamp-3 font-display text-[13.5px] font-semibold leading-snug text-white transition-colors group-hover:text-neo-300 sm:line-clamp-2 sm:min-h-[3rem] sm:text-base">
+          <h3 className="line-clamp-4 font-display text-[13.5px] font-semibold leading-snug text-white transition-colors group-hover:text-neo-300 xs:line-clamp-3 sm:line-clamp-2 sm:min-h-[3rem] sm:text-base">
             {product.name}
           </h3>
           <p className="mt-1.5 hidden line-clamp-2 flex-1 text-sm text-steel-400 sm:mt-2 sm:block">
             {product.shortDesc}
           </p>
           <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-2.5 sm:pt-4">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-steel-500 sm:text-[13px]">
+            <span className="whitespace-nowrap text-[11px] font-medium uppercase tracking-normal text-steel-500 xs:tracking-wider sm:text-[13px]">
               View details
             </span>
             <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white/10 text-steel-300 transition-all duration-300 group-hover:border-neo-600 group-hover:bg-neo-600 group-hover:text-pure sm:h-9 sm:w-9">

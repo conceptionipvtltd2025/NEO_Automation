@@ -126,7 +126,7 @@ export function Process() {
                   }}
                 />
 
-                <p className="mt-2 line-clamp-4 text-[12px] leading-relaxed text-steel-400 sm:mt-3 sm:line-clamp-none sm:text-sm">
+                <p className="mt-2 text-[12px] leading-relaxed text-steel-400 sm:mt-3 sm:text-sm">
                   {s.text}
                 </p>
               </motion.div>

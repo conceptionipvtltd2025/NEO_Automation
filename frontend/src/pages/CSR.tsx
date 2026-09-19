@@ -306,10 +306,19 @@ function ProjectBlock({ project, flip }: { project: Project; flip: boolean }) {
             loading="lazy"
             className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-[1.04]"
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/80 via-ink-950/10 to-transparent" />
-          <p className="pointer-events-none absolute inset-x-0 bottom-0 p-5 text-sm leading-snug text-pure/80 sm:p-6">
-            {project.photo.caption}
-          </p>
+          {/* The caption sits on the photograph, so its scrim is anchored to the
+              caption band itself (not the whole image) and stays fully opaque
+              behind every line — a gradient scaled to the image goes transparent
+              exactly where the caption's first line falls on tall mobile captions. */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0">
+            <div
+              aria-hidden
+              className="h-16 bg-gradient-to-t from-ink-950/95 to-transparent"
+            />
+            <p className="bg-ink-950/95 px-5 pb-5 pt-1 text-sm leading-snug text-pure/90 sm:px-6 sm:pb-6">
+              {project.photo.caption}
+            </p>
+          </div>
         </div>
       </Reveal>
 
@@ -388,7 +397,7 @@ export default function CSR() {
           <StaggerGroup className="grid gap-5">
             {principles.map((p) => (
               <StaggerItem key={p.title}>
-                <div className="flex h-full items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.04]">
+                <div className="flex h-full flex-col items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.04] sm:flex-row">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-neo-600/15 text-neo-400">
                     <p.icon className="h-5 w-5" />
                   </span>

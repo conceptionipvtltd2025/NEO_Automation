@@ -105,12 +105,17 @@ export function Brands() {
 
                 {/* mt-auto pins the link to the bottom so every card in the row
                     lines up regardless of blurb length. */}
+                {/* No `truncate` here: at phone widths the 2-up column is
+                    ~130px of text, so ellipsing ate the brand name ("View
+                    Hoffma…"). The label wraps to two lines instead, which the
+                    flex column absorbs, and the arrow stays pinned to the first
+                    line with shrink-0 so it can never be squashed. */}
                 <Link
                   to={`/brands/${b.id}`}
-                  className="mt-auto inline-flex items-center gap-1 pt-3 text-[12px] font-medium text-white/80 transition hover:text-white sm:pt-5 sm:text-sm"
+                  className="mt-auto inline-flex items-start gap-1 pt-3 text-[12px] font-medium leading-snug text-white/80 transition hover:text-white sm:items-center sm:pt-5 sm:text-sm"
                 >
-                  <span className="truncate">View {b.name} range</span>
-                  <ArrowUpRight className="h-4 w-4 text-neo-500" />
+                  <span>View {b.name} range</span>
+                  <ArrowUpRight className="mt-[1px] h-4 w-4 shrink-0 text-neo-500 sm:mt-0" />
                 </Link>
                 <motion.div
                   className="mt-3 h-px w-full origin-left sm:mt-5"

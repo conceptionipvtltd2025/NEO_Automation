@@ -646,8 +646,8 @@ export default function About() {
 
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
               {site.stats.map((s) => (
-                <Reveal key={s.label}>
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center">
+                <Reveal key={s.label} className="h-full">
+                  <div className="flex h-full flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center">
                     <p className="font-display text-2xl font-bold text-white">
                       <Counter value={s.value} suffix={s.suffix} decimals={s.value % 1 !== 0 ? 1 : 0} />
                     </p>

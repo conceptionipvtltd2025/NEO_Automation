@@ -19,11 +19,11 @@ export function useNavItems(): NavItem[] {
   const allBrands = useCatalog((s) => s.brands);
 
   return useMemo(() => {
-    // Newest first — the same order the home showcase and /industries use, so
-    // the header never disagrees with the page it links to.
-    const visIndustries = industries
-      .filter((i) => i.visible !== false)
-      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+    // NO client-side re-sort — the API already returns industries in
+    // `sort_order` (the admin's sequence). The header must not disagree with
+    // /industries or the home showcase, and all three now simply use the
+    // order the API gave them.
+    const visIndustries = industries.filter((i) => i.visible !== false);
     const visProducts = products.filter((p) => p.visible !== false);
 
     // Show brands that actually have products in the catalogue (fall back to all).

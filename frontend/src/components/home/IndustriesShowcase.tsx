@@ -38,9 +38,13 @@ export function IndustriesShowcase() {
   // Mirror the /industries page: hide what the admin disabled, newest first.
   const industries = useMemo(
     () =>
-      allIndustries
-        .filter((i) => i.visible !== false)
-        .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0)),
+        // NO client-side re-sort. The API returns industries already ordered by
+        // `sort_order` (alphabetical baseline from `npm run order:alphabetical`,
+        // then whatever the admin arranges with the up/down arrows), so the list
+        // is used as-is. This previously re-sorted by `createdAt` descending,
+        // which silently overrode the admin's sequence on the public site while
+        // the admin panel showed the correct order — the two disagreed.
+        allIndustries.filter((i) => i.visible !== false),
     [allIndustries]
   );
 

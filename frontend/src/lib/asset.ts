@@ -24,6 +24,13 @@ const BASE = RAW_BASE.endsWith("/") ? RAW_BASE : `${RAW_BASE}/`;
 export function asset(path: string): string {
   // Pass through absolute URLs (http/https/data) untouched.
   if (/^(https?:)?\/\//.test(path) || path.startsWith("data:")) return path;
+  // Idempotent: a value that already carries the base must not get it twice.
+  // `safeImg()` routes stored "images/..." paths through here, and a record
+  // saved back after rendering would otherwise become /neo-website/neo-website/…
+  // and 404 in production while working fine in dev (where BASE is "/").
+  // `brandLogo()` below has always had this guard; asset() needs it for the
+  // same reason now that stored data — not just literals — flows through it.
+  if (BASE !== "/" && path.startsWith(BASE)) return path;
   return BASE + path.replace(/^\/+/, "");
 }
 

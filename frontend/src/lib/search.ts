@@ -2,6 +2,7 @@ import type { Brand } from "@/data/brands";
 import type { Product } from "@/data/products";
 import type { Category } from "@/data/categories";
 import type { Industry } from "@/data/industries";
+import { BROCHURE_HREF } from "@/components/BrochureCTA";
 
 // Full-site search. Unifies STATIC entries (fixed pages + notable sections) with
 // DYNAMIC entries pulled live from the catalog store — products, categories,
@@ -38,6 +39,12 @@ export type SearchEntry = {
   keywords?: string;
   /** Optional thumbnail (products). */
   image?: string;
+  /**
+   * True for a real file/URL rather than an in-app route (the brochure PDF).
+   * The result list renders these as a plain <a download> — a react-router
+   * <Link> would push /docs/… through the router and 404 instead of saving.
+   */
+  external?: boolean;
 };
 
 type IndexedEntry = SearchEntry & { _t: string; _s: string; _k: string };
@@ -48,6 +55,15 @@ const STATIC_ENTRIES: SearchEntry[] = [
   // Pages
   { id: "page:home", title: "Home", subtitle: "Engineering Tomorrow's Industry", href: "/", group: "Page", keywords: "home neo automation productivity quality safety traceability industrial tools distributor" },
   { id: "page:products", title: "Products", subtitle: "Full catalogue with search & filters", href: "/products", group: "Page", keywords: "catalogue shop browse tools buy filter category brand industry" },
+  // Title leads with "Download" so the +120 title-prefix bonus in scoreEntry()
+  // fires for the query people actually type. href is the shared BROCHURE_HREF
+  // (already through asset()) — a real file under the deploy base, not a
+  // route, hence `external`.
+  // Brand keywords list only brands the PDF actually has pages for (verified
+  // against public/docs). PFERD is deliberately omitted — it is the one brand on
+  // the site the catalogue does not cover, so surfacing this file for "pferd"
+  // would send someone to a 17 MB download that never mentions it.
+  { id: "page:brochure", title: "Download Catalogue (PDF)", subtitle: "The 24-page NEO 2025 print catalogue — PDF · 17 MB", href: BROCHURE_HREF, group: "Page", external: true, keywords: "brochure catalogue catalog pdf download print product guide 2025 atlas copco gesipa transair eepos gedore hoffmann group garant holex cejn legris parker john guest speedfit smart integrated assembly tightening riveting material removal air motors crane piping hand tools" },
   { id: "page:industries", title: "Industries", subtitle: "Sectors we power", href: "/industries", group: "Page", keywords: "industries sectors applications automotive manufacturing ev assembly battery industrial assembly aerospace energy oil gas wind electronic electronics home appliances white goods metal fabrication welding heavy equipment machinery excavator semiconductor wafer fab cleanroom railway rail rolling stock trains" },
   { id: "page:service", title: "Service", subtitle: "Neo Service Workshop — nut runners restored & certified", href: "/nsw", group: "Page", keywords: "nsw neo service workshop repair calibration service nut runner hydraulic tools tensioner amc spares" },
   { id: "page:about", title: "About Neo", subtitle: "Precision is our heritage", href: "/about", group: "Page", keywords: "about company history baldev solanki ahmedabad 2007 heritage" },
@@ -56,6 +72,8 @@ const STATIC_ENTRIES: SearchEntry[] = [
   { id: "page:inquiry", title: "Get a Quote", subtitle: "Tell us what you need", href: "/inquiry", group: "Page", keywords: "quote inquiry enquiry pricing request availability recommendation" },
 
   { id: "page:sustainability", title: "Sustainability", subtitle: "Our environmental and responsibility commitments", href: "/sustainability", group: "Page", keywords: "sustainability environment responsible sourcing circularity esg community green csr recycling" },
+
+  { id: "page:csr", title: "CSR & Community", subtitle: "Blood donation, Water for All and school outreach", href: "/csr", group: "Page", keywords: "csr corporate social responsibility community outreach giving back blood donation camp rotary club ahmedabad majesty stars indian red cross donor water for all water cooler parab drinking water sayona city chankyapuri team atulya sanand jdg girls school kurti distribution students volunteering" },
 
   // Safety sections
   { id: "sec:safety-disciplines", title: "Four Safety Disciplines", subtitle: "Operator, process, electrical and site", href: "/safety#disciplines", group: "Section", keywords: "operator safety process safety electrical safety vde site workshop safety ergonomics" },
@@ -87,6 +105,10 @@ const STATIC_ENTRIES: SearchEntry[] = [
   { id: "sec:timeline", title: "Our Journey", subtitle: "Built milestone by milestone", href: "/about#timeline", group: "Section", keywords: "timeline milestones journey history" },
   { id: "sec:values", title: "Core Values", subtitle: "What drives us", href: "/about#values", group: "Section", keywords: "integrity precision partnership excellence values" },
   { id: "sec:credentials", title: "Credentials & Partnerships", subtitle: "Authorised, trained & accountable", href: "/about#credentials", group: "Section", keywords: "authorised distributor oem-trained credentials genuine equipment partnerships" },
+  // In-app anchor, NOT `external` — /about#certificates is a route, so it must
+  // go through the router. Only the PDFs themselves are files, and those are
+  // reached from inside the section's lightbox.
+  { id: "sec:certificates", title: "Certificates", subtitle: "Our Atlas Copco and GESIPA authorisations, in full", href: "/about#certificates", group: "Section", keywords: "certificate certificates certification authorised distributor authorized channel partner atlas copco certificate gesipa certificate sfs group appointment letter proof document pdf scan valid validity gujarat distributor tools assembly systems" },
   { id: "sec:message", title: "Send a Message", subtitle: "We'll get back within one business day", href: "/contact#message-form", group: "Section", keywords: "message form enquiry contact form" },
 
   // Legal

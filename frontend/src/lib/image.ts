@@ -1,4 +1,5 @@
 import type { SyntheticEvent } from "react";
+import { asset } from "@/lib/asset";
 
 /**
  * Helpers for rendering user-supplied image URLs safely.
@@ -31,6 +32,17 @@ export function safeImg(src?: string | null): string {
   if (s.startsWith("data:")) return s;
   // Upgrade insecure http:// so the browser doesn't block it as mixed content.
   if (s.startsWith("http://")) return "https://" + s.slice(7);
+  // Backend-served admin uploads are NOT under the frontend's deploy base.
+  if (s.startsWith("/uploads/") || s.startsWith("uploads/")) return s;
+  // A self-hosted image from public/, as the seed and the admin store it:
+  // "images/industries/ev-assembly.jpg" or "/images/...". The site ships under
+  // a sub-path, so a relative path would resolve against the current document
+  // (/industries/foo → /industries/images/…) and a root-absolute one against
+  // the domain root — both 404. asset() adds the deploy base and is itself
+  // idempotent, so a value that already carries the base passes through
+  // unchanged. That is what lets the backend seed store a plain, base-agnostic
+  // path instead of having to agree with the frontend build on what BASE is.
+  if (/^\/?images\//.test(s)) return asset(s);
   return s;
 }
 

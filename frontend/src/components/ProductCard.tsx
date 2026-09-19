@@ -37,7 +37,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
 
         <div className="flex flex-1 flex-col p-3 sm:p-5">
-          <h3 className="line-clamp-2 font-display text-[13.5px] font-semibold leading-snug text-white transition-colors group-hover:text-neo-300 sm:min-h-[3rem] sm:text-base">
+          <h3 className="line-clamp-3 font-display text-[13.5px] font-semibold leading-snug text-white transition-colors group-hover:text-neo-300 sm:line-clamp-2 sm:min-h-[3rem] sm:text-base">
             {product.name}
           </h3>
           <p className="mt-1.5 hidden line-clamp-2 flex-1 text-sm text-steel-400 sm:mt-2 sm:block">

@@ -16,6 +16,7 @@ import { ProductsHeaderArt } from "@/components/ui/HeaderArt";
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
+import { BrochureBand } from "@/components/BrochureCTA";
 import { useCatalog } from "@/store/useCatalog";
 import { type Brand, type BrandLine } from "@/data/brands";
 import { BrandLogoPlate } from "@/components/BrandLogoPlate";
@@ -214,6 +215,11 @@ export default function Products() {
         </StaggerGroup>
       </section>
 
+      {/* The print catalogue, offered right where someone is browsing the
+          digital one. The band carries its own py-16, so it also supplies the
+          top spacing that #brands above deliberately omits (pb-4 only). */}
+      <BrochureBand />
+
       {/* Then the catalogue */}
       <section id="catalogue" className="container-px scroll-mt-28 py-14">
         <SectionHeading
@@ -405,11 +411,11 @@ export default function Products() {
 
         {/* Grid */}
         {isLoading ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="h-80 animate-pulse rounded-2xl border border-white/5 bg-white/[0.02]"
+                className="h-56 animate-pulse rounded-2xl border border-white/5 bg-white/[0.02] sm:h-80"
               />
             ))}
           </div>
@@ -430,7 +436,7 @@ export default function Products() {
           <>
             <motion.div
               layout
-              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4"
             >
               {paginated.map((p, i) => (
                 <ProductCard key={p.id} product={p} index={i} />

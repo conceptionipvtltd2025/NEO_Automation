@@ -76,7 +76,10 @@ export function PageHeader({
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-5 max-w-2xl text-base leading-relaxed text-steel-400 sm:text-lg"
+            // steel-200, not steel-400: this is the page's opening sentence,
+            // sitting over a tinted header wash where the dimmer grey read as
+            // washed out. Matches SectionHeading's subtitle treatment.
+            className="mt-5 max-w-2xl text-[17px] leading-relaxed text-steel-200 sm:text-lg"
           >
             {subtitle}
           </motion.p>

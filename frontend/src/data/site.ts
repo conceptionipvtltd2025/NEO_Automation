@@ -1,6 +1,80 @@
 import { industries } from "@/data/industries";
 import { nswHero, nswTeamCover } from "@/data/nswGallery";
 
+/**
+ * A named person on the client's published contact card. `role` carries the
+ * client's own division labels verbatim (MVI, GI) — do not expand them.
+ * `phoneDial` is the tel: form of `phone` (spaces stripped, +91 kept).
+ */
+export type SiteContact = {
+  name: string;
+  role: string;
+  phone: string;
+  phoneDial: string;
+  email: string;
+};
+
+// Straight from the client's contact card. `site.phone` below mirrors Harsh's
+// number (the primary line) and `site.email` stays the general inbox.
+const contacts: SiteContact[] = [
+  {
+    name: "Harsh",
+    role: "MVI",
+    phone: "+91 98987 97004",
+    phoneDial: "+919898797004",
+    email: "harsh@neoautomation.in",
+  },
+  {
+    name: "Nikunj",
+    role: "GI",
+    phone: "+91 96625 01426",
+    phoneDial: "+919662501426",
+    email: "nikunj@neoautomation.in",
+  },
+  {
+    name: "Sneh",
+    role: "Sales",
+    phone: "+91 70164 50911",
+    phoneDial: "+917016450911",
+    email: "sneh@neoautomation.in",
+  },
+  {
+    name: "Priyanka",
+    role: "Service",
+    phone: "+91 98799 49485",
+    phoneDial: "+919879949485",
+    email: "priyanka@neoautomation.in",
+  },
+];
+
+/**
+ * Department lines — the desks, not the individuals. These are what the footer
+ * shows: a visitor who does not know who to ask wants "sales" or "service",
+ * not a name. The named people in `contacts` above are the same company from a
+ * different angle and are deliberately NOT in the footer.
+ */
+export type SiteDepartment = {
+  label: string;
+  phone: string;
+  phoneDial: string;
+  email: string;
+};
+
+const departments: SiteDepartment[] = [
+  {
+    label: "Sales",
+    phone: "+91 96625 01422",
+    phoneDial: "+919662501422",
+    email: "marketing@neoautomation.in",
+  },
+  {
+    label: "Service",
+    phone: "+91 74860 05944",
+    phoneDial: "+917486005944",
+    email: "service@neoautomation.in",
+  },
+];
+
 export const site = {
   name: "Neo Automation",
   legalName: "Neo Automation Pvt. Ltd.",
@@ -12,6 +86,10 @@ export const site = {
   email: "marketing@neoautomation.in",
   whatsapp: "919662501422",
   whatsappDisplay: "+91 96625 01422",
+  /** The named contact directory — the single source for every person's number. */
+  contacts,
+  /** Department lines (Sales / Service) — what the footer surfaces. */
+  departments,
   hours: {
     days: "Monday to Saturday",
     time: "9:30 AM – 6:30 PM",
@@ -90,6 +168,51 @@ const industryTiles: NavTile[] = industries
 
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
+  {
+    label: "Company",
+    href: "/about",
+    mega: {
+      columns: [
+        {
+          heading: "About Neo",
+          links: [
+            { label: "Our story", href: "/about#story", desc: "Ahmedabad-based, founded 2007 by Baldev Solanki" },
+            { label: "Mission & vision", href: "/about#mission-vision", desc: "Precision, traceable tooling for every floor" },
+            { label: "Our journey", href: "/about#timeline", desc: "Milestones from 2007 to AGV/AMR solutions" },
+            { label: "Core values", href: "/about#values", desc: "Integrity, Precision, Partnership, Excellence" },
+          ],
+        },
+        {
+          heading: "Trust & Responsibility",
+          links: [
+            { label: "Credentials & partnerships", href: "/about#credentials", desc: "Authorised distributor, OEM-trained engineers" },
+            { label: "Certificates", href: "/about#certificates", desc: "Our Atlas Copco & GESIPA authorisations, in full" },
+            { label: "Safety", href: "/safety", desc: "How we design risk out of the workstation" },
+            { label: "Sustainability", href: "/sustainability", desc: "Environmental responsibility & circularity" },
+            { label: "CSR & community", href: "/csr", desc: "Blood donation, Water for All & school outreach" },
+            { label: "Terms of use", href: "/terms", desc: "Products, quotations & governing terms" },
+            { label: "Privacy policy", href: "/privacy", desc: "How we collect and protect your data" },
+          ],
+        },
+        {
+          heading: "Talk to Neo",
+          links: [
+            { label: "Contact us", href: "/contact", desc: "Address, phone, email, hours & map" },
+            { label: "Get a quote", href: "/inquiry", desc: "Tell us what you need" },
+            { label: "Neo Service Workshop", href: "/nsw", desc: "Repair, calibrate & certify your tools" },
+          ],
+        },
+      ],
+      featured: {
+        eyebrow: "Who We Are",
+        title: "A partner engineered for precision & trust",
+        blurb: "Nearly two decades equipping Indian industry with the world's finest tools — plus engineering expertise beyond the sale.",
+        href: "/about",
+        cta: "More about Neo",
+        bgImage: nswTeamCover,
+      },
+    },
+  },
   {
     label: "Products",
     href: "/products",
@@ -183,47 +306,6 @@ export const navItems: NavItem[] = [
     },
   },
   {
-    label: "Service",
-    href: "/nsw",
-    mega: {
-      columns: [
-        {
-          heading: "What We Service",
-          links: [
-            { label: "Pneumatic Nut Runners", href: "/nsw#pneumatic-nut-runners", desc: "Overhaul, seal kits & air-motor servicing" },
-            { label: "Battery Nut Runners", href: "/nsw#battery-nut-runners", desc: "Cordless repair & electronics diagnostics" },
-            { label: "Electric Nut Runners", href: "/nsw#electric-nut-runners", desc: "DC/transducerised service & motor rewinding" },
-          ],
-        },
-        {
-          heading: "Calibration & Support",
-          links: [
-            { label: "Torque Calibration", href: "/nsw#torque-calibration", desc: "Documented, audit-ready torque certificates" },
-            { label: "Hydraulic Tools", href: "/nsw#hydraulic-tools", desc: "Tensioners, wrenches & pumps — service & seal kits" },
-            { label: "Repair & Genuine Spares", href: "/nsw#repair-spares", desc: "100% genuine spares, fast turnaround" },
-            { label: "Preventive Maintenance", href: "/nsw#preventive-maintenance", desc: "AMC contracts that maximise tool life" },
-          ],
-        },
-        {
-          heading: "The Neo Service Workshop",
-          links: [
-            { label: "Inside the workshop", href: "/nsw#inside-the-workshop", desc: "Our Atlas Copco-inaugurated facility" },
-            { label: "The service promise", href: "/nsw#service-promise", desc: "In-house, OEM-trained, ~48h turnaround" },
-            { label: "Book a tool service", href: "/inquiry", desc: "Enquire now to schedule a service" },
-          ],
-        },
-      ],
-      featured: {
-        eyebrow: "Neo Service Workshop",
-        title: "Nut runners, restored & certified",
-        blurb: "An in-house workshop with genuine spares, OEM-trained engineers and documented torque calibration — built around your uptime.",
-        href: "/nsw",
-        cta: "Explore Service",
-        bgImage: nswHero,
-      },
-    },
-  },
-  {
     label: "Safety",
     href: "/safety",
     mega: {
@@ -266,45 +348,43 @@ export const navItems: NavItem[] = [
     },
   },
   {
-    label: "Company",
-    href: "/about",
+    label: "Services",
+    href: "/nsw",
     mega: {
       columns: [
         {
-          heading: "About Neo",
+          heading: "What We Service",
           links: [
-            { label: "Our story", href: "/about#story", desc: "Ahmedabad-based, founded 2007 by Baldev Solanki" },
-            { label: "Mission & vision", href: "/about#mission-vision", desc: "Precision, traceable tooling for every floor" },
-            { label: "Our journey", href: "/about#timeline", desc: "Milestones from 2007 to AGV/AMR solutions" },
-            { label: "Core values", href: "/about#values", desc: "Integrity, Precision, Partnership, Excellence" },
+            { label: "Pneumatic Nut Runners", href: "/nsw#pneumatic-nut-runners", desc: "Overhaul, seal kits & air-motor servicing" },
+            { label: "Battery Nut Runners", href: "/nsw#battery-nut-runners", desc: "Cordless repair & electronics diagnostics" },
+            { label: "Electric Nut Runners", href: "/nsw#electric-nut-runners", desc: "DC/transducerised service & motor rewinding" },
           ],
         },
         {
-          heading: "Trust & Responsibility",
+          heading: "Calibration & Support",
           links: [
-            { label: "Credentials & partnerships", href: "/about#credentials", desc: "Authorised distributor, OEM-trained engineers" },
-            { label: "Safety", href: "/safety", desc: "How we design risk out of the workstation" },
-            { label: "Sustainability", href: "/sustainability", desc: "Environmental responsibility & circularity" },
-            { label: "Terms of use", href: "/terms", desc: "Products, quotations & governing terms" },
-            { label: "Privacy policy", href: "/privacy", desc: "How we collect and protect your data" },
+            { label: "Torque Calibration", href: "/nsw#torque-calibration", desc: "Documented, audit-ready torque certificates" },
+            { label: "Hydraulic Tools", href: "/nsw#hydraulic-tools", desc: "Tensioners, wrenches & pumps — service & seal kits" },
+            { label: "Repair & Genuine Spares", href: "/nsw#repair-spares", desc: "100% genuine spares, fast turnaround" },
+            { label: "Preventive Maintenance", href: "/nsw#preventive-maintenance", desc: "AMC contracts that maximise tool life" },
           ],
         },
         {
-          heading: "Talk to Neo",
+          heading: "The Neo Service Workshop",
           links: [
-            { label: "Contact us", href: "/contact", desc: "Address, phone, email, hours & map" },
-            { label: "Get a quote", href: "/inquiry", desc: "Tell us what you need" },
-            { label: "Neo Service Workshop", href: "/nsw", desc: "Repair, calibrate & certify your tools" },
+            { label: "Inside the workshop", href: "/nsw#inside-the-workshop", desc: "Our Atlas Copco-inaugurated facility" },
+            { label: "The service promise", href: "/nsw#service-promise", desc: "In-house, OEM-trained, ~48h turnaround" },
+            { label: "Book a tool service", href: "/inquiry", desc: "Enquire now to schedule a service" },
           ],
         },
       ],
       featured: {
-        eyebrow: "Who We Are",
-        title: "A partner engineered for precision & trust",
-        blurb: "Nearly two decades equipping Indian industry with the world's finest tools — plus engineering expertise beyond the sale.",
-        href: "/about",
-        cta: "More about Neo",
-        bgImage: nswTeamCover,
+        eyebrow: "Neo Service Workshop",
+        title: "Nut runners, restored & certified",
+        blurb: "An in-house workshop with genuine spares, OEM-trained engineers and documented torque calibration — built around your uptime.",
+        href: "/nsw",
+        cta: "Explore Service",
+        bgImage: nswHero,
       },
     },
   },

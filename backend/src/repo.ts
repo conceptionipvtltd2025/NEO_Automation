@@ -65,6 +65,7 @@ export function mapIndustry(r: any) {
     stat: parseJson<{ value: string; label: string }>(r.stat, { value: "", label: "" }),
     visible: r.visible == null ? true : bool(r.visible),
     createdAt: Number(r.created_at ?? 0),
+    sortOrder: Number(r.sort_order ?? 0),
   };
 }
 
@@ -90,6 +91,7 @@ export function mapProduct(r: any) {
     featured: bool(r.featured),
     special: bool(r.special),
     // NULL = unranked; the frontend sorts those last.
+    sortOrder: Number(r.sort_order ?? 0),
     homeOrder: r.home_order === null || r.home_order === undefined ? undefined : Number(r.home_order),
     categoryOrder:
       r.category_order === null || r.category_order === undefined
@@ -195,20 +197,24 @@ export async function deleteCategory(id: string) {
 /* ───────────────────────── industries ───────────────────────── */
 
 export async function listIndustries() {
-  const rows = await query(`SELECT * FROM industries ORDER BY name`);
+  // sort_order is the admin's sequence (alphabetical baseline at deploy, then
+  // whatever they arrange). name is the tiebreak for rows still on the default 0.
+  const rows = await query(
+    `SELECT * FROM industries ORDER BY sort_order, name`
+  );
   return rows.map(mapIndustry);
 }
 
 export async function upsertIndustry(i: any) {
   await query(
     `INSERT INTO industries
-       (id, name, short, tagline, description, image, icon, accent, capabilities, stat, visible, created_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+       (id, name, short, tagline, description, image, icon, accent, capabilities, stat, visible, created_at, sort_order)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        name=VALUES(name), short=VALUES(short), tagline=VALUES(tagline),
        description=VALUES(description), image=VALUES(image), icon=VALUES(icon),
        accent=VALUES(accent), capabilities=VALUES(capabilities), stat=VALUES(stat),
-       visible=VALUES(visible)`,
+       visible=VALUES(visible), sort_order=VALUES(sort_order)`,
     [
       i.id,
       i.name,
@@ -222,6 +228,7 @@ export async function upsertIndustry(i: any) {
       JSON.stringify(i.stat ?? { value: "", label: "" }),
       i.visible === false ? 0 : 1,
       Number(i.createdAt) || Date.now(),
+      Number(i.sortOrder ?? 0),
     ]
   );
   const rows = await query(`SELECT * FROM industries WHERE id=?`, [i.id]);
@@ -241,9 +248,13 @@ export async function deleteIndustry(id: string) {
 /* ───────────────────────── products ───────────────────────── */
 
 export async function listProducts() {
-  // Ranked products first (home_order ascending), then everything else by name.
+  // Ranked products first (home_order ascending) — that ordering drives the
+  // home page and must not change. Everything else falls back to the admin's
+  // own sequence (sort_order, alphabetical baseline at deploy), then name for
+  // rows still on the default 0.
   const rows = await query(
-    `SELECT * FROM products ORDER BY (home_order IS NULL), home_order, name`
+    `SELECT * FROM products
+     ORDER BY (home_order IS NULL), home_order, sort_order, name`
   );
   return rows.map(mapProduct);
 }
@@ -258,8 +269,8 @@ export async function upsertProduct(p: any) {
     `INSERT INTO products
        (id, slug, name, brand_id, brand, category_id, line, industries, price, rating,
         short_desc, description, features, specs, images, documents, featured, special, home_order,
-        category_order, badge, visible)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        category_order, badge, visible, sort_order)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE
        slug=VALUES(slug), name=VALUES(name), brand_id=VALUES(brand_id), brand=VALUES(brand),
        category_id=VALUES(category_id), line=VALUES(line), industries=VALUES(industries), price=VALUES(price),
@@ -267,7 +278,7 @@ export async function upsertProduct(p: any) {
        features=VALUES(features), specs=VALUES(specs), images=VALUES(images),
        documents=VALUES(documents), featured=VALUES(featured), special=VALUES(special),
        home_order=VALUES(home_order), category_order=VALUES(category_order),
-       badge=VALUES(badge), visible=VALUES(visible)`,
+       badge=VALUES(badge), visible=VALUES(visible), sort_order=VALUES(sort_order)`,
     [
       p.id,
       p.slug,
@@ -306,6 +317,7 @@ export async function upsertProduct(p: any) {
         : null,
       p.badge ?? null,
       p.visible === false ? 0 : 1,
+      Number(p.sortOrder ?? 0),
     ]
   );
   return getProduct(p.id);

@@ -227,7 +227,7 @@ export default function BrandDetail() {
               Browse all <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
             {brandProducts.slice(0, 8).map((p, i) => (
               <ProductCard key={p.id} product={p} index={i} />
             ))}

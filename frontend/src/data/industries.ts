@@ -13,6 +13,13 @@ export type Industry = {
   visible?: boolean;
   /** Creation timestamp (ms). Used to order "latest" first; older seed rows may omit it. */
   createdAt?: number;
+  /**
+   * Position in the public sequence, owned by the admin. `npm run
+   * order:alphabetical` writes a 1..n A-Z baseline once at deploy; the admin's
+   * arrows own it after that. It MUST be carried through every edit or an
+   * ordinary save would reset the row to 0 and jump it to the front.
+   */
+  sortOrder?: number;
 };
 
 // Seed imagery is served from the Unsplash CDN at 2x the largest tile so it
@@ -52,24 +59,32 @@ export const industries: Industry[] = [
     // Split out of "Automotive Manufacturing & EV Assembly" at the client's
     // request — electrification is its own discipline (HV safety, cell-to-pack
     // joining, insulated tooling) and deserves its own segment.
-    // NOTE(imagery): a verified in-repo photo of an e-mobility test/assembly
-    // cell — harnesses, HV cabling and a vehicle panel on the bench. Swap in the
-    // client's own battery-line photography from the admin panel when it lands;
-    // never point this at an unverified stock id.
+    //
+    // NOTE(imagery): self-hosted and eyes-on verified — an EV assembly cell with
+    // two vehicle frames on the line, cordless transducer nutrunners, a torque
+    // station and an e-drive module on the handling arm. It replaces an
+    // unverified Unsplash id (an earlier seed id resolved to a roll of
+    // banknotes, so stock ids are not trusted here). Stored as a bare public
+    // path, exactly as the seed stores it: every render site passes an industry
+    // image through safeImg(), which adds the deploy base for us — the site
+    // ships under /neo-website/. Swap in the client's own battery-line
+    // photography from the admin panel when it lands.
     id: "ev-assembly",
     name: "EV Assembly",
     short: "Battery, pack & e-drive",
     tagline: "Battery modules, packs and e-drives — joined, insulated, documented",
     description:
-      "Electrification changes the joint before it changes the vehicle. Battery-module and pack lines demand low-and-high torque in the same station, VDE-insulated tooling for live high-voltage work, structural bonding and riveting on aluminium trays, and a documented result for every single fastener. We build EV stations around exactly that: measured tightening, error-proofing and full traceability from cell stacking to e-drive marriage.",
-    image: img("1581091226825-a6a2a5aee158"),
+      "Electrification changes the joint before it changes the vehicle. A pack line asks one station for a 2 Nm cell-carrier screw and the next for a 25 Nm busbar bolt, where an under-tightened terminal becomes a resistive hot spot and an over-tightened one cracks the cell tab. We build those stations around measured tightening: transducer-controlled tools that record torque and angle on every rundown, VDE-1000 V insulated sets for work on a live pack, structural adhesive bonding and blind riveting on aluminium trays that cannot be welded, and error-proofing that will not release the fixture until the sequence is complete. From cell-to-module stacking through pack close-out to e-drive marriage, every fastener leaves the line with a result written to the MES against the pack's serial number — the audit trail a high-voltage assembly is expected to produce years later.",
+    image: "images/industries/ev-assembly.jpg",
     icon: "BatteryCharging",
     accent: "#7c86f0",
     capabilities: [
-      "Battery module & pack tightening",
-      "VDE-insulated HV tool sets",
-      "Structural riveting & bonding on alloy trays",
-      "100% torque traceability to the MES",
+      "Cell-to-module & pack-close tightening",
+      "Busbar and HV terminal torque control",
+      "VDE 1000 V insulated tool sets",
+      "Structural bonding & riveting on alloy trays",
+      "Error-proofed sequencing & fixture release",
+      "Per-serial torque traceability to the MES",
     ],
     stat: { value: "100%", label: "joints documented" },
   },

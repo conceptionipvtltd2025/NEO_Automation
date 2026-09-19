@@ -180,7 +180,7 @@ export default function ProductDetail() {
                     className="rounded-xl border border-white/10 bg-white/[0.02] p-3 text-center"
                   >
                     <t.icon className="mx-auto h-5 w-5 text-neo-500" />
-                    <p className="mt-2 text-[13px] leading-tight text-steel-400">
+                    <p className="mt-2 hyphens-auto break-words text-[11.5px] leading-tight text-steel-400 xs:text-[13px]">
                       {t.label}
                     </p>
                   </div>
@@ -307,7 +307,7 @@ export default function ProductDetail() {
               </Link>
             </div>
           </Reveal>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
             {related.map((p, i) => (
               <ProductCard key={p.id} product={p} index={i} />
             ))}

@@ -3,6 +3,7 @@ import { ArrowUpRight, PhoneCall } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { Aurora, GridBackground } from "@/components/ui/Backgrounds";
+import { BrochureButton } from "@/components/BrochureCTA";
 import { site } from "@/data/site";
 
 export function CTABand() {
@@ -32,6 +33,15 @@ export function CTABand() {
               <a href={`tel:${site.phone}`} className="btn-ghost">
                 <PhoneCall className="h-4 w-4" /> {site.phone}
               </a>
+            </div>
+            {/* Brochure download sits on its own baseline rather than as a third
+                pill in the row above: three centred pills wrap 2+1 on narrow
+                screens, which leaves a lopsided orphan. Same btn-ghost geometry,
+                so it stays visually in the same family as the row it follows. */}
+            <div className="mt-4 flex justify-center">
+              <Magnetic strength={0.25}>
+                <BrochureButton />
+              </Magnetic>
             </div>
           </div>
         </div>

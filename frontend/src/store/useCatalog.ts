@@ -41,6 +41,19 @@ type CatalogState = {
 //  • 401 → the session/token is invalid or expired → force re-login.
 //  • other API error / network down → record a message for the admin banner.
 /** Next free position for a record appended to an ordered list. */
+/**
+ * Order by the admin's explicit sequence, falling back to name. Mirrors the
+ * server's `ORDER BY sort_order, name`, so the list does not re-shuffle when
+ * the API response replaces the local state.
+ *
+ * This runs after every upsert because the admin's up/down arrows work by
+ * WRITING new sortOrder values — the list is rendered in array order, so
+ * without a re-sort the numbers would change and nothing would visibly move.
+ */
+const bySortOrder = <T extends { sortOrder?: number; name?: string }>(a: T, b: T) =>
+  (a.sortOrder ?? Number.MAX_SAFE_INTEGER) - (b.sortOrder ?? Number.MAX_SAFE_INTEGER) ||
+  String(a.name ?? "").localeCompare(String(b.name ?? ""));
+
 const nextSortOrder = (list: { sortOrder?: number }[]) =>
   list.reduce((max, x) => Math.max(max, x.sortOrder ?? 0), 0) + 1;
 
@@ -106,14 +119,31 @@ export const useCatalog = create<CatalogState>()(
 
       upsertProduct: (p) => {
         set((s) => {
-          const exists = s.products.some((x) => x.id === p.id);
+          const prev = s.products.find((x) => x.id === p.id);
+          // Keep the catalogue sequence. The product form does not edit
+          // sortOrder, so an incoming record without one would be written as 0
+          // and jump to the front of its category on the next save.
+          const withOrder: Product = {
+            ...p,
+            sortOrder: p.sortOrder ?? prev?.sortOrder ?? nextSortOrder(s.products),
+          };
+          const list = prev
+            ? s.products.map((x) => (x.id === p.id ? withOrder : x))
+            : [withOrder, ...s.products];
+          // Products are sequenced WITHIN their category (the only list a
+          // visitor browses them in), so group by category first. The home
+          // page has its own ranking (homeOrder/categoryOrder) and reads it
+          // separately — this ordering does not affect it.
           return {
-            products: exists
-              ? s.products.map((x) => (x.id === p.id ? p : x))
-              : [{ ...p }, ...s.products],
+            products: [...list].sort(
+              (a, b) =>
+                String(a.categoryId ?? "").localeCompare(String(b.categoryId ?? "")) ||
+                bySortOrder(a, b)
+            ),
           };
         });
-        persistWrite(api.put(`/products/${p.id}`, p), "product");
+        const payload = get().products.find((x) => x.id === p.id) ?? p;
+        persistWrite(api.put(`/products/${p.id}`, payload), "product");
       },
       deleteProduct: (id) => {
         set((s) => ({ products: s.products.filter((x) => x.id !== id) }));
@@ -138,10 +168,20 @@ export const useCatalog = create<CatalogState>()(
             ...c,
             sortOrder: c.sortOrder ?? prev?.sortOrder ?? nextSortOrder(s.categories),
           };
+          const list = prev
+            ? s.categories.map((x) => (x.id === c.id ? withOrder : x))
+            : [...s.categories, withOrder];
+          // Re-sort by sortOrder. The admin's up/down arrows work by writing
+          // new sortOrder values, and the list is rendered in ARRAY order — so
+          // without this the numbers would change and nothing would visibly
+          // move. Matches the server, which returns `ORDER BY sort_order, name`.
           return {
-            categories: prev
-              ? s.categories.map((x) => (x.id === c.id ? withOrder : x))
-              : [...s.categories, withOrder],
+            categories: [...list].sort(
+              (a, b) =>
+                (a.sortOrder ?? Number.MAX_SAFE_INTEGER) -
+                  (b.sortOrder ?? Number.MAX_SAFE_INTEGER) ||
+                a.name.localeCompare(b.name)
+            ),
           };
         });
         const payload = get().categories.find((x) => x.id === c.id) ?? c;
@@ -156,8 +196,18 @@ export const useCatalog = create<CatalogState>()(
         set((s) => {
           const exists = s.industries.some((x) => x.id === i.id);
           if (exists) {
+            const prev = s.industries.find((x) => x.id === i.id);
+            // Same guard as categories/products: the industry form does not
+            // edit sortOrder, so carry the stored value through or an ordinary
+            // save resets the row to 0 and jumps it to the front.
+            const withOrder: Industry = {
+              ...i,
+              sortOrder: i.sortOrder ?? prev?.sortOrder ?? 0,
+            };
             return {
-              industries: s.industries.map((x) => (x.id === i.id ? i : x)),
+              industries: s.industries
+                .map((x) => (x.id === i.id ? withOrder : x))
+                .sort(bySortOrder),
             };
           }
           // New industry: enabled by default, timestamped, and prepended so it
@@ -166,8 +216,9 @@ export const useCatalog = create<CatalogState>()(
             ...i,
             visible: i.visible ?? true,
             createdAt: i.createdAt ?? Date.now(),
+            sortOrder: i.sortOrder ?? nextSortOrder(s.industries),
           };
-          return { industries: [created, ...s.industries] };
+          return { industries: [created, ...s.industries].sort(bySortOrder) };
         });
         // Send the enriched record so the backend stores visible/createdAt too.
         const payload = get().industries.find((x) => x.id === i.id) ?? i;

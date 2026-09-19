@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -51,6 +51,58 @@ const GROUP_LABEL: Record<SearchGroup, string> = {
   Section: "Sections",
   Legal: "Legal",
 };
+
+
+/**
+ * One result row. Renders a react-router <Link> for an in-app route, and a
+ * plain <a download target="_blank"> for an `external` entry (the catalogue
+ * PDF) — routing a real file path would 404 instead of downloading it.
+ * Both render the identical anchor box, so the row geometry is unchanged.
+ */
+const RowLink = forwardRef<
+  HTMLAnchorElement,
+  {
+    href: string;
+    external?: boolean;
+    title: string;
+    children: ReactNode;
+    className?: string;
+    onClick?: () => void;
+    onMouseEnter?: () => void;
+  }
+>(function RowLink(
+  { href, external, title, children, className, onClick, onMouseEnter },
+  ref
+) {
+  if (external) {
+    return (
+      <a
+        ref={ref}
+        href={href}
+        download
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`${title} — downloads a 17 MB PDF`}
+        className={className}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+      >
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link
+      ref={ref}
+      to={href}
+      className={className}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+    >
+      {children}
+    </Link>
+  );
+});
 
 export function NavSearch({
   className,
@@ -128,8 +180,11 @@ export function NavSearch({
     setActive(0);
   };
 
-  const go = (href: string) => {
-    navigate(href);
+  // An `external` entry (the brochure PDF) is a real file, not a route —
+  // navigate() would push /docs/… through the router and land on a 404.
+  const go = (href: string, external?: boolean) => {
+    if (external) window.open(href, "_blank", "noopener,noreferrer");
+    else navigate(href);
     close();
   };
 
@@ -137,7 +192,7 @@ export function NavSearch({
     e.preventDefault();
     if (!q) return;
     if (flat.length > 0 && active >= 0 && active < flat.length) {
-      go(flat[active].href);
+      go(flat[active].href, flat[active].external);
     } else {
       go(`/products?q=${encodeURIComponent(q)}`);
     }
@@ -229,8 +284,13 @@ export function NavSearch({
                           const isActive = i === active;
                           return (
                             <li key={r.id}>
-                              <Link
-                                to={r.href}
+                              {/* External entries (the catalogue PDF) render
+                                  as a real anchor so the browser downloads the
+                                  file instead of the router 404ing on it. */}
+                              <RowLink
+                                href={r.href}
+                                external={r.external}
+                                title={r.title}
                                 onClick={close}
                                 onMouseEnter={() => setActive(i)}
                                 ref={
@@ -284,7 +344,7 @@ export function NavSearch({
                                       : "text-steel-600 group-hover:text-neo-400"
                                   )}
                                 />
-                              </Link>
+                              </RowLink>
                             </li>
                           );
                         })}

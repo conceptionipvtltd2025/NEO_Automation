@@ -5,11 +5,37 @@ import { InquiryForm } from "@/components/InquiryForm";
 import { Reveal } from "@/components/ui/Reveal";
 import { site } from "@/data/site";
 
+// The address is the only multi-line value; it carries its own <br /> so the
+// card breaks where the postal address does, instead of ragging arbitrarily and
+// towering over the single-line cards beside it.
 const info = [
-  { icon: MapPin, label: "Address", value: `${site.address.line1} ${site.address.line2}` },
+  {
+    icon: MapPin,
+    label: "Address",
+    value: (
+      <>
+        {site.address.line1}
+        <br />
+        {site.address.line2}
+      </>
+    ),
+  },
   { icon: Phone, label: "Phone", value: site.phone, href: `tel:${site.phoneDial}` },
   { icon: Mail, label: "Email", value: site.email, href: `mailto:${site.email}` },
-  { icon: Clock, label: "Hours", value: site.hours.short },
+  {
+    icon: Clock,
+    // Split rather than using site.hours.short: that single string wrapped
+    // wherever the card ran out of room, orphaning "PM" onto its own line.
+    // Breaking at the day/time boundary is where a reader would break it too.
+    label: "Hours",
+    value: (
+      <>
+        {site.hours.days}
+        <br />
+        <span className="whitespace-nowrap">{site.hours.time}</span>
+      </>
+    ),
+  },
 ];
 
 const mapQuery = encodeURIComponent(site.map.query);
@@ -43,9 +69,18 @@ export default function Contact() {
                       <p className="text-xs uppercase tracking-wider text-steel-500">
                         {c.label}
                       </p>
+                      {/* `break-words` (overflow-wrap) was splitting the email
+                          mid-word — "neoautomatio / n.in". An address has no
+                          space to wrap at, so it needs `break-all`, which
+                          breaks at a sensible character boundary.
+                          leading-snug, not relaxed: the address runs to four
+                          lines, and relaxed leading made its card roughly twice
+                          the height of the single-line cards beside it. */}
                       <p
-                        className={`mt-1 break-words font-medium text-white ${
-                          c.label === "Email" ? "text-[14.5px]" : "text-sm"
+                        className={`mt-1 font-medium leading-snug text-white ${
+                          c.label === "Email"
+                            ? "break-all text-[14.5px]"
+                            : "text-sm"
                         }`}
                       >
                         {c.value}

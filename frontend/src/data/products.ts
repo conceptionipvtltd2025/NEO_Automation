@@ -39,6 +39,17 @@ export type Product = {
    */
   special?: boolean;
   /**
+   * Position in the CATALOGUE sequence, within this product's own category —
+   * the list a visitor actually browses. `npm run order:alphabetical` writes a
+   * 1..n A-Z baseline once at deploy; the admin owns it after that. It MUST be
+   * carried through every edit, or an ordinary save resets the row to 0 and
+   * jumps it to the front of its family.
+   *
+   * Distinct from `homeOrder`/`categoryOrder`, which rank a product on the HOME
+   * page only and still take precedence there.
+   */
+  sortOrder?: number;
+  /**
    * Position within the home page sections (ascending). Products without one
    * sort last, so an admin only has to number the few they care about.
    */

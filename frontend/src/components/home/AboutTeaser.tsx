@@ -30,7 +30,7 @@ export function AboutTeaser() {
                 <Award className="h-8 w-8 text-neo-500" />
                 <div>
                   <p className="font-display text-2xl font-bold text-white">
-                    <Counter value={18} suffix="+" />
+                    <Counter value={19} suffix="+" />
                   </p>
                   <p className="text-xs text-steel-400">Years of excellence</p>
                 </div>

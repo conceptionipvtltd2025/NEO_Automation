@@ -32,10 +32,15 @@
     /* Muted copy runs brighter than the original scale: at the larger type
        size the old steel-400/500 greys were the main reason small print read as
        "not clearly visible". Hue is unchanged — only luminance. */
-    --steel-300: 200 208 220;
-    --steel-400: 170 180 196;
-    --steel-500: 140 150 168;
-    --steel-600: 104 113 130;
+    --steel-300: 205 213 224;
+    --steel-400: 184 193 208;
+    /* 500/600 are the eyebrow/label greys. They were the one real contrast
+       failure left: measured against the site's TINTED card and band fills
+       (not the near-black page), old 500 hit 4.23:1 and old 600 only 2.57:1 on
+       the teal band — below AA. These values clear 4.5:1 on that worst case
+       and ~7-9:1 on the page itself. Hue unchanged; luminance only. */
+    --steel-500: 168 178 196;
+    --steel-600: 146 156 174;
     --steel-700: 50 56 68;
 
     /* `white` token → cool light foreground / translucent light overlays */
@@ -501,70 +506,79 @@
   }
 
   /* ── Logo mark ──────────────────────────────────────────────────────
-     The NEO brand mark is the client's logo as-is: black ornament + red
-     "NEO" circle on white. To sit it in the premium dark UI without looking
-     like a harsh white sticker, we frame it on a soft IVORY disc with a thin
-     brand-red ring and a diffuse red glow — so it reads as an intentional,
-     high-end medallion that belongs to the dark theme. */
+     The brand mark is the official mandala: a transparent-background rounded
+     DIAMOND — black filigree framing the red "NEO" ring. It is NOT the old
+     opaque white square, so it gets no disc, no mask and no ring: the ivory
+     puck those rules drew would clip 84% of the filigree (the points reach 95%
+     of the half-width on the 12/3/6/9 axes, far past any inscribed circle) and
+     would re-introduce the white sticker the transparent art exists to avoid.
+     The art sits directly on the page; only a soft red halo anchors it to the
+     palette. */
   .logo-mark {
     position: relative;
     display: grid;
     place-items: center;
-    overflow: hidden;
-    border-radius: 9999px;
-    /* soft ivory disc — a hair off pure white so it's warm, not glaring */
-    background: radial-gradient(
-      circle at 50% 34%,
-      #ffffff 0%,
-      #fbfbfa 62%,
-      #f1f0ee 100%
-    );
-    box-shadow:
-      /* thin brand-red ring ties it to the site palette */
-      0 0 0 1.5px rgba(237, 28, 36, 0.55),
-      /* subtle dark separation from the disc edge */ 0 0 0 3px rgba(10, 10, 12, 0.55),
-      /* soft red glow so it feels lit, not pasted-on */ 0 6px 20px -8px rgba(237, 28, 36, 0.55),
-      0 2px 8px -3px rgba(0, 0, 0, 0.55),
-      inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      filter 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .logo-mark img {
     position: relative;
     z-index: 1;
-    /* logo.png is a full-bleed white square (opaque bg + black ornament + red
-       NEO circle) whose outer filigree points touch all four edges. CONTAIN it
-       a touch inside the disc so the whole medallion sits within the circular
-       mask with an even mat all around — fully visible, balanced, and never
-       clipped at top/bottom/left/right (the old 116% overflowed the rim). */
-    width: 92%;
-    height: 92%;
+    /* Full-bleed: the diamond's own transparent corners are the breathing
+       room, so insetting it again only shrinks the mark inside its box. */
+    width: 100%;
+    height: 100%;
     object-fit: contain;
   }
-  /* diffuse red glow behind the disc — anchors it to the brand's red accents
-     (buttons, links) so the mark feels part of the design. Kept static and
+  /* The artwork is used exactly as supplied, so its filigree stays near-black
+     (8,3,0) — 1.14:1 against the dark chrome, i.e. invisible. Rather than
+     recolour the mark, we put a light plate BEHIND it, which is how the logo
+     appears on the client's own brochure and shopfront signage. Inset to 6%
+     so the plate reads as a rounded badge behind the diamond rather than a
+     hard square crop, and only in dark contexts — on the light theme the page
+     is already near-white and a plate would be a visible grey sticker. */
+  html:not(.light) .logo-mark::before,
+  .force-dark .logo-mark::before {
+    content: "";
+    position: absolute;
+    /* NEGATIVE inset: the diamond's points reach 95% of the half-width, so a
+       positive inset crops them against the plate edge. -4% puts the plate
+       fractionally OUTSIDE the art, so the whole mark — points included — sits
+       on white with a hairline of margin. */
+    /* NEGATIVE inset: the diamond's points reach 95% of the half-width, so a
+       positive inset crops them against the plate edge. -6% puts the plate
+       fractionally OUTSIDE the art so the whole mark sits on white.
+       A CIRCLE, not a rounded square: the mandala's own silhouette is round,
+       and a squared badge fought the pill-shaped header bar — it read as a
+       sticker pasted onto the nav rather than part of it. */
+    inset: -6%;
+    z-index: 0;
+    border-radius: 9999px;
+    background: #fff;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
+  }
+  /* diffuse red glow behind the mark — anchors it to the brand's red accents
+     (buttons, links) so it feels part of the design. Kept static and
      restrained: a soft halo, not a flashing pulse — reads premium, not busy. */
   .logo-mark::after {
     content: "";
     position: absolute;
-    inset: -24%;
+    inset: -12%;
     z-index: -1;
     border-radius: 9999px;
     background: radial-gradient(
       circle,
-      rgba(237, 28, 36, 0.32) 0%,
-      rgba(237, 28, 36, 0) 62%
+      rgba(237, 28, 36, 0.28) 0%,
+      rgba(237, 28, 36, 0) 64%
     );
     opacity: 0.5;
   }
-  /* hover: gentle lift + brighter red ring/glow */
+  /* hover: gentle lift + a touch more glow */
   .logo-lockup:hover .logo-mark {
-    transform: translateY(-1px) scale(1.05);
-    box-shadow: 0 0 0 1.5px rgba(237, 28, 36, 0.9),
-      0 0 0 3px rgba(10, 10, 12, 0.55),
-      0 10px 28px -8px rgba(237, 28, 36, 0.7),
-      0 2px 8px -3px rgba(0, 0, 0, 0.55),
-      inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px) scale(1.04);
+  }
+  .logo-lockup:hover .logo-mark::after {
+    opacity: 0.85;
   }
   @media (prefers-reduced-motion: reduce) {
     .logo-mark {

@@ -21,11 +21,14 @@ import {
   Zap,
   Gauge,
 } from "lucide-react";
+import { asset } from "@/lib/asset";
 
 /**
  * Per-page animated header art. Each PageHeader can pass one of these as its
- * `media` so every page gets a distinct, on-brand motif. All are pure CSS/SVG +
- * framer-motion — no images, so nothing can 404 and they stay crisp at any size.
+ * `media` so every page gets a distinct, on-brand motif. Almost all are pure
+ * CSS/SVG + framer-motion — no images, so nothing can 404 and they stay crisp at
+ * any size. The one exception is AboutHeaderArt, which shows the real logo
+ * artwork because that page's motif IS the brand mark.
  *
  * Shared shell keeps sizing/positioning consistent across variants.
  */
@@ -180,14 +183,32 @@ export function AboutHeaderArt() {
           <span className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-neo-500 shadow-[0_0_12px_2px_rgba(237,28,36,0.6)]" />
         </motion.div>
       ))}
+      {/* The plate carries the REAL logo, so it has to be a hard `bg-pure`
+          white: the mandala filigree is near-black ink and the wordmark is red,
+          both invisible on the ink fill this tile used to have. `bg-pure` is a
+          literal #ffffff — `bg-white` is the token-driven --fg, which flips to
+          near-ink in the light theme and would swallow the artwork.
+          Staying 34% is deliberate, not inherited: the tile is a SQUARE inside a
+          circular ring set, so its corners are what approach the innermost ring
+          (52%). At 34% the half-diagonal clears that ring by ~7px; at 38% it
+          cuts straight through it. */}
       <motion.div
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute left-1/2 top-1/2 grid h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-ink-900/80 shadow-2xl shadow-black/50 backdrop-blur-md"
+        className="absolute left-1/2 top-1/2 grid h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-pure p-[5%] shadow-2xl shadow-black/50"
       >
-        <span className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-bold tracking-tight text-white">
-          N<span className="text-neo-500">E</span>O
-        </span>
+        {/* Padding is a PERCENTAGE, not a fixed p-*, because the stage is fluid
+            (w-full up to max-w-sm) — 5% holds the same margin at every width.
+            Kept small on purpose: the artwork is the source JPEG with only its
+            surrounding whitespace trimmed, so the file's own edges already sit
+            close to the ink and a larger inset strands a tiny mark in a big
+            plate. No optical nudge is needed — the ink is centred in its canvas
+            to within half a pixel at 1024px. */}
+        <img
+          src={asset("images/logo.png")}
+          alt="Neo Automation logo"
+          className="h-full w-full object-contain"
+        />
       </motion.div>
     </Stage>
   );

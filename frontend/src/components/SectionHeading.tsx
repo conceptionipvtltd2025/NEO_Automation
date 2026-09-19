@@ -44,7 +44,18 @@ export function SectionHeading({
         </h2>
         {subtitle && (
           <Reveal delay={0.1}>
-            <p className="mt-2.5 text-[14px] leading-relaxed text-steel-400 sm:mt-4 sm:text-base">
+            {/* The section sub-heading is the first real sentence a visitor
+                reads, so it is set as intro copy rather than a caption:
+                15/17.5px (was 14/16) on steel-200 (was steel-400). The old
+                grey sat around 6:1 on the site's tinted section bands — legible
+                by the letter of AA but visibly washed out, and the first thing
+                anyone reading at arm's length complains about. max-w-prose
+                caps the measure so a long subtitle does not run to a
+                hard-to-track 100+ characters per line. */}
+            <p className={cn(
+                "mt-2.5 max-w-prose text-[15px] leading-relaxed text-steel-200 sm:mt-4 sm:text-[17.5px]",
+                centered && "mx-auto"
+              )}>
               {subtitle}
             </p>
           </Reveal>

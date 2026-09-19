@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import type { NavItem, NavColumn, NavFeatured, NavTile } from "@/data/site";
+import { safeImg, onImgError } from "@/lib/image";
 import { cn } from "@/lib/utils";
 
 // The animated Desoutter-style dropdown panel that drops beneath a nav item.
@@ -176,7 +177,8 @@ function TilesLayout({
               className="force-dark group relative block aspect-[16/10] overflow-hidden rounded-2xl border border-white/10"
             >
               <img
-                src={t.image}
+                src={safeImg(t.image)}
+                onError={onImgError}
                 alt=""
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"

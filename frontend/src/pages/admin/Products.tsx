@@ -12,6 +12,7 @@ import {
   AdminToolbar,
   AdminForm,
   IconBtn,
+  OrderArrows,
   Field,
   usePagination,
   AdminPagination,
@@ -63,6 +64,39 @@ export default function AdminProducts() {
       p.brand.toLowerCase().includes(search.toLowerCase())
   );
   const { paged, ...pager } = usePagination(filtered, [search]);
+
+  /* ── sequence: arrows renumber 1..n WITHIN the product's own category ──── */
+
+  // Products are sequenced per CATEGORY — that is the only list a visitor
+  // browses them in — so "up" means "up among your own family", never up past
+  // an unrelated product that merely happens to sit next to you in this table.
+  const siblings = (categoryId?: string) =>
+    products.filter((x) => (x.categoryId ?? "") === (categoryId ?? ""));
+
+  const move = (id: string, dir: -1 | 1) => {
+    const me = products.find((x) => x.id === id);
+    if (!me) return;
+    const family = siblings(me.categoryId);
+    const from = family.findIndex((x) => x.id === id);
+    const to = from + dir;
+    if (from < 0 || to < 0 || to >= family.length) return;
+    const next = [...family];
+    [next[from], next[to]] = [next[to], next[from]];
+    next.forEach((prod, idx) => {
+      const pos = idx + 1;
+      if (prod.sortOrder !== pos) upsertProduct({ ...prod, sortOrder: pos });
+    });
+  };
+
+  // Searching hides rows, so the arrows would move a product past siblings the
+  // admin cannot see. They act on the full family, so disable while filtering.
+  const filtering = search.trim().length > 0;
+  /** First/last WITHIN the product's own category, not the whole table. */
+  const isFirst = (p: Product) => siblings(p.categoryId)[0]?.id === p.id;
+  const isLast = (p: Product) => {
+    const fam = siblings(p.categoryId);
+    return fam[fam.length - 1]?.id === p.id;
+  };
 
   const openEdit = (p: Product) => {
     setEditing(p);
@@ -143,6 +177,7 @@ export default function AdminProducts() {
         <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-steel-500">
+              <th className="w-[92px] px-5 py-4 font-medium">Order</th>
               <th className="px-5 py-4 font-medium">Product</th>
               <th className="px-5 py-4 font-medium">Brand</th>
               <th className="px-5 py-4 font-medium">Home page</th>
@@ -153,6 +188,15 @@ export default function AdminProducts() {
           <tbody>
             {paged.map((p) => (
               <tr key={p.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.02]">
+                <td className="px-5 py-4">
+                  <OrderArrows
+                    onUp={() => move(p.id, -1)}
+                    onDown={() => move(p.id, 1)}
+                    first={isFirst(p)}
+                    last={isLast(p)}
+                    disabled={filtering}
+                  />
+                </td>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
                     <img src={safeImg(p.images[0])} onError={onImgError} alt="" className="h-11 w-11 rounded-lg object-cover" />
@@ -221,7 +265,7 @@ export default function AdminProducts() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-steel-500">
+                <td colSpan={6} className="px-5 py-12 text-center text-steel-500">
                   No products found.
                 </td>
               </tr>
@@ -245,7 +289,14 @@ export default function AdminProducts() {
                   </p>
                 )}
               </div>
-              <div className="flex shrink-0 gap-1.5">
+              <div className="flex shrink-0 items-center gap-1.5">
+                <OrderArrows
+                  onUp={() => move(p.id, -1)}
+                  onDown={() => move(p.id, 1)}
+                  first={isFirst(p)}
+                  last={isLast(p)}
+                  disabled={filtering}
+                />
                 <IconBtn onClick={() => openEdit(p)} title="Edit">
                   <Pencil className="h-4 w-4" />
                 </IconBtn>

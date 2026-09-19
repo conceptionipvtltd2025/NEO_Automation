@@ -10,8 +10,10 @@ import {
   Facebook,
   ArrowUpRight,
   ArrowUp,
+  Download,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { BROCHURE_HREF, BROCHURE_LABEL, BROCHURE_META } from "@/components/BrochureCTA";
 import { site, navItems } from "@/data/site";
 import { categories } from "@/data/categories";
 import { getLenis } from "@/components/providers/SmoothScroll";
@@ -29,6 +31,13 @@ const social = [
   { icon: Facebook, href: site.social.facebook, label: "Facebook" },
   { icon: Instagram, href: site.social.instagram, label: "Instagram" },
   { icon: XIcon, href: site.social.twitter, label: "X" },
+];
+
+// Pages the header reaches only through a mega-menu column, so the footer's
+// Navigate list surfaces them directly.
+const extraLinks = [
+  { label: "Sustainability & Safety", href: "/sustainability" },
+  { label: "CSR & Community", href: "/csr" },
 ];
 
 export function Footer() {
@@ -87,14 +96,37 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              {/* Pages with no top-level nav item of their own. */}
+              {extraLinks.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    to={l.href}
+                    className="group inline-flex min-h-[44px] items-center gap-1 py-1 text-sm text-steel-300 transition hover:text-white sm:min-h-0 sm:py-0.5"
+                  >
+                    {l.label}
+                    <ArrowUpRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
+                  </Link>
+                </li>
+              ))}
+              {/* The brochure is a static PDF, not a route — it cannot join
+                  extraLinks above, whose entries render as react-router
+                  <Link>s and would push /docs/… through the router and 404.
+                  Same row geometry and classes, plain <a download> inside. */}
               <li>
-                <Link
-                  to="/sustainability"
-                  className="group inline-flex min-h-[44px] items-center gap-1 py-1 text-sm text-steel-300 transition hover:text-white sm:min-h-0 sm:py-0.5"
+                <a
+                  href={BROCHURE_HREF}
+                  download
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Download the ${BROCHURE_LABEL} — PDF, 17 MB`}
+                  className="group inline-flex min-h-[44px] items-center gap-1.5 py-1 text-sm text-steel-300 transition hover:text-white sm:min-h-0 sm:py-0.5"
                 >
-                  Sustainability &amp; Safety
-                  <ArrowUpRight className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
-                </Link>
+                  <Download className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-y-0.5" />
+                  Download catalogue
+                  <span aria-hidden className="text-[12px] text-steel-500">
+                    {BROCHURE_META}
+                  </span>
+                </a>
               </li>
             </ul>
           </div>
@@ -121,6 +153,11 @@ export function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-steel-500">
               Get in touch
             </h4>
+            {/* Two DEPARTMENT lines (Sales / Service), not the per-person
+                directory — a visitor who does not know who to ask wants a desk,
+                not a name. The Sales number is also the WhatsApp number, so it
+                carries the WhatsApp icon and links to wa.me rather than being
+                repeated as a separate row. */}
             <ul className="mt-5 space-y-4 text-sm text-steel-300">
               <li className="flex gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-neo-500" />
@@ -130,29 +167,35 @@ export function Footer() {
                   {site.address.line2}
                 </span>
               </li>
-              <li>
-                <a href={`tel:${site.phoneDial}`} className="flex items-center gap-3 transition hover:text-white">
-                  <Phone className="h-4 w-4 shrink-0 text-neo-500" />
-                  {site.phone}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`https://wa.me/${site.whatsapp}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-3 transition hover:text-white"
-                >
-                  <MessageCircle className="h-4 w-4 shrink-0 text-neo-500" />
-                  {site.whatsappDisplay}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${site.email}`} className="flex items-center gap-3 transition hover:text-white">
-                  <Mail className="h-4 w-4 shrink-0 text-neo-500" />
-                  {site.email}
-                </a>
-              </li>
+              {site.departments.map((d) => {
+                // Sales is the WhatsApp line — same number, so link it there.
+                const isWhatsapp = d.phoneDial.replace(/\D/g, "") === site.whatsapp;
+                const PhoneIcon = isWhatsapp ? MessageCircle : Phone;
+                return (
+                  <li key={d.label}>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-steel-500">
+                      {d.label}
+                    </p>
+                    <a
+                      href={isWhatsapp ? `https://wa.me/${site.whatsapp}` : `tel:${d.phoneDial}`}
+                      {...(isWhatsapp ? { target: "_blank", rel: "noreferrer" } : {})}
+                      className="mt-1.5 flex items-center gap-3 transition hover:text-white"
+                    >
+                      <PhoneIcon className="h-4 w-4 shrink-0 text-neo-500" />
+                      <span className="whitespace-nowrap">{d.phone}</span>
+                    </a>
+                    <a
+                      href={`mailto:${d.email}`}
+                      className="mt-1.5 flex items-center gap-3 transition hover:text-white"
+                    >
+                      <Mail className="h-4 w-4 shrink-0 text-neo-500" />
+                      {/* break-all: an address has no space to wrap at, so
+                          overflow-wrap would widen the row past its track. */}
+                      <span className="min-w-0 break-all">{d.email}</span>
+                    </a>
+                  </li>
+                );
+              })}
               <li className="flex gap-3">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-neo-500" />
                 <span>

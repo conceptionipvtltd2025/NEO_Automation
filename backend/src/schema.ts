@@ -101,8 +101,8 @@ export const TABLES: string[] = [
 const ALTERS: string[] = [
   `ALTER TABLE industries ADD COLUMN visible TINYINT(1) DEFAULT 1`,
   `ALTER TABLE industries ADD COLUMN created_at BIGINT DEFAULT 0`,
-  // Catalogue sequence is client-specified content, not alphabetical — the
-  // twelve solution families must list in the order given in seedData.
+  // Catalogue sequence. `npm run order:alphabetical` seeds this A-Z once at
+  // deploy; after that the admin's up/down arrows own it and nothing resets it.
   `ALTER TABLE categories ADD COLUMN sort_order INT DEFAULT 0`,
   // Second-level catalogue: which brand product line a product belongs to
   // (e.g. Atlas Copco → electric-assembly-tools).
@@ -131,6 +131,13 @@ const ALTERS: string[] = [
   // scale as products.home_order — so a product and a whole category can be
   // interleaved (product at 1, category at 2, …).
   `ALTER TABLE categories ADD COLUMN home_order INT DEFAULT NULL`,
+  // Explicit sequence for industries and products, so both can be ordered by
+  // the admin exactly like categories and brands already are. Both default to
+  // 0; `npm run order:alphabetical` writes a 1..n A-Z baseline at deploy and
+  // the admin owns the value from then on. Products sort within their own
+  // category, so the number only has to be unique per category, not globally.
+  `ALTER TABLE industries ADD COLUMN sort_order INT DEFAULT 0`,
+  `ALTER TABLE products ADD COLUMN sort_order INT DEFAULT 0`,
 ];
 
 export async function migrate() {

@@ -120,8 +120,11 @@ export default {
         "9xl": ["8rem", { lineHeight: "1" }],
       },
       fontFamily: {
-        sans: ["Sora", "Inter", "system-ui", "sans-serif"],
-        display: ["Clash Display", "Sora", "sans-serif"],
+        // Inter for body, Manrope for display. Both ship a tall x-height and
+        // open apertures, so they stay legible at small sizes and on dark
+        // backgrounds where thin, geometric faces smear.
+        sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        display: ["Manrope", "Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
       backgroundImage: {

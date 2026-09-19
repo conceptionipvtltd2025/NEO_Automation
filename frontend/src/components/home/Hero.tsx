@@ -103,9 +103,17 @@ export function Hero() {
         className="container-px relative z-10 grid w-full items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]"
       >
         <div>
-          <h1 className="font-display text-[clamp(2.6rem,7vw,5.4rem)] font-bold leading-[0.98] tracking-tight">
+          {/* leading-[1.12], not [0.98]: each line is `overflow-hidden` so the
+              word can slide up from below on load, which means the line box
+              doubles as a CLIP RECT. At 0.98 the box (84.7px) was shorter than
+              the font size (86.4px), so every descender fell outside it and was
+              sliced — the "g"s in "Engineering" and the "y" in "Industry" lost
+              their tails. Manrope needs ~1.10 to clear its descenders; 1.12
+              leaves a hair of margin. The lines are pulled back together with a
+              negative margin on each span so the stack looks as tight as before. */}
+          <h1 className="font-display text-[clamp(2.6rem,7vw,5.4rem)] font-bold leading-[1.12] tracking-tight">
             {["Engineering", "Tomorrow's"].map((word, i) => (
-              <span key={i} className="block overflow-hidden">
+              <span key={i} className="-mb-[0.14em] block overflow-hidden">
                 <motion.span
                   className="inline-block text-white"
                   initial={{ y: "110%" }}
@@ -116,6 +124,8 @@ export function Hero() {
                 </motion.span>
               </span>
             ))}
+            {/* No negative margin on the LAST line: it would pull the h1
+                box up over this line's own descenders and clip the "y". */}
             <span className="block overflow-hidden">
               <motion.span
                 className="inline-block text-white"

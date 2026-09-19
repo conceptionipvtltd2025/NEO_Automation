@@ -9,6 +9,7 @@ import {
   AdminToolbar,
   AdminForm,
   IconBtn,
+  OrderArrows,
   Field,
   usePagination,
   AdminPagination,
@@ -40,6 +41,32 @@ export default function AdminIndustries() {
     i.name.toLowerCase().includes(search.toLowerCase())
   );
   const { paged, ...pager } = usePagination(filtered, [search]);
+
+  /* ── sequence: arrows renumber 1..n so nobody types a sort number ─────── */
+
+  // `industries` arrives in sort_order (the API sorts by it), so array order
+  // IS the sequence. Reordering is a swap plus a renumber of the FULL list.
+  const commitOrder = (list: typeof industries) => {
+    list.forEach((ind, idx) => {
+      const pos = idx + 1;
+      if (ind.sortOrder !== pos) upsertIndustry({ ...ind, sortOrder: pos });
+    });
+  };
+
+  const move = (id: string, dir: -1 | 1) => {
+    const from = industries.findIndex((x) => x.id === id);
+    const to = from + dir;
+    if (from < 0 || to < 0 || to >= industries.length) return;
+    const next = [...industries];
+    [next[from], next[to]] = [next[to], next[from]];
+    commitOrder(next);
+  };
+
+  // Searching hides rows, so "up" could jump one past neighbours the admin
+  // cannot see. Arrows act on the FULL list, so disable them while filtering.
+  const filtering = search.trim().length > 0;
+  const firstId = industries[0]?.id;
+  const lastId = industries[industries.length - 1]?.id;
 
   const openEdit = (ind: Industry) => {
     setEditing(ind);
@@ -109,7 +136,15 @@ export default function AdminIndustries() {
             <div className="p-4">
               <h3 className="font-display text-base font-semibold text-white">{ind.name}</h3>
               <p className="mt-1 line-clamp-2 text-xs text-steel-400">{ind.tagline}</p>
-              <div className="mt-3 flex justify-end gap-2">
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <OrderArrows
+                  onUp={() => move(ind.id, -1)}
+                  onDown={() => move(ind.id, 1)}
+                  first={ind.id === firstId}
+                  last={ind.id === lastId}
+                  disabled={filtering}
+                />
+                <div className="flex gap-2">
                 <IconBtn
                   onClick={() => toggleIndustry(ind.id)}
                   title={ind.visible === false ? "Enable (show on site)" : "Disable (hide from site)"}
@@ -122,6 +157,7 @@ export default function AdminIndustries() {
                 <IconBtn onClick={() => setDeleteId(ind.id)} title="Delete" danger>
                   <Trash2 className="h-4 w-4" />
                 </IconBtn>
+                </div>
               </div>
             </div>
           </div>

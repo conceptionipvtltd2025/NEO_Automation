@@ -27,6 +27,11 @@ export function Navbar() {
 
   const activeItem = navItems.find((i) => i.label === activeMega) ?? null;
 
+  // Is this nav item the section the visitor is currently in? Mirrors the
+  // desktop `routeActive` rule: exact match for "/", prefix match otherwise.
+  const mobileRouteActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
   const openMega = (label: string) => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setActiveMega(label);
@@ -92,10 +97,21 @@ export function Navbar() {
                 // space-between pushed the nav off-centre and let the three
                 // groups touch at 1280px. auto | 1fr | auto centres the nav on
                 // the BAR and keeps a real gutter either side at every width.
-                "mt-3 grid grid-cols-[minmax(0,auto)_1fr_auto] items-center gap-2 rounded-2xl border px-3 py-3 transition-all duration-500 sm:gap-4 sm:px-5 xl:gap-8",
+                //
+                // `rounded-full`, not rounded-2xl: once the logo grew, a
+                // 16px-radius rectangle read as a slab with a badge stuck to
+                // it. A full pill is the shape most modern marketing headers
+                // settle on — it reads as one deliberate floating object, and
+                // the round logo plate now echoes the bar's own ends.
+                // py-2 (was py-3) because the mark itself now sets the bar's
+                // height; keeping the old padding made the header tower.
+                "mt-3 grid grid-cols-[minmax(0,auto)_1fr_auto] items-center gap-2 rounded-full border px-3 py-2 transition-all duration-500 sm:gap-4 sm:px-4 xl:gap-8",
                 scrolled || activeMega || searchOpen
                   ? "border-white/10 bg-ink-900/80 shadow-card backdrop-blur-xl"
-                  : "border-transparent bg-transparent",
+                  // Even at rest the bar keeps a faint scrim. Fully transparent
+                  // chrome over a busy photo hero was the main reason the
+                  // header "broke the look" — the nav links fought the image.
+                  : "border-white/5 bg-ink-950/25 backdrop-blur-md",
                 overDarkHero && !activeMega && !searchOpen && "force-dark"
               )}
             >
@@ -254,13 +270,30 @@ export function Navbar() {
                             )
                           }
                           aria-expanded={mobileExpanded === item.label}
+                          aria-current={
+                            mobileRouteActive(item.href) ? "page" : undefined
+                          }
                           className={cn(
-                            "flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-lg font-medium transition",
-                            mobileExpanded === item.label
+                            // Two INDEPENDENT states, which used to be conflated:
+                            //   • expanded  — this accordion is open right now
+                            //   • active    — this is the section you are on
+                            // Keying the highlight off `mobileExpanded` alone meant
+                            // that on /industries nothing was marked, and opening
+                            // the Products accordion lit Products up as if it were
+                            // the current page. Now the accent bar tracks the ROUTE
+                            // and the subtle fill tracks the accordion.
+                            "relative flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-lg font-medium transition",
+                            mobileRouteActive(item.href) || mobileExpanded === item.label
                               ? "bg-white/[0.05] text-white"
                               : "text-steel-300 hover:bg-white/[0.04] hover:text-white"
                           )}
                         >
+                          {mobileRouteActive(item.href) && (
+                            <span
+                              aria-hidden
+                              className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-neo-500"
+                            />
+                          )}
                           {item.label}
                           <ChevronDown
                             className={cn(

@@ -7,6 +7,8 @@ import {
   Tags,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Home,
 } from "lucide-react";
 import { useCatalog } from "@/store/useCatalog";
@@ -27,6 +29,33 @@ export default function AdminCategories() {
     c.name.toLowerCase().includes(search.toLowerCase())
   );
   const { paged, ...pager } = usePagination(filtered, [search]);
+
+  /* ── sequence: arrows renumber 1..n so nobody types a sort number ─────── */
+
+  // `categories` already arrives in sort_order (the API sorts by it), so the
+  // array order IS the sequence. Reordering is a swap plus a renumber.
+  const commitOrder = (list: Category[]) => {
+    list.forEach((c, i) => {
+      const pos = i + 1;
+      if (c.sortOrder !== pos) upsertCategory({ ...c, sortOrder: pos });
+    });
+  };
+
+  const move = (id: string, dir: -1 | 1) => {
+    const from = categories.findIndex((c) => c.id === id);
+    const to = from + dir;
+    if (from < 0 || to < 0 || to >= categories.length) return;
+    const next = [...categories];
+    [next[from], next[to]] = [next[to], next[from]];
+    commitOrder(next);
+  };
+
+  // A search hides rows, so "up" could jump a category over neighbours the
+  // admin cannot see — the arrows act on the FULL list, so they are disabled
+  // while filtering rather than silently doing something surprising.
+  const filtering = search.trim().length > 0;
+  const firstId = categories[0]?.id;
+  const lastId = categories[categories.length - 1]?.id;
 
   const save = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +81,7 @@ export default function AdminCategories() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wider text-steel-500">
+              <th className="w-[92px] px-5 py-4 font-medium">Order</th>
               <th className="px-5 py-4 font-medium">Name</th>
               <th className="px-5 py-4 font-medium">Description</th>
               <th className="px-5 py-4 font-medium">Home page</th>
@@ -61,6 +91,15 @@ export default function AdminCategories() {
           <tbody>
             {paged.map((c) => (
               <tr key={c.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.02]">
+                <td className="px-5 py-4">
+                  <OrderArrows
+                    onUp={() => move(c.id, -1)}
+                    onDown={() => move(c.id, 1)}
+                    first={c.id === firstId}
+                    last={c.id === lastId}
+                    disabled={filtering}
+                  />
+                </td>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
                     <span className="grid h-9 w-9 place-items-center rounded-lg bg-neo-600/15 text-neo-400">
@@ -101,7 +140,7 @@ export default function AdminCategories() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-5 py-12 text-center text-steel-500">
+                <td colSpan={5} className="px-5 py-12 text-center text-steel-500">
                   No categories found.
                 </td>
               </tr>
@@ -124,7 +163,14 @@ export default function AdminCategories() {
                   <p className="mt-1 line-clamp-2 text-xs text-steel-400">{c.description}</p>
                 )}
               </div>
-              <div className="flex shrink-0 gap-1.5">
+              <div className="flex shrink-0 items-center gap-1.5">
+                <OrderArrows
+                  onUp={() => move(c.id, -1)}
+                  onDown={() => move(c.id, 1)}
+                  first={c.id === firstId}
+                  last={c.id === lastId}
+                  disabled={filtering}
+                />
                 <IconBtn onClick={() => setEditing(c)} title="Edit">
                   <Pencil className="h-4 w-4" />
                 </IconBtn>
@@ -432,6 +478,54 @@ export function AdminToolbar({
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Up/down sequence arrows, mirroring the pair on the Home page admin so the
+ * gesture is identical wherever an admin orders something.
+ *
+ * `first`/`last` disable the arrow that would do nothing, and `disabled`
+ * switches the whole control off while a search is filtering the list — moving
+ * a row "up" past neighbours the admin cannot see is never what they meant.
+ */
+export function OrderArrows({
+  onUp,
+  onDown,
+  first,
+  last,
+  disabled,
+}: {
+  onUp: () => void;
+  onDown: () => void;
+  first?: boolean;
+  last?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <div
+      className="flex items-center gap-1"
+      title={disabled ? "Clear the search to reorder" : undefined}
+    >
+      <button
+        type="button"
+        onClick={onUp}
+        disabled={first || disabled}
+        aria-label="Move up"
+        className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-400 transition hover:border-white/25 hover:text-white disabled:pointer-events-none disabled:opacity-25"
+      >
+        <ChevronUp className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={onDown}
+        disabled={last || disabled}
+        aria-label="Move down"
+        className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-steel-400 transition hover:border-white/25 hover:text-white disabled:pointer-events-none disabled:opacity-25"
+      >
+        <ChevronDown className="h-4 w-4" />
+      </button>
     </div>
   );
 }

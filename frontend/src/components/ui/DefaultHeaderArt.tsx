@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import { ShieldCheck, Sparkles } from "lucide-react";
+import { asset } from "@/lib/asset";
 
 /**
  * Generic branded banner shown on the right of every PageHeader when a page
- * doesn't supply its own `media`. Pure CSS/SVG — no images to manage — so it
- * stays crisp, fast and on-brand on any page (About, Contact, Legal, …).
+ * doesn't supply its own `media`. Rings, glow and chips are pure CSS — the only
+ * image is the logo itself, so it stays crisp, fast and on-brand on any page
+ * (About, Contact, Legal, …).
  */
 export function DefaultHeaderArt() {
   return (
@@ -27,15 +29,23 @@ export function DefaultHeaderArt() {
         </motion.div>
       ))}
 
-      {/* Center emblem */}
+      {/* Center emblem — the real logo artwork, matching AboutHeaderArt.
+          The plate is a hard `bg-pure` (#ffffff) because the mandala filigree is
+          near-black ink and the wordmark red: both vanish on an ink fill. Not
+          `bg-white`, which is the token-driven --fg and flips to near-ink in the
+          light theme. Padding is a percentage so the margin holds at every stage
+          width, and `object-contain` keeps the square mandala's ornamental
+          points from being stretched or clipped. */}
       <motion.div
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute left-1/2 top-1/2 grid h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-ink-900/80 shadow-2xl shadow-black/50 backdrop-blur-md"
+        className="absolute left-1/2 top-1/2 grid h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-pure p-[10%] shadow-2xl shadow-black/50"
       >
-        <span className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-bold tracking-tight text-white">
-          N<span className="text-neo-500">E</span>O
-        </span>
+        <img
+          src={asset("images/logo.png")}
+          alt="Neo Automation logo"
+          className="h-full w-full object-contain"
+        />
       </motion.div>
 
       {/* Floating accent chips */}

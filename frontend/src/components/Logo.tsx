@@ -67,15 +67,17 @@ export function Logo({
         <span className="-mt-px flex min-w-0 flex-col leading-none">
           <span
             className={cn(
-              // Solid foreground, NO red letter: the mandala already carries the
-              // red "NEO", and a second, differently-cut red E beside it read as
-              // two competing wordmarks. `text-white` is token-driven
-              // (--fg), so it flips to ink in the light theme.
+              // `text-white` is token-driven (--fg), so it flips to ink in the
+              // light theme; only the E carries the brand red.
               "font-display font-bold leading-none tracking-tight text-white",
               compact ? "text-[1.35rem]" : "text-[1.35rem] xs:text-[1.45rem] sm:text-[1.7rem] lg:text-[1.85rem] xl:text-[2rem]"
             )}
           >
-            NEO
+            {/* The middle E is red, matching the mandala's own red wordmark and
+                the lockup the client has always used. Restored at their request
+                after a spell rendering all three letters in the foreground
+                colour. Keep it — it is deliberate, not a stray style. */}
+            N<span className="text-neo-500">E</span>O
           </span>
           <span
             className={cn(

@@ -1,5 +1,6 @@
 import { industries } from "@/data/industries";
 import { nswHero, nswTeamCover } from "@/data/nswGallery";
+import { asset } from "@/lib/asset";
 
 /**
  * A named person on the client's published contact card. `role` carries the
@@ -176,10 +177,11 @@ export const navItems: NavItem[] = [
         {
           heading: "About Neo",
           links: [
-            { label: "Our story", href: "/about#story", desc: "Ahmedabad-based, founded 2007 by Baldev Solanki" },
+            { label: "Our story", href: "/about#story", desc: "Founded 2007 by Mr. Baldev Solanki, Ahmedabad" },
             { label: "Mission & vision", href: "/about#mission-vision", desc: "Precision, traceable tooling for every floor" },
             { label: "Our journey", href: "/about#timeline", desc: "Milestones from 2007 to AGV/AMR solutions" },
             { label: "Core values", href: "/about#values", desc: "Integrity, Precision, Partnership, Excellence" },
+            { label: "CO2 Calculator", href: "/about#co2-calculator", desc: "Sustainability selling with Atlas Copco" },
           ],
         },
         {
@@ -205,7 +207,7 @@ export const navItems: NavItem[] = [
       ],
       featured: {
         eyebrow: "Who We Are",
-        title: "A partner engineered for precision & trust",
+        title: "A Partner Engineered for Precision & Trust",
         blurb: "Nearly two decades equipping Indian industry with the world's finest tools — plus engineering expertise beyond the sale.",
         href: "/about",
         cta: "More about Neo",
@@ -317,6 +319,7 @@ export const navItems: NavItem[] = [
             { label: "Hazard & control guide", href: "/safety#hazards", desc: "Seven risks we design out of the station" },
             { label: "Safety through service", href: "/safety#in-service", desc: "A tool stays safe only if it is kept safe" },
             { label: "Training & competence", href: "/safety#training", desc: "Operator training at every handover" },
+            { label: "Safety insights", href: "/safety#insights", desc: "Atlas Copco expert reading on vibration & bolting" },
           ],
         },
         {
@@ -344,6 +347,9 @@ export const navItems: NavItem[] = [
         blurb: "Reaction force, weight, insulation, guarding and traceability are designed in long before anyone writes a work instruction.",
         href: "/safety",
         cta: "Explore Safety",
+        // Atlas Copco's "No bad vibes" photograph — the same image that opens
+        // the attributed vibration feature on /safety.
+        bgImage: asset("images/safety/no-bad-vibes.jpg"),
       },
     },
   },
@@ -380,7 +386,7 @@ export const navItems: NavItem[] = [
       ],
       featured: {
         eyebrow: "Neo Service Workshop",
-        title: "Nut runners, restored & certified",
+        title: "Nut Runners, Restored & Certified",
         blurb: "An in-house workshop with genuine spares, OEM-trained engineers and documented torque calibration — built around your uptime.",
         href: "/nsw",
         cta: "Explore Service",

@@ -3,6 +3,7 @@ import type { Product } from "@/data/products";
 import type { Category } from "@/data/categories";
 import type { Industry } from "@/data/industries";
 import { BROCHURE_HREF } from "@/components/BrochureCTA";
+import { allInsightPages, insightPath, insightTopics } from "@/data/safetyInsights";
 
 // Full-site search. Unifies STATIC entries (fixed pages + notable sections) with
 // DYNAMIC entries pulled live from the catalog store — products, categories,
@@ -65,7 +66,7 @@ const STATIC_ENTRIES: SearchEntry[] = [
   // would send someone to a 17 MB download that never mentions it.
   { id: "page:brochure", title: "Download Catalogue (PDF)", subtitle: "The 24-page NEO 2025 print catalogue — PDF · 17 MB", href: BROCHURE_HREF, group: "Page", external: true, keywords: "brochure catalogue catalog pdf download print product guide 2025 atlas copco gesipa transair eepos gedore hoffmann group garant holex cejn legris parker john guest speedfit smart integrated assembly tightening riveting material removal air motors crane piping hand tools" },
   { id: "page:industries", title: "Industries", subtitle: "Sectors we power", href: "/industries", group: "Page", keywords: "industries sectors applications automotive manufacturing ev assembly battery industrial assembly aerospace energy oil gas wind electronic electronics home appliances white goods metal fabrication welding heavy equipment machinery excavator semiconductor wafer fab cleanroom railway rail rolling stock trains" },
-  { id: "page:service", title: "Service", subtitle: "Neo Service Workshop — nut runners restored & certified", href: "/nsw", group: "Page", keywords: "nsw neo service workshop repair calibration service nut runner hydraulic tools tensioner amc spares" },
+  { id: "page:service", title: "Service", subtitle: "Neo Service Workshop — Nut Runners, Restored & Certified", href: "/nsw", group: "Page", keywords: "nsw neo service workshop repair calibration service nut runner hydraulic tools tensioner amc spares" },
   { id: "page:about", title: "About Neo", subtitle: "Precision is our heritage", href: "/about", group: "Page", keywords: "about company history baldev solanki ahmedabad 2007 heritage" },
   { id: "page:safety", title: "Safety", subtitle: "Safety is engineered, not enforced", href: "/safety", group: "Page", keywords: "safety ehs hse operator ergonomics torque reaction kickback vde insulated 1000v high voltage hv ev battery compressed air safety coupling blow gun abrasive guard ppe hard hat lifting load test calibration traceability poka yoke error proofing risk hazard control training competence occupational health" },
   { id: "page:contact", title: "Contact", subtitle: "We'd love to hear from you", href: "/contact", group: "Page", keywords: "contact address phone email hours map directions location get in touch" },
@@ -73,13 +74,22 @@ const STATIC_ENTRIES: SearchEntry[] = [
 
   { id: "page:sustainability", title: "Sustainability", subtitle: "Our environmental and responsibility commitments", href: "/sustainability", group: "Page", keywords: "sustainability environment responsible sourcing circularity esg community green csr recycling" },
 
-  { id: "page:csr", title: "CSR & Community", subtitle: "Blood donation, Water for All and school outreach", href: "/csr", group: "Page", keywords: "csr corporate social responsibility community outreach giving back blood donation camp rotary club ahmedabad majesty stars indian red cross donor water for all water cooler parab drinking water sayona city chankyapuri team atulya sanand jdg girls school kurti distribution students volunteering" },
+  { id: "page:csr", title: "CSR & Community", subtitle: "Blood donation, Water for All and school outreach", href: "/csr", group: "Page", keywords: "csr corporate social responsibility community outreach giving back blood donation camp rotary club ahmedabad majesty stars indian red cross donor water for all water cooler parab drinking water sayona city chankyapuri team atulya sanand jdg girls school kurti distribution students volunteering atlas copco water4all worldwide" },
 
   // Safety sections
   { id: "sec:safety-disciplines", title: "Four Safety Disciplines", subtitle: "Operator, process, electrical and site", href: "/safety#disciplines", group: "Section", keywords: "operator safety process safety electrical safety vde site workshop safety ergonomics" },
   { id: "sec:safety-hazards", title: "Hazard & Control", subtitle: "Seven risks we design out of the station", href: "/safety#hazards", group: "Section", keywords: "torque reaction kickback manual handling strain live electrical hv ev compressed air abrasive rotating undocumented torque suspended loads" },
   { id: "sec:safety-service", title: "Safety Through Service", subtitle: "A tool stays safe only if it is kept safe", href: "/safety#in-service", group: "Section", keywords: "certified genuine spares oem trained preventive maintenance amc calibration" },
   { id: "sec:safety-training", title: "Safety Training & Standards", subtitle: "Training, competence and accountability", href: "/safety#training", group: "Section", keywords: "training competence handover standards accountability iso 45001 audit ehs" },
+  // Atlas Copco's own articles, summarised on /safety, each with its own Neo
+  // detail page (see INSIGHT_ENTRIES below) — nothing links out to
+  // atlascopco.com. The keywords mirror the articles' subjects so a search for
+  // the topic (not just "insights") lands on the section that credits them.
+  { id: "sec:safety-insights", title: "Safety Insights", subtitle: "Atlas Copco expert reading on vibration, ergonomics & bolting", href: "/safety#insights", group: "Section", keywords: "insights articles expert hub atlas copco heat pump wind turbine smart bolting defence electronics vibration standard vpm iso 5349 28927 ce marking hand arm vibration syndrome havs raynaud white finger numbness pocket guide exposure a8 2002/44/ec powerful ergonomics turbine grinder bolt tensioning tensioner mechatronic wrench data integration traceability" },
+  { id: "sec:safety-vibration", title: "Vibration, Explained", subtitle: "HAVS injuries and the new VPM vibration value", href: "/safety#vibration", group: "Section", keywords: "vibration hand arm vibration syndrome havs raynaud numbness musculoskeletal vpm peak magnitude chipping hammer impact nutrunner impulse grinder" },
+
+  // CSR sections
+  { id: "sec:water-for-all-global", title: "Water for All — Worldwide", subtitle: "The Atlas Copco Group's clean-water initiative since 1984", href: "/csr#water-for-all-global", group: "Section", keywords: "water for all atlas copco group 1984 water4all clean drinking water sanitation hygiene peter hakansson torgny rogert" },
 
   // Home sections
   { id: "sec:brands", title: "Our Brands", subtitle: "The world's finest brands, delivered by Neo", href: "/#brands", group: "Section", keywords: "authorised distribution atlas copco gesipa gedore pferd cejn partners logos" },
@@ -100,7 +110,10 @@ const STATIC_ENTRIES: SearchEntry[] = [
   { id: "sec:service-promise", title: "The Service Promise", subtitle: "A workshop built around your uptime", href: "/nsw#service-promise", group: "Section", keywords: "guarantee oem-trained in-house amc uptime" },
 
   // About sections
-  { id: "sec:story", title: "Our Story", subtitle: "Founded 2007 in Ahmedabad, Gujarat", href: "/about#story", group: "Section", keywords: "story founder history origin stats baldev solanki" },
+  // The founder's portrait and name now lead this section (the separate
+  // "Our Founder" section was folded into it), so it answers founder searches.
+  { id: "sec:story", title: "Our Story", subtitle: "Founded 2007 in Ahmedabad by Mr. Baldev Solanki", href: "/about#story", group: "Section", keywords: "story history origin stats founder baldev solanki mr. baldev solanki leadership 2007 ahmedabad gujarat" },
+  { id: "sec:co2-calculator", title: "CO2 Calculator", subtitle: "Strategic Partnership Selling for Sustainability", href: "/about#co2-calculator", group: "Section", keywords: "co2 co₂ calculator carbon footprint pcf product carbon footprint iso 14067 carbon trust emissions energy cost savings sustainability strategic partnership selling sps low-carbon impact plan atlas copco" },
   { id: "sec:mission-vision", title: "Mission & Vision", subtitle: "Our mission and vision", href: "/about#mission-vision", group: "Section", keywords: "mission vision precision traceable industry 4.0 safety" },
   { id: "sec:timeline", title: "Our Journey", subtitle: "Built milestone by milestone", href: "/about#timeline", group: "Section", keywords: "timeline milestones journey history" },
   { id: "sec:values", title: "Core Values", subtitle: "What drives us", href: "/about#values", group: "Section", keywords: "integrity precision partnership excellence values" },
@@ -115,6 +128,31 @@ const STATIC_ENTRIES: SearchEntry[] = [
   { id: "legal:terms", title: "Terms of Use", subtitle: "Products, quotations & governing terms", href: "/terms", group: "Legal", keywords: "terms conditions liability governing law quotations legal" },
   { id: "legal:privacy", title: "Privacy Policy", subtitle: "How we collect and protect your data", href: "/privacy", group: "Legal", keywords: "privacy data cookies security rights legal" },
 ];
+
+// ── Safety insight detail pages ────────────────────────────────────────────
+// One entry per /safety/insights/:id page, generated from the same data the
+// pages render, so a new or renamed insight is searchable with no edit here.
+// These are in-app routes (never `external`): the client wants every insight to
+// open on Neo's own site, not on atlascopco.com.
+const topicLabel = (id: string) =>
+  insightTopics.find((t) => t.id === id)?.label ?? id;
+
+const INSIGHT_ENTRIES: SearchEntry[] = allInsightPages.map((i) => ({
+  id: "insight:" + i.id,
+  title: i.title,
+  subtitle: `${i.kind} · Safety insight`,
+  href: insightPath(i.id),
+  group: "Section",
+  keywords: [
+    i.summary,
+    ...i.takeaways,
+    i.topic.replace(/-/g, " "),
+    topicLabel(i.topic),
+    "safety insight article atlas copco",
+  ]
+    .join(" ")
+    .toLowerCase(),
+}));
 
 const prepare = (e: SearchEntry): IndexedEntry => ({
   ...e,
@@ -188,7 +226,7 @@ export function buildSearchIndex(
     });
   }
 
-  return [...dynamic, ...STATIC_ENTRIES].map(prepare);
+  return [...dynamic, ...STATIC_ENTRIES, ...INSIGHT_ENTRIES].map(prepare);
 }
 
 function scoreEntry(e: IndexedEntry, q: string, terms: string[]): number {

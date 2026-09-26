@@ -1,6 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   HeartPulse,
   Droplets,
@@ -8,21 +13,35 @@ import {
   HandHeart,
   Users,
   Handshake,
+  Globe2,
   X,
   ChevronLeft,
   ChevronRight,
   ArrowRight,
   ArrowUpRight,
+  ArrowDown,
+  ArrowUp,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { SustainabilityHeaderArt } from "@/components/ui/HeaderArt";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
+import { Counter } from "@/components/ui/Counter";
 import { asset } from "@/lib/asset";
+import { scrollToHash } from "@/lib/scroll";
 
-// Every claim on this page is evidenced by the photographs in
-// public/images/csr/. No donor counts, litres or beneficiary numbers appear
-// anywhere — those were never recorded, so they are never implied.
+// Every claim about Neo's own work on this page is evidenced by the
+// photographs in public/images/csr/. No donor counts, litres or beneficiary
+// numbers for Neo's projects appear anywhere — those were never recorded, so
+// they are never implied.
+//
+// The "Water for All, Worldwide" section (#water-for-all-global) is the one
+// exception, and it is NOT Neo's work: it presents the Atlas Copco Group's own
+// Water for All programme (founded 1984), using Atlas Copco's photograph and
+// the figures Atlas Copco publishes on atlascopco.com. Attribution rule — keep
+// it on screen, link out to atlascopco.com / water4all.org, and never state or
+// imply that Neo is part of, funds, or named its project after that
+// programme. Neo's Project 02 simply shares the name and the belief.
 
 /** Pair a CSR slug with its full-size and grid-sized files. */
 const img = (slug: string) => ({
@@ -49,6 +68,13 @@ type Project = {
   partner: string;
   body: string[];
   photo: CSRPhoto;
+  /** Optional in-page link rendered under the body copy. */
+  jump?: { hash: string; label: string };
+};
+
+/** Smooth in-page jump that keeps a real `href` for no-JS / open-in-new-tab. */
+const jumpTo = (hash: string) => (e: ReactMouseEvent<HTMLAnchorElement>) => {
+  if (scrollToHash(hash)) e.preventDefault();
 };
 
 const projects: Project[] = [
@@ -82,6 +108,10 @@ const projects: Project[] = [
       "It was inaugurated on 1st July 2025, garlanded with marigolds, alongside the Rotary Club of Ahmedabad Majesty Stars and Team Atulya.",
       "The parab stays where people actually need it: on the street, open to anyone, through the Gujarat summer.",
     ],
+    jump: {
+      hash: "#water-for-all-global",
+      label: "Water for All around the world",
+    },
     photo: {
       ...img("water-for-all-parab"),
       caption:
@@ -123,6 +153,34 @@ const principles = [
     title: "Hands on the work",
     text: "Our own team shows up — donating, inaugurating, distributing. A cheque posted from the office is not what we mean by responsibility.",
   },
+];
+
+/* ── Atlas Copco Group — Water for All ─────────────────────────────────
+   Atlas Copco's programme, Atlas Copco's photograph, Atlas Copco's figures
+   (all from atlascopco.com/en-uk/about-atlas-copco/water-for-all). Shown for
+   context beside Neo's own parab — never as Neo's work. */
+const W4A_SITE_URL = "https://www.water4all.org/en";
+const W4A_ATLAS_URL =
+  "https://www.atlascopco.com/en-uk/about-atlas-copco/water-for-all";
+
+const w4aPhoto = img("water-for-all-atlas-copco");
+
+type W4AStat = {
+  /** Static display value, or a number to count up to. */
+  value: string | number;
+  suffix?: string;
+  label: string;
+};
+
+const w4aStats: W4AStat[] = [
+  { value: "1984", label: "Founded in Sweden by Atlas Copco employees" },
+  {
+    value: 50,
+    suffix: "+",
+    label: "Countries with a local Water for All organisation",
+  },
+  { value: "Millions", label: "People reached since 1984" },
+  { value: "2×", label: "Each employee donation matched twice over" },
 ];
 
 /** Every CSR photograph, ordered to follow the projects above. */
@@ -297,7 +355,12 @@ function ProjectBlock({ project, flip }: { project: Project; flip: boolean }) {
   const Icon = project.icon;
 
   return (
-    <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+    // `id` makes every project deep-linkable (/csr#water-for-all etc.);
+    // scroll-mt clears the fixed navbar on native anchor jumps.
+    <div
+      id={project.id}
+      className="grid scroll-mt-28 items-center gap-8 lg:grid-cols-2 lg:gap-12"
+    >
       <Reveal className={flip ? "lg:order-2" : undefined}>
         <div className="force-dark group relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
           <img
@@ -345,9 +408,230 @@ function ProjectBlock({ project, flip }: { project: Project; flip: boolean }) {
               </p>
             ))}
           </div>
+          {project.jump && (
+            <a
+              href={project.jump.hash}
+              onClick={jumpTo(project.jump.hash)}
+              className="group/jump mt-6 inline-flex items-center gap-3 text-sm font-semibold text-steel-200 transition hover:text-white"
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 bg-volt-500/10 text-volt-500 transition duration-300 group-hover/jump:translate-y-0.5 group-hover/jump:border-volt-500/40">
+                <ArrowDown className="h-4 w-4" />
+              </span>
+              <span className="underline decoration-white/20 decoration-1 underline-offset-4 transition group-hover/jump:decoration-volt-500">
+                {project.jump.label}
+              </span>
+            </a>
+          )}
         </div>
       </Reveal>
     </div>
+  );
+}
+
+/**
+ * "Water for All, Worldwide" — the Atlas Copco Group's programme, presented as
+ * Atlas Copco's (attributed + linked out), then bridged back to Neo's own
+ * parab, which only shares the name and the belief.
+ *
+ * One cinematic force-dark split card: photo on top below `lg`, photo left /
+ * copy right from `lg`. The photo settles from a slight zoom once on entry
+ * (transform only; skipped under reduced motion).
+ */
+function WaterForAllGlobal() {
+  const reduce = useReducedMotion();
+
+  return (
+    <section
+      id="water-for-all-global"
+      className="container-px scroll-mt-28 py-10 sm:py-16"
+    >
+      <SectionHeading
+        align="center"
+        eyebrow="Water for All, Worldwide"
+        title="Clean water is a human right"
+        subtitle="The same three words also name one of industry's longest-running community programmes — the Atlas Copco Group's Water for All, founded by its own employees in 1984."
+      />
+
+      <Reveal className="mt-10 sm:mt-14">
+        <article
+          aria-labelledby="w4a-global-title"
+          className="force-dark relative overflow-hidden rounded-[2rem] border border-white/10 bg-ink-900 shadow-card lg:grid lg:grid-cols-2"
+        >
+          {/* Photo — 4:3 on top below lg; fills the left column from lg. */}
+          <figure className="shine-sweep group relative aspect-[4/3] overflow-hidden bg-ink-800 lg:aspect-auto lg:min-h-[34rem]">
+            {/* Hover drift lives on this wrapper so it never fights the
+                framer-driven Ken Burns transform on the <img> itself. */}
+            <div className="absolute inset-0 transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]">
+              <motion.img
+                src={w4aPhoto.full}
+                // The thumb is a 4:3 centre crop — right for the stacked
+                // layout. From lg the column is taller than it is wide, so
+                // object-cover renders the photo far wider than the column:
+                // declare a wide slot there so the full 1600w file is used.
+                srcSet={`${w4aPhoto.thumb} 800w, ${w4aPhoto.full} 1600w`}
+                sizes="(min-width: 1024px) 1200px, 100vw"
+                width={1600}
+                height={1067}
+                alt="A brass tap with a thin stream of clean water running from it, in front of a clay-walled village house"
+                loading="lazy"
+                decoding="async"
+                initial={reduce ? false : { scale: 1.08 }}
+                whileInView={reduce ? undefined : { scale: 1 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+                // Tap + stream sit right of centre. From lg the column is a
+                // tall portrait slot, so the crop is biased right to keep the
+                // spout, stream and handle in frame — less at lg, where the
+                // slot is narrowest, more at xl, where the concrete post can
+                // take the scrim instead of the tap.
+                className="h-full w-full object-cover object-center lg:object-[58%_50%] xl:object-[66%_50%]"
+              />
+            </div>
+
+            {/* Soft scrim toward the copy: down into it below lg, right into
+                it from lg — kept short so the running water stays clear. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-b from-transparent to-ink-900 lg:hidden"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-r from-transparent to-ink-900 lg:block"
+            />
+
+            <figcaption className="glass-strong absolute left-3 top-3 z-[2] inline-flex max-w-[calc(100%-1.5rem)] items-center gap-2 rounded-full px-3 py-1.5 text-[0.72rem] font-medium text-pure/90 xs:left-4 xs:top-4 xs:max-w-[calc(100%-2rem)] xs:px-3.5 xs:text-xs sm:left-6 sm:top-6">
+              <Droplets className="hidden h-3.5 w-3.5 shrink-0 text-volt-400 xs:block" />
+              <span className="truncate">Water for All · Atlas Copco Group</span>
+            </figcaption>
+          </figure>
+
+          {/* Copy */}
+          <div className="relative min-w-0 p-5 xs:p-6 sm:p-10 xl:p-14">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-volt-500/10 blur-3xl"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -bottom-28 left-1/4 h-64 w-64 rounded-full bg-aurora-500/[0.07] blur-3xl"
+            />
+
+            <div className="relative">
+              {/* One line at every width: the label tightens (and drops its
+                  globe) on the narrowest phones instead of wrapping. */}
+              <span className="inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full border border-volt-400/25 bg-volt-500/15 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.08em] text-volt-400 xs:px-3 xs:tracking-[0.12em] sm:text-2xs sm:tracking-[0.16em]">
+                <Globe2 className="hidden h-3.5 w-3.5 shrink-0 xs:block" />
+                Atlas Copco Group initiative
+              </span>
+              <h3
+                id="w4a-global-title"
+                className="mt-4 font-display text-[clamp(1.75rem,3.6vw,2.6rem)] font-bold leading-tight tracking-tight text-pure"
+              >
+                Water for All
+              </h3>
+              <div className="mt-4 space-y-4">
+                <p className="leading-relaxed text-steel-300">
+                  Water for All is the Atlas Copco Group's main community
+                  engagement initiative. It was founded in Sweden in 1984 by two
+                  Atlas Copco employees, Peter Håkansson and Torgny Rogert, and
+                  has spread across the world ever since.
+                </p>
+                <p className="leading-relaxed text-steel-400">
+                  Volunteering employees fund projects that give people access
+                  to clean drinking water, sanitation and hygiene — and every
+                  voluntary employee donation is matched twice over by the
+                  company. Because women and girls are hit hardest when water is
+                  scarce, every project aims to improve their lives in
+                  particular.
+                </p>
+              </div>
+
+              <StaggerGroup className="mt-8 grid grid-cols-2 gap-3 sm:gap-4">
+                {w4aStats.map((s) => (
+                  <StaggerItem key={s.label} className="min-w-0">
+                    <div className="relative h-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-3.5 transition duration-300 hover:-translate-y-0.5 hover:border-volt-400/30 hover:bg-white/[0.06] xs:p-4 sm:p-5">
+                      <span
+                        aria-hidden
+                        className="absolute inset-x-4 top-0 h-px bg-aurora opacity-70"
+                      />
+                      <p className="font-display text-[1.35rem] font-bold leading-none tracking-tight text-pure tabular-nums xs:text-2xl sm:text-3xl">
+                        {typeof s.value === "number" ? (
+                          reduce ? (
+                            `${s.value}${s.suffix ?? ""}`
+                          ) : (
+                            <Counter value={s.value} suffix={s.suffix} />
+                          )
+                        ) : (
+                          s.value
+                        )}
+                      </p>
+                      <p className="mt-2 text-xs leading-snug text-steel-400 sm:text-sm sm:leading-snug">
+                        {s.label}
+                      </p>
+                    </div>
+                  </StaggerItem>
+                ))}
+              </StaggerGroup>
+
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <a
+                  href={W4A_SITE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-ghost"
+                >
+                  Visit water4all.org
+                  <ArrowUpRight className="h-4 w-4" />
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+                <a
+                  href={W4A_ATLAS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/ext inline-flex items-center gap-1.5 text-sm font-semibold text-volt-400 underline-offset-4 transition hover:text-pure hover:underline"
+                >
+                  Read on atlascopco.com
+                  <ArrowUpRight className="h-4 w-4 transition duration-300 group-hover/ext:-translate-y-0.5 group-hover/ext:translate-x-0.5" />
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </div>
+
+              <p className="mt-6 text-2xs text-steel-500">
+                Image and programme details: Atlas Copco Group.
+              </p>
+            </div>
+          </div>
+        </article>
+      </Reveal>
+
+      {/* Bridge back to Neo's own parab — same name, same belief, nothing more. */}
+      <Reveal delay={0.1} className="mt-6 sm:mt-8">
+        <div className="flex flex-col items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-white/20 xs:flex-row sm:gap-5 sm:p-6 lg:items-center">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-aurora-500/15 text-aurora-600">
+            <Droplets className="h-6 w-6" />
+          </span>
+          <div className="min-w-0 flex-1 lg:flex lg:items-center lg:justify-between lg:gap-10">
+            <p className="leading-relaxed text-steel-300">
+              Neo's own Water for All parab at Sayona City shares the name —
+              and the belief behind it: clean drinking water should be open to
+              anyone who needs it.
+            </p>
+            <a
+              href="#water-for-all"
+              onClick={jumpTo("#water-for-all")}
+              // Plain inline flow (not inline-flex) so, if the label ever wraps,
+              // the arrow follows the last word instead of floating off right.
+              className="group/back mt-3 block text-sm font-semibold text-white lg:mt-0 lg:shrink-0"
+            >
+              <span className="underline decoration-aurora-600/60 decoration-2 underline-offset-4 transition group-hover/back:decoration-aurora-600">
+                See our Water for All project
+              </span>
+              <ArrowUp className="ml-1.5 inline-block h-4 w-4 align-[-0.2em] text-aurora-600 transition duration-300 group-hover/back:-translate-y-0.5" />
+            </a>
+          </div>
+        </div>
+      </Reveal>
+    </section>
   );
 }
 
@@ -387,9 +671,9 @@ export default function CSR() {
                 announced.
               </p>
               <p className="leading-relaxed text-steel-400">
-                We do not publish donor counts or beneficiary numbers here. What
-                we can show is the photographs from each day, and the partners
-                whose names are on them.
+                We do not publish donor counts or beneficiary numbers for our
+                projects. What we can show is the photographs from each day, and
+                the partners whose names are on them.
               </p>
             </div>
           </Reveal>
@@ -417,7 +701,7 @@ export default function CSR() {
       </section>
 
       {/* The three projects */}
-      <section id="projects" className="container-px py-16">
+      <section id="projects" className="container-px py-10 sm:py-16">
         <SectionHeading
           align="center"
           eyebrow="What We've Done"
@@ -435,8 +719,11 @@ export default function CSR() {
         </div>
       </section>
 
+      {/* Atlas Copco Group's Water for All — attributed context, not Neo's work */}
+      <WaterForAllGlobal />
+
       {/* Photo gallery */}
-      <section id="gallery" className="container-px py-16">
+      <section id="gallery" className="container-px py-10 sm:py-16">
         <SectionHeading
           align="center"
           eyebrow="From the Days Themselves"
@@ -449,7 +736,7 @@ export default function CSR() {
       </section>
 
       {/* CTA */}
-      <section className="container-px py-16">
+      <section className="container-px py-10 sm:py-16">
         <Reveal>
           <div className="gradient-border relative overflow-hidden p-8 sm:p-12">
             <div

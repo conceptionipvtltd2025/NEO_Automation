@@ -44,19 +44,28 @@ export function NSWSection() {
           <div className="relative grid gap-6 p-5 sm:gap-10 sm:p-12 lg:grid-cols-[1.1fr_0.9fr] lg:p-16">
             <div>
               <Reveal>
-                <span className="eyebrow">Neo Service Workshop</span>
+                <span className="eyebrow max-xs:tracking-[0.12em]">Neo Service Workshop</span>
               </Reveal>
               <Reveal delay={0.1}>
                 <h2 className="mt-4 font-display text-[clamp(1.6rem,5.5vw,3.4rem)] font-bold leading-[1.06] text-pure sm:mt-6">
-                  Nut runners,{" "}
-                  <span className="text-gradient-neo">restored & certified.</span>
+                  {/* Hard break: left to wrap, "&" was stranded at the start
+                      of line two on desktop and at the end of line one on
+                      phones. Now the red phrase always leads its own line. */}
+                  Nut Runners,
+                  <br />
+                  <span className="text-gradient-neo">Restored &amp; Certified.</span>
                 </h2>
               </Reveal>
               <Reveal delay={0.18}>
-                <p className="mt-3 max-w-lg text-[14px] leading-relaxed text-steel-300 sm:mt-5 sm:text-base">
-                  An all tools & tackles equipped service workshop for servicing
-                  all types of Pneumatic, Battery and Electric nut runners — with
-                  genuine spares, documented calibration and fast turnaround.
+                {/* Client copy, verbatim. max-w-xl (not lg): the paragraph is
+                    ~290 characters, and at 32rem it stacked into a tall narrow
+                    column that ran well past the 2x2 photo grid beside it. */}
+                <p className="mt-3 max-w-xl text-pretty text-[14px] leading-relaxed text-steel-300 sm:mt-5 sm:text-base">
+                  A fully equipped service workshop for the inspection, servicing,
+                  repair, and calibration of Pneumatic, Battery, and Electric nut
+                  runners. We use genuine spare parts and follow documented
+                  calibration procedures to ensure reliable performance, accuracy,
+                  and fast turnaround.
                 </p>
               </Reveal>
 
@@ -72,7 +81,10 @@ export function NSWSection() {
               </Reveal>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+            {/* self-center: from lg the copy column can outgrow the 2x2 grid
+                (1024px wraps the headline to three lines), and a stretched
+                grid would open a gap between its two rows instead. */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:self-center">
               {pillars.map((p, i) => (
                 <motion.div
                   key={p.title}

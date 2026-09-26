@@ -12,6 +12,7 @@ import About from "./pages/About";
 import Sustainability from "./pages/Sustainability";
 import CSR from "./pages/CSR";
 import Safety from "./pages/Safety";
+import SafetyInsightDetail from "./pages/SafetyInsightDetail";
 import Contact from "./pages/Contact";
 import Inquiry from "./pages/Inquiry";
 import NSW from "./pages/NSW";
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="/sustainability" element={<Sustainability />} />
         <Route path="/csr" element={<CSR />} />
         <Route path="/safety" element={<Safety />} />
+        <Route path="/safety/insights/:slug" element={<SafetyInsightDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/inquiry" element={<Inquiry />} />
         <Route path="/terms" element={<Legal kind="terms" />} />

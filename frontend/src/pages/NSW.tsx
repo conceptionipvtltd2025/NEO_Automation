@@ -86,7 +86,7 @@ export default function NSW() {
       <PageHeader
         eyebrow="Neo Service Workshop"
         title="Service"
-        subtitle="An all tools & tackles equipped service workshop for servicing all types of Pneumatic, Battery and Electric nut runners — keeping your tightening tools precise, certified and production-ready."
+        subtitle="A fully equipped service workshop for the inspection, servicing, repair, and calibration of Pneumatic, Battery, and Electric nut runners. We use genuine spare parts and follow documented calibration procedures to ensure reliable performance, accuracy, and fast turnaround."
         crumbs={[{ label: "Service" }]}
         media={<NSWHeaderArt />}
       />

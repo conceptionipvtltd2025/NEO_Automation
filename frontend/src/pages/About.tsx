@@ -6,6 +6,7 @@ import {
   useReducedMotion,
   useScroll,
   useSpring,
+  useTransform,
 } from "framer-motion";
 import {
   Target,
@@ -27,6 +28,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { CertificatesSection } from "@/components/Certificates";
+import { CO2CalculatorSection } from "@/components/about/CO2CalculatorSection";
 import { AboutHeaderArt } from "@/components/ui/HeaderArt";
 import { Reveal } from "@/components/ui/Reveal";
 import { Counter } from "@/components/ui/Counter";
@@ -161,7 +163,7 @@ const csrTeasers = [
     image: "images/csr/blood-donation-team-thumb.jpg",
     alt: "The Neo Automation team and Rotary volunteers at the blood donation camp",
     icon: HeartPulse,
-    href: "/csr#projects",
+    href: "/csr#blood-donation",
   },
   {
     title: "Water for All",
@@ -169,7 +171,7 @@ const csrTeasers = [
     image: "images/csr/water-for-all-parab-thumb.jpg",
     alt: "The donated drinking-water parab, garlanded at its inauguration",
     icon: Droplets,
-    href: "/csr#projects",
+    href: "/csr#water-for-all",
   },
   {
     title: "Sanand Girls School",
@@ -177,7 +179,7 @@ const csrTeasers = [
     image: "images/csr/sanand-girls-kurti-thumb.jpg",
     alt: "Students of the JDG girls school in Sanand with the donated kurtis",
     icon: GraduationCap,
-    href: "/csr#projects",
+    href: "/csr#sanand-girls-school",
   },
 ];
 
@@ -573,6 +575,72 @@ function MilestoneCard({
   );
 }
 
+/* ── Founder portrait ──────────────────────────────────────────────────────
+   Leads the #story section. The client asked for ONE company-story section
+   carrying Mr. Baldev Solanki's photograph, so the separate founder spotlight
+   that used to follow it was folded in here. He is titled only "Founder", the
+   one role the client has given, and no quote is attributed to him because we
+   have not been given one. The photograph is used exactly as supplied: a 4:5
+   frame matching the 800x1000 file, so object-cover neither crops nor
+   distorts it, and object-top keeps his head (top third) in frame. */
+function FounderPortrait() {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  // Gentle depth: the offset gradient frame behind the portrait eases from a
+  // 24px offset to 8px as the portrait scrolls through (transform only), and
+  // sits at a static 12px when the visitor prefers reduced motion.
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const frameOffset = useTransform(scrollYProgress, [0, 1], [24, 8]);
+
+  return (
+    // Capped and centred below lg so a phone never gets a screen-tall
+    // photograph. `me-3 mb-3` reserve room for the offset frame so it never
+    // pokes past the column.
+    <Reveal className="mx-auto w-full min-w-0 max-w-sm lg:max-w-none">
+      <div ref={ref} className="relative mb-3 me-3">
+        <motion.div
+          aria-hidden
+          style={reduce ? { x: 12, y: 12 } : { x: frameOffset, y: frameOffset }}
+          className="pointer-events-none absolute inset-0 rounded-3xl border border-iris-400/30 bg-gradient-to-br from-neo-600/35 via-iris-500/25 to-volt-500/30"
+        />
+        <div className="force-dark relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
+          <img
+            src={asset("images/team/founder-baldev-solanki.jpg")}
+            alt="Mr. Baldev Solanki, founder of Neo Automation"
+            width={800}
+            height={1000}
+            decoding="async"
+            className="aspect-[4/5] w-full object-cover object-top"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-ink-950/90 via-ink-950/45 to-transparent"
+          />
+          <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+            <p className="font-display text-lg font-semibold leading-tight text-pure sm:text-xl">
+              Mr. Baldev Solanki
+            </p>
+            <p className="mt-1 text-[13px] text-pure/75">Founder, Neo Automation</p>
+          </div>
+        </div>
+
+        <motion.div
+          animate={reduce ? undefined : { y: [0, -8, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="glass-strong absolute -right-2 top-6 rounded-2xl px-3.5 py-2.5 shadow-card sm:-right-5 sm:px-4 sm:py-3"
+        >
+          <p className="whitespace-nowrap text-[13px] font-semibold text-white">
+            Est. 2007 <span className="text-steel-500">·</span> Ahmedabad
+          </p>
+        </motion.div>
+      </div>
+    </Reveal>
+  );
+}
+
 export default function About() {
   // Scroll-progress rail: the bright line draws itself down the spine as the
   // list scrolls past. `start 85%` → `end 60%` means the line is empty when the
@@ -600,20 +668,16 @@ export default function About() {
         media={<AboutHeaderArt />}
       />
 
-      {/* Intro + image */}
-      <section id="story" className="container-px pb-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <Reveal>
-            <div className="force-dark relative overflow-hidden rounded-3xl border border-white/10 shadow-card">
-              <img
-                src={asset("images/nsw/team-leadership.jpg")}
-                alt="The Neo Automation team at the Service Workshop inauguration"
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 to-transparent" />
-            </div>
-          </Reveal>
-          <div>
+      {/* Our story — led by the founder's portrait. The portrait column is
+          the narrower one (and a fixed width from xl) so the 4:5 photograph
+          stands about as tall as the text beside it instead of towering over
+          it on wide screens. Only scroll-mt-4: scrollToHash already clears
+          the navbar and Lenis adds scroll-margin on top; the few px keep the
+          portrait (no section padding above it) off the navbar's edge. */}
+      <section id="story" className="container-px scroll-mt-4 pb-8">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14 xl:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] xl:gap-16 min-[1360px]:grid-cols-[minmax(0,25rem)_minmax(0,1fr)]">
+          <FounderPortrait />
+          <div className="min-w-0">
             <Reveal>
               <p className="text-lg leading-relaxed text-steel-300">
                 Neo Automation is a leading Ahmedabad–Gujarat based provider of
@@ -644,7 +708,10 @@ export default function About() {
               </p>
             </Reveal>
 
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {/* 2x2 again in the lg-xl window: there the story column is
+                only ~440-560px, four-up cards measured 97-116px wide, and
+                "ENGINEERING" / "RELIABILITY" ran out through the card border. */}
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
               {site.stats.map((s) => (
                 <Reveal key={s.label} className="h-full">
                   <div className="flex h-full flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center">
@@ -765,6 +832,10 @@ export default function About() {
           ))}
         </StaggerGroup>
       </section>
+
+      {/* CO2 Calculator & Strategic Partnership Selling — Atlas Copco's
+          sustainability content, sent by Atlas Copco India for this page. */}
+      <CO2CalculatorSection />
 
       {/* CSR teaser. The full /csr page existed but was only reachable from a
           mega-menu column and the footer, so nobody browsing the Company page

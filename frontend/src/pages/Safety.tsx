@@ -21,6 +21,9 @@ import { PageHeader } from "@/components/PageHeader";
 import { SafetyHeaderArt } from "@/components/ui/HeaderArt";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
+import { NoBadVibesBand } from "@/components/safety/NoBadVibesBand";
+import { SafetyInsights } from "@/components/safety/SafetyInsights";
+import { VibrationSpotlight } from "@/components/safety/VibrationSpotlight";
 
 /**
  * /safety — the dedicated Safety section the client asked for in the header.
@@ -31,6 +34,16 @@ import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/Reveal";
  * provides. Neo is NOT itself registered to ISO 45001 — its OEM partners hold
  * their own certifications — and the "Standards & accountability" band below
  * says exactly that rather than implying a registration Neo does not have.
+ *
+ * Three sections carry Atlas Copco's own safety knowledge from its Expert Hub
+ * (https://www.atlascopco.com/en-uk/itba/expert-hub/safety): the "no bad
+ * vibes" image band, the nine Safety Insights cards, and the Vibration,
+ * Explained spotlight (HAVS injuries + the hand-arm vs VPM chart). That content
+ * is Atlas Copco's — credited, linked to the originals, never presented as
+ * Neo's own work. Data lives in src/data/safetyInsights.ts.
+ *
+ * Order: header → commitment → no bad vibes → disciplines → hazards →
+ * insights → vibration → in service → training → CTA.
  */
 
 /* ── The four disciplines ────────────────────────────────────────────────── */
@@ -230,6 +243,11 @@ export default function Safety() {
         </div>
       </section>
 
+      {/* ── Atlas Copco: "no bad vibes" image band ───────────────────────── */}
+      <section id="no-bad-vibes" className="container-px py-10 sm:py-16">
+        <NoBadVibesBand />
+      </section>
+
       {/* ── The four disciplines ─────────────────────────────────────────── */}
       <section id="disciplines" className="container-px py-16">
         <SectionHeading
@@ -317,6 +335,10 @@ export default function Safety() {
           ))}
         </div>
       </section>
+
+      {/* ── Atlas Copco Expert Hub insights + vibration spotlight ────────── */}
+      <SafetyInsights />
+      <VibrationSpotlight />
 
       {/* ── Safety through service ───────────────────────────────────────── */}
       <section id="in-service" className="container-px py-16">

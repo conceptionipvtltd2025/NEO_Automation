@@ -217,21 +217,7 @@ export function Footer() {
             `sm` the button additionally leaves the right-hand cluster (see its
             own row below) so it is never under `right-5` mid-scroll either. */}
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 py-7 pb-24 sm:flex-row">
-          <div className="text-center text-xs text-steel-500 sm:text-left">
-            <p>
-              © {new Date().getFullYear()} {site.legalName}. All rights reserved.
-              <span className="mx-2 text-steel-600">·</span>
-              Designed &amp; developed by{" "}
-              <a
-                href="https://www.conceptioni.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-steel-400 transition hover:text-white"
-              >
-                Conception I Pvt Ltd
-              </a>
-            </p>
-          </div>
+        
           {/* Below `sm` the button is its own centred row ABOVE the legal
               links (order-first), keeping it off the right edge the FAB owns.
               From `sm` up it rejoins the cluster exactly as before. */}
